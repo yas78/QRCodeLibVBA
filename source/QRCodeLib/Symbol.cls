@@ -196,10 +196,10 @@ End Sub
 ' (概要)
 '  データ領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
 '----------------------------------------------------------------------------------------
-Friend Function GetDataBlock() As Variant() ' Subtype : Byte()
+Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
 
     Dim dataBytes() As Byte
-    dataBytes = GetSymbolBytes()
+    dataBytes = GetDataBytes()
     
     Dim numPreBlocks As Long
     numPreBlocks = RSBlock.GetTotalNumber(m_parent.ErrorCorrectionLevel, m_currVersion, True)
@@ -247,7 +247,7 @@ Friend Function GetDataBlock() As Variant() ' Subtype : Byte()
         ret(i) = data
     Next
     
-    GetDataBlock = ret
+    BuildDataBlock = ret
     
 End Function
 
@@ -255,7 +255,7 @@ End Function
 ' (概要)
 '  誤り訂正領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
 '----------------------------------------------------------------------------------------
-Friend Function GetErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
+Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
 
     Dim i As Long
     Dim j As Long
@@ -316,7 +316,7 @@ Friend Function GetErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant
         Next
     Next
 
-    GetErrorCorrectionBlock = ret
+    BuildErrorCorrectionBlock = ret
     
 End Function
 
@@ -327,10 +327,10 @@ End Function
 Private Function GetEncodingRegionBytes() As Byte()
 
     Dim dataBlock() As Variant ' Subtype : Byte()
-    dataBlock = GetDataBlock()
+    dataBlock = BuildDataBlock()
     
     Dim ecBlock() As Variant ' Subtype : Byte()
-    ecBlock = GetErrorCorrectionBlock(dataBlock)
+    ecBlock = BuildErrorCorrectionBlock(dataBlock)
     
     Dim numCodewords  As Long
     numCodewords = Codeword.GetTotalNumber(m_currVersion)
@@ -386,25 +386,25 @@ End Function
 ' (概要)
 '  シンボルデータの完全なバイトデータを返します。
 '----------------------------------------------------------------------------------------
-Private Function GetSymbolBytes() As Byte()
+Private Function GetDataBytes() As Byte()
     
     Dim bs As BitSequence
     Set bs = New BitSequence
 
     If m_parent.Count > 1 Then
-        Call BuildStructuredAppendHeader(bs)
+        Call WriteStructuredAppendHeader(bs)
     End If
     
-    Call BuildSegments(bs)
-    Call BuildTerminator(bs)
-    Call BuildPaddingBits(bs)
-    Call BuildPadCodewords(bs)
+    Call WriteSegments(bs)
+    Call WriteTerminator(bs)
+    Call WritePaddingBits(bs)
+    Call WritePadCodewords(bs)
 
-    GetSymbolBytes = bs.GetBytes()
+    GetDataBytes = bs.GetBytes()
 
 End Function
 
-Private Sub BuildStructuredAppendHeader(ByVal bs As BitSequence)
+Private Sub WriteStructuredAppendHeader(ByVal bs As BitSequence)
 
 #If [DEBUG] Then
     Debug.Assert m_parent.Count > 1
@@ -417,7 +417,7 @@ Private Sub BuildStructuredAppendHeader(ByVal bs As BitSequence)
     
 End Sub
 
-Private Sub BuildSegments(ByVal bs As BitSequence)
+Private Sub WriteSegments(ByVal bs As BitSequence)
     
     Dim i As Long
     Dim data() As Byte
@@ -447,7 +447,7 @@ Private Sub BuildSegments(ByVal bs As BitSequence)
 
 End Sub
 
-Private Sub BuildTerminator(ByVal bs As BitSequence)
+Private Sub WriteTerminator(ByVal bs As BitSequence)
     
     Dim terminatorLength As Long
     terminatorLength = IIf( _
@@ -459,7 +459,7 @@ Private Sub BuildTerminator(ByVal bs As BitSequence)
     
 End Sub
 
-Private Sub BuildPaddingBits(ByVal bs As BitSequence)
+Private Sub WritePaddingBits(ByVal bs As BitSequence)
     
     If bs.Length Mod 8 > 0 Then
         Call bs.Append(&H0, 8 - (bs.Length Mod 8))
@@ -467,7 +467,7 @@ Private Sub BuildPaddingBits(ByVal bs As BitSequence)
 
 End Sub
 
-Private Sub BuildPadCodewords(ByVal bs As BitSequence)
+Private Sub WritePadCodewords(ByVal bs As BitSequence)
     
     Dim numDataCodewords As Long
     numDataCodewords = DataCodeword.GetTotalNumber( _
