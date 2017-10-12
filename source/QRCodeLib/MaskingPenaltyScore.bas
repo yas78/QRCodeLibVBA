@@ -242,12 +242,12 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
         Next
     Next
     
-    Dim tmp As Double
-    tmp = CDbl(darkCount) / CDbl((UBound(moduleMatrix) + 1) ^ 2)
-    tmp = Abs(0.5 - tmp)
-    tmp = Int(tmp / 0.05)
+    Dim tmp As Long
+    tmp = CLng(Int((darkCount / (UBound(moduleMatrix) + 1) ^ 2) * 100))
+    tmp = Abs(tmp - 50)
+    tmp = (tmp + 4) \ 5
     
-    CalcProportionOfDarkModules = CLng(tmp) * 10
+    CalcProportionOfDarkModules = tmp * 10
 
 End Function
 
