@@ -199,7 +199,7 @@ End Sub
 Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
 
     Dim dataBytes() As Byte
-    dataBytes = GetDataBytes()
+    dataBytes = GetMessageBytes()
     
     Dim numPreBlocks As Long
     numPreBlocks = RSBlock.GetTotalNumber(m_parent.ErrorCorrectionLevel, m_currVersion, True)
@@ -384,9 +384,9 @@ End Function
 
 '----------------------------------------------------------------------------------------
 ' (概要)
-'  シンボルデータの完全なバイトデータを返します。
+'  コード語に変換するメッセージビット列を返します。
 '----------------------------------------------------------------------------------------
-Private Function GetDataBytes() As Byte()
+Private Function GetMessageBytes() As Byte()
     
     Dim bs As BitSequence
     Set bs = New BitSequence
@@ -400,7 +400,7 @@ Private Function GetDataBytes() As Byte()
     Call WritePaddingBits(bs)
     Call WritePadCodewords(bs)
 
-    GetDataBytes = bs.GetBytes()
+    GetMessageBytes = bs.GetBytes()
 
 End Function
 
