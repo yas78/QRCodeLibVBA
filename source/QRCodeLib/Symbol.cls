@@ -604,7 +604,7 @@ End Sub
 ' (概要)
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '----------------------------------------------------------------------------------------
-Public Function Get1bppDIB(ByVal moduleSize As Long, _
+Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 0, _
                            Optional ByVal foreColorRGB As Long = &H0&, _
                            Optional ByVal backColorRGB As Long = &HFFFFFF) As Byte()
     
@@ -746,7 +746,7 @@ End Function
 ' (概要)
 '  色深度24bppビットマップファイルのバイトデータを返します。
 '----------------------------------------------------------------------------------------
-Public Function Get24bppDIB(ByVal moduleSize As Long, _
+Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
                             Optional ByVal foreColor As Long = &H0&, _
                             Optional ByVal backColor As Long = &HFFFFFF) As Byte()
 
@@ -858,7 +858,7 @@ End Function
 ' (概要)
 '  シンボルのイメージを返します。
 '----------------------------------------------------------------------------------------
-Public Function Get1bppImage(ByVal moduleSize As Integer, _
+Public Function Get1bppImage(Optional ByVal moduleSize As Long = 5, _
                              Optional ByVal foreColorRGB As Long = &H0, _
                              Optional ByVal backColorRGB As Long = &HFFFFFF) As IPicture
 
@@ -878,7 +878,7 @@ End Function
 ' (概要)
 '  シンボルのイメージを返します。
 '----------------------------------------------------------------------------------------
-Public Function Get24bppImage(ByVal moduleSize As Integer, _
+Public Function Get24bppImage(Optional ByVal moduleSize As Long = 5, _
                               Optional ByVal foreColorRGB As Long = &H0, _
                               Optional ByVal backColorRGB As Long = &HFFFFFF) As IPicture
 
@@ -899,7 +899,7 @@ End Function
 '  シンボルをビットマップ形式で保存します。
 '----------------------------------------------------------------------------------------
 Public Sub Save1bppDIB(ByVal filePath As String, _
-                       ByVal moduleSize As Long, _
+                       Optional ByVal moduleSize As Long = 5, _
                        Optional ByVal foreColorRGB As Long = &H0&, _
                        Optional ByVal backColorRGB As Long = &HFFFFFF)
     
@@ -925,7 +925,7 @@ End Sub
 '  シンボルをビットマップ形式で保存します。
 '----------------------------------------------------------------------------------------
 Public Sub Save24bppDIB(ByVal filePath As String, _
-                        ByVal moduleSize As Long, _
+                        Optional ByVal moduleSize As Long = 5, _
                         Optional ByVal foreColorRGB As Long = &H0&, _
                         Optional ByVal backColorRGB As Long = &HFFFFFF)
     
