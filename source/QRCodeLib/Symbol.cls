@@ -450,11 +450,10 @@ End Sub
 Private Sub WriteTerminator(ByVal bs As BitSequence)
     
     Dim terminatorLength As Long
+    terminatorLength = m_dataBitCapacity - m_dataBitCounter
     
-    If m_dataBitCapacity - m_dataBitCounter > ModeIndicator.Length Then
+    If terminatorLength > ModeIndicator.Length Then
         terminatorLength = ModeIndicator.Length
-    Else
-        terminatorLength = m_dataBitCapacity - m_dataBitCounter
     End If
     
     Call bs.Append(ModeIndicator.TERMINATOR_VALUE, terminatorLength)
