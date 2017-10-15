@@ -234,7 +234,7 @@ Private Sub UserForm_Initialize()
     cmbMaxVersion.Value = DEFAULT_VERSION
     
     Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
-    chkStructuredAppend.Value = True
+    chkStructuredAppend.Value = False
 
     btnSave.Enabled = False
     
