@@ -11,10 +11,11 @@ Option Explicit
 
 Private m_items  As Collection
 
-Private m_minVersion As Long
+Private m_minVersion              As Long
 Private m_maxVersion              As Long
 Private m_errorCorrectionLevel    As ErrorCorrectionLevel
 Private m_structuredAppendAllowed As Boolean
+Private m_byteModeCharsetName     As String
 
 Private m_structuredAppendParity As Long
 
@@ -25,13 +26,16 @@ Private m_encAlpha  As IQRCodeEncoder
 Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
+Private m_byteModeEncoding As TextEncoding
+
 '----------------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '----------------------------------------------------------------------------------------
 Friend Sub Initialize(ByVal maxVer As Long, _
                       ByVal ecLevel As ErrorCorrectionLevel, _
-                      ByVal allowStructuredAppend As Boolean)
+                      ByVal allowStructuredAppend As Boolean, _
+                      ByVal byteModeCharsetName As String)
     
     If maxVer < Constants.MIN_VERSION Or _
        maxVer > Constants.MAX_VERSION Then
@@ -40,17 +44,21 @@ Friend Sub Initialize(ByVal maxVer As Long, _
 
     Set m_items = New Collection
     
-    Set m_encNum = New NumericEncoder
-    Set m_encAlpha = New AlphanumericEncoder
-    Set m_encByte = New ByteEncoder
-    Set m_encKanji = New KanjiEncoder
+    Set m_encNum = QRCodeEncoderFactory.CreateEncoder(EncodingMode.NUMERIC, byteModeCharsetName)
+    Set m_encAlpha = QRCodeEncoderFactory.CreateEncoder(EncodingMode.ALPHA_NUMERIC, byteModeCharsetName)
+    Set m_encByte = QRCodeEncoderFactory.CreateEncoder(EncodingMode.EIGHT_BIT_BYTE, byteModeCharsetName)
+    Set m_encKanji = QRCodeEncoderFactory.CreateEncoder(EncodingMode.KANJI, byteModeCharsetName)
 
     m_minVersion = 1
     m_maxVersion = maxVer
     m_errorCorrectionLevel = ecLevel
     m_structuredAppendAllowed = allowStructuredAppend
+    m_byteModeCharsetName = byteModeCharsetName
 
     m_structuredAppendParity = 0
+    
+    Set m_byteModeEncoding = New TextEncoding
+    Call m_byteModeEncoding.Init(byteModeCharsetName)
 
     Set m_currSymbol = New Symbol
     Call m_currSymbol.Initialize(Me)
@@ -131,6 +139,16 @@ End Property
 Friend Property Get ErrorCorrectionLevel() As ErrorCorrectionLevel
 
     ErrorCorrectionLevel = m_errorCorrectionLevel
+
+End Property
+
+'----------------------------------------------------------------------------------------
+' (概要)
+'  バイトモードの文字コードを取得します。
+'----------------------------------------------------------------------------------------
+Friend Property Get ByteModeCharset() As String
+    
+    ByteModeCharset = m_byteModeCharsetName
 
 End Property
 
@@ -242,20 +260,14 @@ Friend Sub UpdateParity(ByVal c As String)
     Debug.Assert Len(c) = 1
 #End If
 
-    Dim code As Long
-    code = Asc(c) And &HFFFF&
+    Dim charBytes() As Byte
+    charBytes = m_byteModeEncoding.GetBytes(c)
+
+    Dim i As Long
     
-    Dim msb As Long
-    Dim lsb As Long
-    
-    msb = (code And &HFF00&) \ 2 ^ 8
-    lsb = code And &HFF&
-    
-    If msb > 0 Then
-        m_structuredAppendParity = m_structuredAppendParity Xor msb
-    End If
-    
-    m_structuredAppendParity = m_structuredAppendParity Xor lsb
+    For i = 0 To UBound(charBytes)
+        m_structuredAppendParity = m_structuredAppendParity Xor charBytes(i)
+    Next
 
 End Sub
 

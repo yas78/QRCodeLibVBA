@@ -45,8 +45,7 @@ Public Sub Place(ByRef moduleMatrix() As Variant, _
     c1 = UBound(moduleMatrix)
     
     For i = 0 To 7
-        temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor _
-               m_formatInfoMaskArray(i)
+        temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
         
         v = IIf(temp > 0, 3, -3)
         
@@ -68,8 +67,7 @@ Public Sub Place(ByRef moduleMatrix() As Variant, _
     c2 = 7
     
     For i = 8 To 14
-        temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor _
-               m_formatInfoMaskArray(i)
+        temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
                
         v = IIf(temp > 0, 3, -3)
         

@@ -14,9 +14,28 @@ Option Explicit
 
 Implements IQRCodeEncoder
 
-Private m_data()        As Long
+Private m_data()        As Byte
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
+
+Private m_encAlpha  As IQRCodeEncoder
+Private m_encKanji  As IQRCodeEncoder
+
+Private m_textEncoding  As TextEncoding
+
+Private Sub Class_Initialize()
+    
+    Set m_encAlpha = New AlphanumericEncoder
+    Set m_encKanji = New KanjiEncoder
+    Set m_textEncoding = New TextEncoding
+    
+End Sub
+
+Public Sub Initialize(ByVal charsetName As String)
+
+    Call m_textEncoding.Init(charsetName)
+    
+End Sub
 
 '----------------------------------------------------------------------------------------
 ' (概要)
@@ -66,30 +85,28 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
+    Debug.Assert IQRCodeEncoder_IsInSubset(c)
 #End If
 
-    If m_charCounter = 0 Then
-        ReDim m_data(0)
-    Else
-        ReDim Preserve m_data(UBound(m_data) + 1)
-    End If
-    
-    Dim wd As Long
-    wd = Asc(c) And &HFFFF&
-    
-    m_data(UBound(m_data)) = wd
+    Dim charBytes() As Byte
+    charBytes = m_textEncoding.GetBytes(c)
     
     Dim ret As Long
+    Dim i   As Long
     
-    If wd > &HFF Then
-        m_charCounter = m_charCounter + 2
-        ret = 16
-    Else
+    For i = 0 To UBound(charBytes)
+    
+        If m_charCounter = 0 Then
+            ReDim m_data(0)
+        Else
+            ReDim Preserve m_data(UBound(m_data) + 1)
+        End If
+        
+        m_data(UBound(m_data)) = charBytes(i)
         m_charCounter = m_charCounter + 1
-        ret = 8
-    End If
-    
-    m_bitCounter = m_bitCounter + ret
+        m_bitCounter = m_bitCounter + 8
+        ret = ret + 8
+    Next
     
     IQRCodeEncoder_Append = ret
 
@@ -105,10 +122,10 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     Debug.Assert Len(c) = 1
 #End If
 
-    Dim code    As Long
-    code = Asc(c) And &HFFFF&
-    
-    IQRCodeEncoder_GetCodewordBitLength = IIf(code > &HFF, 16, 8)
+    Dim charBytes() As Byte
+    charBytes = m_textEncoding.GetBytes(c)
+
+    IQRCodeEncoder_GetCodewordBitLength = (UBound(charBytes) + 1) * 8
 
 End Function
 
@@ -117,33 +134,8 @@ End Function
 '  エンコードされたバイトデータを返します。
 '----------------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetBytes() As Byte()
-    
-    Dim byteCount   As Long
-    Dim ret()       As Byte
-    Dim i           As Long
-    
-    Dim idx As Long
-    
-    Dim msb As Long
-    Dim lsb As Long
-    
-    byteCount = m_bitCounter \ 8 + IIf((m_bitCounter Mod 8) > 0, 1, 0)
-    ReDim ret(byteCount - 1)
-    
-    For i = 0 To UBound(m_data)
-        msb = (m_data(i) And &HFF00&) \ 2 ^ 8
-        lsb = m_data(i) And &HFF
-        
-        ret(idx) = IIf(m_data(i) > &HFF, msb, lsb)
-        idx = idx + 1
-        
-        If m_data(i) > &HFF Then
-            ret(idx) = lsb
-            idx = idx + 1
-        End If
-    Next
 
-    IQRCodeEncoder_GetBytes = ret
+    IQRCodeEncoder_GetBytes = m_data
     
 End Function
 
@@ -171,27 +163,22 @@ Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolea
     Debug.Assert Len(c) = 1
 #End If
 
-    Dim ret As Boolean
+    If m_encAlpha.IsInSubset(c) Then
+        IQRCodeEncoder_IsInExclusiveSubset = False
+        Exit Function
+    End If
     
-    Dim code As Long
-    code = Asc(c) And &HFFFF&
-    
-    Select Case code
-        Case &H20&, &H24&, &H25&, &H2A&, &H2B&, &H2D& To &H3A&, &H41& To &H5A&
-            ret = False
-            
-        Case &H8140& To &H9FFC&
-            ret = False
-    
-        Case &HE040& To &HEBBF&
-            ret = False
-            
-        Case Else
-            ret = True
+    If m_encKanji.IsInSubset(c) Then
+        IQRCodeEncoder_IsInExclusiveSubset = False
+        Exit Function
+    End If
         
-    End Select
+    If IQRCodeEncoder_IsInSubset(c) Then
+        IQRCodeEncoder_IsInExclusiveSubset = True
+        Exit Function
+    End If
     
-    IQRCodeEncoder_IsInExclusiveSubset = ret
+    IQRCodeEncoder_IsInExclusiveSubset = False
     
 End Function
 

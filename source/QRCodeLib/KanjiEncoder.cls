@@ -18,6 +18,14 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
+Private m_textEncoding  As New TextEncoding
+
+Private Sub Class_Initialize()
+
+    Call m_textEncoding.Init("Shift_JIS")
+
+End Sub
+
 '----------------------------------------------------------------------------------------
 ' (概要)
 '  ビット数を取得します。
@@ -69,8 +77,11 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Debug.Assert IQRCodeEncoder_IsInSubset(c)
 #End If
 
+    Dim charBytes() As Byte
+    charBytes = m_textEncoding.GetBytes(c)
+
     Dim wd  As Long
-    wd = Asc(c) And &HFFFF&
+    wd = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
     
     Select Case wd
         Case &H8140& To &H9FFC&
@@ -141,8 +152,16 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
     Debug.Assert Len(c) = 1
 #End If
 
+    Dim charBytes() As Byte
+    charBytes = m_textEncoding.GetBytes(c)
+
+    If UBound(charBytes) <> 1 Then
+        IQRCodeEncoder_IsInSubset = False
+        Exit Function
+    End If
+
     Dim code As Long
-    code = Asc(c) And &HFFFF&
+    code = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
     
     Dim lsb As Long
     lsb = code And &HFF&

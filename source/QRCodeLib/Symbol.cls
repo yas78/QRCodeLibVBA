@@ -132,7 +132,7 @@ Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, ByVal c As Str
 #End If
 
     Dim encoder As IQRCodeEncoder
-    Set encoder = QRCodeEncoderFactory.CreateEncoder(encMode)
+    Set encoder = QRCodeEncoderFactory.CreateEncoder(encMode, m_parent.ByteModeCharset)
 
     Dim bitLength As Long
     bitLength = encoder.GetCodewordBitLength(c)

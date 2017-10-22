@@ -95,16 +95,16 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
     Dim isSameColor As Boolean
     Dim r           As Long
     Dim c           As Long
-    Dim tmp         As Boolean
+    Dim temp        As Boolean
 
     For r = 0 To UBound(moduleMatrix) - 1
         For c = 0 To UBound(moduleMatrix(r)) - 1
-            tmp = moduleMatrix(r)(c) > 0
+            temp = moduleMatrix(r)(c) > 0
             isSameColor = True
             
-            isSameColor = isSameColor And (moduleMatrix(r + 0)(c + 1) > 0 = tmp)
-            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 0) > 0 = tmp)
-            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 1) > 0 = tmp)
+            isSameColor = isSameColor And (moduleMatrix(r + 0)(c + 1) > 0 = temp)
+            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 0) > 0 = temp)
+            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 1) > 0 = temp)
     
             If isSameColor Then
                 penalty = penalty + 3
@@ -242,12 +242,15 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
         Next
     Next
     
-    Dim tmp As Long
-    tmp = CLng(Int((darkCount / (UBound(moduleMatrix) + 1) ^ 2) * 100))
-    tmp = Abs(tmp - 50)
-    tmp = (tmp + 4) \ 5
+    Dim numModules As Double
+    numModules = (UBound(moduleMatrix) + 1) ^ 2
     
-    CalcProportionOfDarkModules = tmp * 10
+    Dim temp As Long
+    temp = Int((darkCount / numModules * 100) + 1)
+    temp = Abs(temp - 50)
+    temp = (temp + 4) \ 5
+    
+    CalcProportionOfDarkModules = temp * 10
 
 End Function
 

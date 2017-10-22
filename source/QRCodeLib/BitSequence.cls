@@ -56,7 +56,7 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
     Dim remainingData As Long
     remainingData = data
 
-    Dim tmp As Byte
+    Dim temp As Byte
 
     Do While remainingLength > 0
         If m_space = 0 Then
@@ -64,10 +64,10 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
             Call m_buffer.Add(m_buffer.Count, CByte(&H0))
         End If
 
-        tmp = m_buffer(m_buffer.Count - 1)
+        temp = m_buffer(m_buffer.Count - 1)
 
         If m_space < remainingLength Then
-            tmp = CByte(tmp Or remainingData \ (2 ^ (remainingLength - m_space)))
+            temp = CByte(temp Or remainingData \ (2 ^ (remainingLength - m_space)))
 
             remainingData = remainingData And ((2 ^ (remainingLength - m_space)) - 1)
 
@@ -75,14 +75,14 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
             remainingLength = remainingLength - m_space
             m_space = 0
         Else
-            tmp = CByte(tmp Or remainingData * (2 ^ (m_space - remainingLength)))
+            temp = CByte(temp Or remainingData * (2 ^ (m_space - remainingLength)))
 
             m_bitCounter = m_bitCounter + remainingLength
             m_space = m_space - remainingLength
             remainingLength = 0
         End If
         
-        m_buffer(m_buffer.Count - 1) = tmp
+        m_buffer(m_buffer.Count - 1) = temp
     Loop
 
 End Sub

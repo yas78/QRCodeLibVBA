@@ -29,11 +29,11 @@ Private Sub Update_fraQRCodeImage()
     If txtData.TextLength = 0 Then Exit Sub
     
     Dim ecLevel As ErrorCorrectionLevel
-    ecLevel = cmbECLevel.Value
+    ecLevel = cmbErrorCorrectionLevel.Value
 
 On Error GoTo Catch_
     Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value)
+    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value, cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim sbl As Symbol
@@ -44,17 +44,16 @@ On Error GoTo Catch_
     For idx = 0 To sbls.Count - 1
         Set sbl = sbls.Item(idx)
         Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
-        Set img = ctl
-        Set img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text))
         
         ctl.Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod 4) + IMAGE_MARGIN
         ctl.Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ 4) + IMAGE_MARGIN
         ctl.Width = IMAGE_WIDTH
         ctl.Height = IMAGE_HEIGHT
         
+        Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.Get1bppImage(5)
+        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text))
         
     Next
     
@@ -89,12 +88,12 @@ Private Sub btnSave_Click()
     fBaseName = fs.GetParentFolderName(fBaseName) & "\" & fs.GetBaseName(fBaseName)
     
     Dim ecLevel As ErrorCorrectionLevel
-    ecLevel = cmbECLevel.Value
+    ecLevel = cmbErrorCorrectionLevel.Value
     
 On Error GoTo Catch_
     
     Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value)
+    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value, cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim filePath As String
@@ -134,6 +133,12 @@ Private Sub chkStructuredAppend_Change()
 End Sub
 
 Private Sub cmbEcLevel_Change()
+
+    Call Update_fraQRCodeImage
+    
+End Sub
+
+Private Sub cmbEncoding_Change()
 
     Call Update_fraQRCodeImage
     
@@ -202,28 +207,34 @@ End Sub
 
 Private Sub UserForm_Initialize()
     
-    cmbECLevel.ColumnCount = 2
-    cmbECLevel.ColumnWidths = "0"
-    cmbECLevel.TextColumn = 2
-    cmbECLevel.BoundColumn = 1
+    With cmbErrorCorrectionLevel
+        .ColumnCount = 2
+        .ColumnWidths = "0"
+        .TextColumn = 2
+        .BoundColumn = 1
+        
+        .AddItem
+        .List(0, 0) = ErrorCorrectionLevel.L
+        .List(0, 1) = "L (7%)"
+        
+        .AddItem
+        .List(1, 0) = ErrorCorrectionLevel.M
+        .List(1, 1) = "M (15%)"
+        
+        .AddItem
+        .List(2, 0) = ErrorCorrectionLevel.Q
+        .List(2, 1) = "Q (25%)"
+        
+        .AddItem
+        .List(3, 0) = ErrorCorrectionLevel.H
+        .List(3, 1) = "H (30%)"
+        
+        .ListIndex = 1
+    End With
     
-    cmbECLevel.AddItem
-    cmbECLevel.List(0, 0) = ErrorCorrectionLevel.L
-    cmbECLevel.List(0, 1) = "L (7%)"
-    
-    cmbECLevel.AddItem
-    cmbECLevel.List(1, 0) = ErrorCorrectionLevel.M
-    cmbECLevel.List(1, 1) = "M (15%)"
-    
-    cmbECLevel.AddItem
-    cmbECLevel.List(2, 0) = ErrorCorrectionLevel.Q
-    cmbECLevel.List(2, 1) = "Q (25%)"
-    
-    cmbECLevel.AddItem
-    cmbECLevel.List(3, 0) = ErrorCorrectionLevel.H
-    cmbECLevel.List(3, 1) = "H (30%)"
-    
-    cmbECLevel.ListIndex = 1
+    cmbEncoding.AddItem "Shift_JIS"
+    cmbEncoding.AddItem "UTF-8"
+    cmbEncoding.ListIndex = 0
     
     Dim i As Long
     
