@@ -132,13 +132,13 @@ Private Sub chkStructuredAppend_Change()
     
 End Sub
 
-Private Sub cmbEcLevel_Change()
+Private Sub cmbEncoding_Change()
 
     Call Update_fraQRCodeImage
     
 End Sub
 
-Private Sub cmbEncoding_Change()
+Private Sub cmbErrorCorrectionLevel_Change()
 
     Call Update_fraQRCodeImage
     
