@@ -37,7 +37,7 @@ End Function
 '----------------------------------------------------------------------------------------
 Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
     
-    Dim penalty As Integer
+    Dim penalty As Long
     penalty = 0
 
     penalty = penalty + CalcAdjacentModulesInRowInSameColor(moduleMatrix)
@@ -125,7 +125,7 @@ Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     Dim moduleMatrixTemp() As Variant
     moduleMatrixTemp = QuietZone.Place(moduleMatrix)
 
-    Dim penalty As Integer
+    Dim penalty As Long
     penalty = 0
     
     penalty = penalty + CalcModuleRatioInRow(moduleMatrixTemp)

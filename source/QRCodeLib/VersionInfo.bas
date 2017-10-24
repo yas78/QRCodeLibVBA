@@ -22,7 +22,7 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
 
     Call Initialize
 
-    Dim numModulesPerSide As Integer
+    Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
     
     Dim versionInfoValue As Long

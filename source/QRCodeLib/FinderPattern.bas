@@ -17,7 +17,7 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
 
     Call Initialize
 
-    Dim offset As Integer
+    Dim offset As Long
     offset = (UBound(moduleMatrix) + 1) - (UBound(m_finderPattern) + 1)
 
     Dim i As Long

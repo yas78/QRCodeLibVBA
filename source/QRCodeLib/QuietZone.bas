@@ -7,7 +7,7 @@ Option Explicit
 
 Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
     
-    Const QUIET_ZONE_WIDTH As Integer = 4
+    Const QUIET_ZONE_WIDTH As Long = 4
     
     Dim ret() As Variant
     ReDim ret(UBound(moduleMatrix) + QUIET_ZONE_WIDTH * 2)

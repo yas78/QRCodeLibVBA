@@ -173,7 +173,7 @@ Private Sub SelectVersion()
     Dim encMode As Variant ' Subtype : EncodingMode
     
     For Each encMode In m_segmentCounter.Keys
-        Dim num As Integer
+        Dim num As Long
         num = m_segmentCounter(encMode)
 
         m_dataBitCounter = m_dataBitCounter + _
