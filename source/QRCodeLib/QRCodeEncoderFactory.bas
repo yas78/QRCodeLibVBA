@@ -2,7 +2,9 @@ Attribute VB_Name = "QRCodeEncoderFactory"
 Option Private Module
 Option Explicit
 
-Public Function CreateEncoder(ByVal encMode As EncodingMode, ByVal byteModeEncoding As String) As IQRCodeEncoder
+Public Function CreateEncoder( _
+    ByVal encMode As EncodingMode, _
+    ByVal byteModeEncoding As String) As IQRCodeEncoder
 
     Dim ret As IQRCodeEncoder
 

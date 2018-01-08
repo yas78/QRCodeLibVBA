@@ -1,5 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form1 
+   Caption         =   "QR Code"
    ClientHeight    =   8430
    ClientLeft      =   45
    ClientTop       =   390
@@ -15,7 +16,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
-Private Const DEFAULT_VERSION     As Long = 20
+Private Const DEFAULT_VERSION     As Long = 40
 Private Const IMAGE_WIDTH         As Long = 122
 Private Const IMAGE_HEIGHT        As Long = 122
 Private Const IMAGE_MARGIN        As Long = 2
@@ -33,7 +34,10 @@ Private Sub Update_fraQRCodeImage()
 
 On Error GoTo Catch_
     Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value, cmbEncoding.Value)
+    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), _
+                          ecLevel, _
+                          chkStructuredAppend.Value, _
+                          cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim sbl As Symbol
@@ -53,11 +57,14 @@ On Error GoTo Catch_
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text))
-        
+        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text), _
+                                        RGB(0, 0, 0), _
+                                        RGB(255, 255, 255))
     Next
     
-    fraQRCodeImage.ScrollHeight = CLng((sbls.Count + 3) \ 4) * (IMAGE_HEIGHT + IMAGE_MARGIN) + IMAGE_MARGIN
+    fraQRCodeImage.ScrollHeight = _
+        CLng((sbls.Count + 3) \ 4) * (IMAGE_HEIGHT + IMAGE_MARGIN) + _
+        IMAGE_MARGIN
     btnSave.Enabled = txtData.TextLength > 0
 
 Finally_:
@@ -93,7 +100,10 @@ Private Sub btnSave_Click()
 On Error GoTo Catch_
     
     Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), ecLevel, chkStructuredAppend.Value, cmbEncoding.Value)
+    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), _
+                          ecLevel, _
+                          chkStructuredAppend.Value, _
+                          cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim filePath As String
@@ -184,7 +194,8 @@ Private Sub txtData_Change()
 
 End Sub
 
-Private Sub txtModuleSize_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+Private Sub txtModuleSize_KeyDown( _
+    ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
 
     If txtModuleSize.TextLength = 0 Then Exit Sub
     If txtModuleSize.Text Like "*[!0-9]*" Then Exit Sub

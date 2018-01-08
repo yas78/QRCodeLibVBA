@@ -1,7 +1,7 @@
 Attribute VB_Name = "RSBlock"
-'----------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------
 ' RSブロック
-'----------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
 
@@ -14,7 +14,9 @@ Private m_initialized As Boolean
 '  RSブロック数を返します。
 '  ---------------------------------------------------------------------------
 Public Function GetTotalNumber( _
-    ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long, ByVal preceding As Boolean) As Long
+    ByVal ecLevel As ErrorCorrectionLevel, _
+    ByVal ver As Long, _
+    ByVal preceding As Boolean) As Long
 
 #If [DEBUG] Then
     Debug.Assert ver >= Constants.MIN_VERSION And _
@@ -45,7 +47,9 @@ End Function
 '  先行するRSブロックは Trueを指定します。
 '---------------------------------------------------------------------------
 Public Function GetNumberDataCodewords( _
-    ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long, ByVal preceding As Boolean) As Long
+    ByVal ecLevel As ErrorCorrectionLevel, _
+    ByVal ver As Long, _
+    ByVal preceding As Boolean) As Long
 
 #If [DEBUG] Then
     Debug.Assert ver >= Constants.MIN_VERSION And _
@@ -112,10 +116,10 @@ Public Function GetNumberECCodewords( _
 
 End Function
 
-'----------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
-'----------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------
 Private Sub Initialize()
 
     If m_initialized Then Exit Sub

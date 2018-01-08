@@ -10,17 +10,27 @@ Private Const GMEM_MOVEABLE As Long = &H2
 Private Const GMEM_ZEROINIT As Long = &H40
 Private Const GHND          As Long = GMEM_MOVEABLE Or GMEM_ZEROINIT
 
-Private Declare Function IIDFromString Lib "ole32" (ByVal lpsz As Long, ByRef lpiid As UUID) As Long
+Private Declare Function IIDFromString Lib "ole32" ( _
+    ByVal lpsz As Long, ByRef lpiid As UUID) As Long
 
-Private Declare Function CreateStreamOnHGlobal Lib "ole32" (ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, ByRef ppstm As Any) As Long
-Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As Long, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
+Private Declare Function CreateStreamOnHGlobal Lib "ole32" ( _
+    ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, _
+    ByRef ppstm As Any) As Long
+Private Declare Function OleLoadPicture Lib "olepro32" ( _
+    ByVal pStream As Long, ByVal lSize As Long, ByVal fRunmode As Long, _
+    ByRef riid As UUID, ByRef ppvObj As Any) As Long
 
-Private Declare Function GlobalAlloc Lib "kernel32" (ByVal uFlags As Long, ByVal dwBytes As Long) As Long
-Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
-Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
-Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
+Private Declare Function GlobalAlloc Lib "kernel32" ( _
+    ByVal uFlags As Long, ByVal dwBytes As Long) As Long
+Private Declare Function GlobalLock Lib "kernel32" ( _
+    ByVal hMem As Long) As Long
+Private Declare Function GlobalUnlock Lib "kernel32" ( _
+    ByVal hMem As Long) As Long
+Private Declare Function GlobalFree Lib "kernel32" ( _
+    ByVal hMem As Long) As Long
 
-Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
+Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
+    ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 
 Private Type UUID
     Data1    As Long
