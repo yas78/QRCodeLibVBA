@@ -32,8 +32,8 @@ Private m_byteModeEncoding As TextEncoding
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Friend Sub Initialize(ByVal maxVer As Long, _
-                      ByVal ecLevel As ErrorCorrectionLevel, _
+Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
+                      ByVal maxVer As Long, _
                       ByVal allowStructuredAppend As Boolean, _
                       ByVal byteModeCharsetName As String)
     

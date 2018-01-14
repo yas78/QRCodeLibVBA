@@ -33,11 +33,11 @@ Private Sub Update_fraQRCodeImage()
     ecLevel = cmbErrorCorrectionLevel.Value
 
 On Error GoTo Catch_
-    Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), _
-                          ecLevel, _
-                          chkStructuredAppend.Value, _
-                          cmbEncoding.Value)
+    Dim sbls As QRCodeLib.Symbols
+    Set sbls = CreateSymbols(ecLevel, _
+                             CLng(cmbMaxVersion.Text), _
+                             chkStructuredAppend.Value, _
+                             cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim sbl As Symbol
@@ -57,9 +57,7 @@ On Error GoTo Catch_
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text), _
-                                        RGB(0, 0, 0), _
-                                        RGB(255, 255, 255))
+        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text))
     Next
     
     fraQRCodeImage.ScrollHeight = _
@@ -100,10 +98,10 @@ Private Sub btnSave_Click()
 On Error GoTo Catch_
     
     Dim sbls As Symbols
-    Set sbls = NewSymbols(CLng(cmbMaxVersion.Text), _
-                          ecLevel, _
-                          chkStructuredAppend.Value, _
-                          cmbEncoding.Value)
+    Set sbls = CreateSymbols(ecLevel, _
+                             CLng(cmbMaxVersion.Text), _
+                             chkStructuredAppend.Value, _
+                             cmbEncoding.Value)
     Call sbls.AppendString(txtData.Text)
     
     Dim filePath As String

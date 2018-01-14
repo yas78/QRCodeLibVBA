@@ -625,10 +625,15 @@ End Sub
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
 Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 0, _
-                           Optional ByVal foreColorRGB As Long = &H0&, _
-                           Optional ByVal backColorRGB As Long = &HFFFFFF) As Byte()
+                           Optional ByVal foreRGB As String = "#000000", _
+                           Optional ByVal backRGB As String = "#FFFFFF") As Byte()
     
     If moduleSize < 1 Then Err.Raise 5
+    
+    Dim foreColorRGB As Long
+    foreColorRGB = ColorCode.ToRGB(foreRGB)
+    Dim backColorRGB As Long
+    backColorRGB = ColorCode.ToRGB(backRGB)
     
     If m_dataBitCounter = 0 Then Err.Raise 51
 
@@ -771,10 +776,15 @@ End Function
 '  色深度24bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
 Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
-                            Optional ByVal foreColor As Long = &H0&, _
-                            Optional ByVal backColor As Long = &HFFFFFF) As Byte()
+                            Optional ByVal foreRGB As String = "#000000", _
+                            Optional ByVal backRGB As String = "#FFFFFF") As Byte()
 
     If moduleSize < 1 Then Err.Raise 5
+    
+    Dim foreColorRGB As Long
+    foreColorRGB = ColorCode.ToRGB(foreRGB)
+    Dim backColorRGB As Long
+    backColorRGB = ColorCode.ToRGB(backRGB)
     
     If m_dataBitCounter = 0 Then Err.Raise 51
 
@@ -812,7 +822,7 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
         For i = 1 To moduleSize
             For c = 0 To UBound(moduleMatrix(r))
                 For j = 1 To moduleSize
-                    colorRGB = IIf(moduleMatrix(r)(c) > 0, foreColor, backColor)
+                    colorRGB = IIf(moduleMatrix(r)(c) > 0, foreColorRGB, backColorRGB)
                     dataBlock(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
                     dataBlock(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
                     dataBlock(idx + 2) = CByte(colorRGB And &HFF&)               ' R
@@ -905,13 +915,13 @@ End Function
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
 Public Function Get24bppImage(Optional ByVal moduleSize As Long = 5, _
-                              Optional ByVal foreColorRGB As Long = &H0, _
-                              Optional ByVal backColorRGB As Long = &HFFFFFF) As IPicture
+                              Optional ByVal foreRGB As String = "#000000", _
+                              Optional ByVal backRGB As String = "#FFFFFF") As IPicture
 
     If moduleSize < 1 Then Err.Raise 5
 
     Dim dib() As Byte
-    dib = Get24bppDIB(moduleSize, foreColorRGB, backColorRGB)
+    dib = Get24bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim ret As IPicture
     Set ret = ImageConverter.ConvertFrom(dib)
@@ -926,8 +936,8 @@ End Function
 '------------------------------------------------------------------------------
 Public Sub Save1bppDIB(ByVal filePath As String, _
                        Optional ByVal moduleSize As Long = 5, _
-                       Optional ByVal foreColorRGB As Long = &H0&, _
-                       Optional ByVal backColorRGB As Long = &HFFFFFF)
+                       Optional ByVal foreRGB As String = "#000000", _
+                       Optional ByVal backRGB As String = "#FFFFFF")
     
     If Len(filePath) = 0 Then Err.Raise 5
     If moduleSize < 1 Then Err.Raise 5
@@ -935,7 +945,7 @@ Public Sub Save1bppDIB(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Err.Raise 51
 
     Dim bitmapBytes() As Byte
-    bitmapBytes = Get1bppDIB(moduleSize, foreColorRGB, backColorRGB)
+    bitmapBytes = Get1bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim fNum As Integer
     fNum = FreeFile()
@@ -952,8 +962,8 @@ End Sub
 '------------------------------------------------------------------------------
 Public Sub Save24bppDIB(ByVal filePath As String, _
                         Optional ByVal moduleSize As Long = 5, _
-                        Optional ByVal foreColorRGB As Long = &H0&, _
-                        Optional ByVal backColorRGB As Long = &HFFFFFF)
+                        Optional ByVal foreRGB As String = "#000000", _
+                        Optional ByVal backRGB As String = "#FFFFFF")
     
     If Len(filePath) = 0 Then Err.Raise 5
     If moduleSize < 1 Then Err.Raise 5
@@ -961,7 +971,7 @@ Public Sub Save24bppDIB(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Err.Raise 51
 
     Dim bitmapBytes() As Byte
-    bitmapBytes = Get24bppDIB(moduleSize, foreColorRGB, backColorRGB)
+    bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim fNum As Integer
     fNum = FreeFile()

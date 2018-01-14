@@ -14,11 +14,6 @@ Private Const adTypeText        As Long = 2
 
 Private Const adModeReadWrite   As Long = 3
 
-Private Const CHARSET_SHIFT_JIS As String = "shift_jis"
-Private Const CHARSET_UTF8      As String = "utf-8"
-
-Private Const UTF8_BOM_LENGTH As Long = 3
-
 Private m_sr        As Object ' Is ADODB.Stream
 Private m_charset   As String
 
@@ -30,12 +25,7 @@ End Property
 
 Public Sub Init(ByVal charsetName As String)
     
-    If LCase(charsetName) <> CHARSET_SHIFT_JIS And _
-       LCase(charsetName) <> CHARSET_UTF8 Then
-        Err.Raise 5
-    End If
-    
-    m_charset = LCase(charsetName)
+    m_charset = charsetName
         
     Set m_sr = CreateObject("ADODB.Stream")
     
@@ -45,6 +35,8 @@ Public Sub Init(ByVal charsetName As String)
 End Sub
 
 Public Function GetBytes(ByVal s As String) As Byte()
+
+    Const BOM_LENGTH As Long = 3
 
     Call m_sr.Open
 
@@ -62,23 +54,20 @@ Public Function GetBytes(ByVal s As String) As Byte()
     Dim srcIdx  As Long
     Dim destIdx As Long
     
-    Select Case m_charset
-        Case CHARSET_UTF8
-            ReDim temp(UBound(buf) - UTF8_BOM_LENGTH)
+    Select Case LCase(m_charset)
+        Case "utf-8"
+            ReDim temp(UBound(buf) - BOM_LENGTH)
     
             ' Remove BOM
-            For srcIdx = UTF8_BOM_LENGTH To UBound(buf)
+            For srcIdx = BOM_LENGTH To UBound(buf)
                 temp(destIdx) = buf(srcIdx)
                 destIdx = destIdx + 1
             Next
             
             GetBytes = temp
 
-        Case CHARSET_SHIFT_JIS
-            GetBytes = buf
-            
         Case Else
-            Err.Raise 51
+            GetBytes = buf
             
     End Select
     
