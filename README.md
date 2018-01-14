@@ -48,7 +48,8 @@ Set sbls = CreateSymbols(maxVer:=10)
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
 CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。
 ```vbnet
-Dim symbols As Symbols = New Symbols(byteModeEncoding:="utf-8")
+Dim sbls As Symbols
+Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
 ```
 
 ### 例５．分割QRコードを作成する
