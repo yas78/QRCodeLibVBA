@@ -624,7 +624,7 @@ End Sub
 ' (概要)
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
-Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 0, _
+Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 5, _
                            Optional ByVal foreRGB As String = "#000000", _
                            Optional ByVal backRGB As String = "#FFFFFF") As Byte()
     
