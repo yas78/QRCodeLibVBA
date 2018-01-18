@@ -895,13 +895,13 @@ End Function
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
 Public Function Get1bppImage(Optional ByVal moduleSize As Long = 5, _
-                             Optional ByVal foreColorRGB As Long = &H0, _
-                             Optional ByVal backColorRGB As Long = &HFFFFFF) As IPicture
+                             Optional ByVal foreRGB As String = "#000000", _
+                             Optional ByVal backRGB As String = "#FFFFFF") As IPicture
 
     If moduleSize < 1 Then Err.Raise 5
     
     Dim dib() As Byte
-    dib = Get1bppDIB(moduleSize, foreColorRGB, backColorRGB)
+    dib = Get1bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim ret As IPicture
     Set ret = ImageConverter.ConvertFrom(dib)
