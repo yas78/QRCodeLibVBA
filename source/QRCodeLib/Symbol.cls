@@ -806,7 +806,7 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
     End If
 
     Dim dataBlock() As Byte
-    ReDim dataBlock((hByteLen + pack4byte) * (3 * pictHeight) - 1)
+    ReDim dataBlock((hByteLen + pack4byte) * pictHeight - 1)
 
     Dim r As Long
     Dim c As Long
