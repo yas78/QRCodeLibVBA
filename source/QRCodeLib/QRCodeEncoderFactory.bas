@@ -7,7 +7,8 @@ Public Function CreateEncoder( _
     ByVal byteModeEncoding As String) As IQRCodeEncoder
 
     Dim ret As IQRCodeEncoder
-
+    Dim enc As ByteEncoder
+    
     Select Case encMode
         Case EncodingMode.NUMERIC
             Set ret = New NumericEncoder
@@ -17,7 +18,6 @@ Public Function CreateEncoder( _
 
         Case EncodingMode.EIGHT_BIT_BYTE
             Set ret = New ByteEncoder
-            Dim enc As ByteEncoder
             Set enc = ret
             Call enc.Initialize(byteModeEncoding)
 

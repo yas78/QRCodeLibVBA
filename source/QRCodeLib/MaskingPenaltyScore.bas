@@ -258,7 +258,7 @@ End Function
 ' (概要)
 '  左に90度回転した配列を返します。
 '------------------------------------------------------------------------------
-Private Function MatrixRotate90(arg() As Variant) As Variant()
+Private Function MatrixRotate90(ByRef arg() As Variant) As Variant()
 
     Dim ret() As Variant
     ReDim ret(UBound(arg(0)))
