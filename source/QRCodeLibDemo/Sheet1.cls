@@ -9,11 +9,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Sub btnShowForm_Click()
-
+Private Sub btnOpenForm_Click()
+    
     Dim frm As Form1
     Set frm = New Form1
     
     Call frm.Show(vbModeless)
-    
+
 End Sub

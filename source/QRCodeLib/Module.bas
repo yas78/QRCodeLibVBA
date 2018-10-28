@@ -11,7 +11,7 @@ Option Explicit
 '---------------------------------------------------------------------------
 Public Function GetNumModulesPerSide(ByVal ver As Long) As Long
 
-    GetNumModulesPerSide = 17 + ver * 4
+    GetNumModulesPerSide = 17 + 4 * ver
     
 End Function
 
