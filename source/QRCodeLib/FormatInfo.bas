@@ -141,7 +141,7 @@ Private Function GetFormatInfoValue( _
             indicator = 2
             
         Case Else
-            Err.Raise 5
+            Call Err.Raise(5)
         
     End Select
 

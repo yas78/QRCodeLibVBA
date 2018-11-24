@@ -12,14 +12,14 @@ Attribute VB_Exposed = False
 '------------------------------------------------------------------------------
 Option Explicit
 
-Private m_buffer As Dictionary
+Private m_buffer As Object ' Is Dictionary
 
 Private m_bitCounter As Long
 Private m_space      As Long
 
 Private Sub Class_Initialize()
 
-    Set m_buffer = New Dictionary
+    Set m_buffer = CreateObject("Scripting.Dictionary")
     m_bitCounter = 0
     m_space = 0
 

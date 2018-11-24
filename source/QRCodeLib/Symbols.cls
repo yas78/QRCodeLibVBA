@@ -39,7 +39,7 @@ Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
     
     If maxVer < Constants.MIN_VERSION Or _
        maxVer > Constants.MAX_VERSION Then
-        Err.Raise 5
+        Call Err.Raise(5)
     End If
 
     Set m_items = New Collection
@@ -202,7 +202,7 @@ Public Sub AppendString(ByVal s As String)
     Dim newMode As EncodingMode
     Dim i       As Long
 
-    If Len(s) = 0 Then Err.Raise 5
+    If Len(s) = 0 Then Call Err.Raise(5)
     
     For i = 1 To Len(s)
         oldMode = m_currSymbol.CurrentEncodingMode
@@ -224,14 +224,14 @@ Public Sub AppendString(ByVal s As String)
                 newMode = SelectInitialMode(s, i)
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
     
         If newMode <> oldMode Then
             If Not m_currSymbol.TrySetEncodingMode(newMode, Mid$(s, i, 1)) Then
                 If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
-                    Err.Raise 6
+                    Call Err.Raise(6)
                 End If
 
                 Call Add
@@ -243,7 +243,7 @@ Public Sub AppendString(ByVal s As String)
     
         If Not m_currSymbol.TryAppend(Mid$(s, i, 1)) Then
             If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
-                Err.Raise 6
+                Call Err.Raise(6)
             End If
             
             Call Add
@@ -294,20 +294,20 @@ Private Function SelectInitialMode( _
     Dim flg2    As Boolean
     Dim i       As Long
             
-    If m_encKanji.IsInSubset(Mid$(s, startIndex, 1)) Then
+    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.KANJI
         Exit Function
 
-    ElseIf m_encByte.IsInExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     
-    ElseIf m_encAlpha.IsInExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
         flg = False
         
         For i = startIndex To Len(s)
-            If m_encAlpha.IsInExclusiveSubset(Mid$(s, i, 1)) Then
+            If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
                 cnt = cnt + 1
             Else
                 Exit For
@@ -325,13 +325,13 @@ Private Function SelectInitialMode( _
                 flg = cnt < 8
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
         
         If flg Then
             If (startIndex + cnt) <= Len(s) Then
-                If m_encByte.IsInExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
+                If m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
                     SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
                     Exit Function
                 Else
@@ -347,13 +347,13 @@ Private Function SelectInitialMode( _
             Exit Function
         End If
 
-    ElseIf m_encNum.IsInSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encNum.InSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
         flg1 = False
         flg2 = False
         
         For i = startIndex To Len(s)
-            If m_encNum.IsInSubset(Mid$(s, i, 1)) Then
+            If m_encNum.InSubset(Mid$(s, i, 1)) Then
                 cnt = cnt + 1
             Else
                 Exit For
@@ -374,13 +374,13 @@ Private Function SelectInitialMode( _
                 flg2 = cnt < 9
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
 
         If flg1 Then
             If (startIndex + cnt) <= Len(s) Then
-                flg1 = m_encByte.IsInExclusiveSubset(Mid$(s, startIndex + cnt, 1))
+                flg1 = m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1))
             Else
                 flg1 = False
             End If
@@ -388,7 +388,7 @@ Private Function SelectInitialMode( _
 
         If flg2 Then
             If (startIndex + cnt) <= Len(s) Then
-                flg2 = m_encAlpha.IsInExclusiveSubset(Mid$(s, startIndex + cnt, 1))
+                flg2 = m_encAlpha.InExclusiveSubset(Mid$(s, startIndex + cnt, 1))
             Else
                 flg2 = False
             End If
@@ -406,7 +406,7 @@ Private Function SelectInitialMode( _
         End If
         
     Else
-        Err.Raise 51
+        Call Err.Raise(51)
         
     End If
 
@@ -423,15 +423,15 @@ End Function
 Private Function SelectModeWhileInNumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
     
-    If m_encKanji.IsInSubset(Mid$(s, startIndex, 1)) Then
+    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.KANJI
         Exit Function
         
-    ElseIf m_encByte.IsInExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     
-    ElseIf m_encAlpha.IsInExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.ALPHA_NUMERIC
         Exit Function
         
@@ -456,11 +456,11 @@ Private Function SelectModeWhileInAlphanumericMode( _
     Dim flg As Boolean
     Dim i   As Long
     
-    If m_encKanji.IsInSubset(Mid$(s, startIndex, 1)) Then
+    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.KANJI
         Exit Function
     
-    ElseIf m_encByte.IsInExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
         
@@ -470,11 +470,11 @@ Private Function SelectModeWhileInAlphanumericMode( _
     flg = False
 
     For i = startIndex To Len(s)
-        If Not m_encAlpha.IsInSubset(Mid$(s, i, 1)) Then
+        If Not m_encAlpha.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
         
-        If m_encNum.IsInSubset(Mid$(s, i, 1)) Then
+        If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
         Else
             flg = True
@@ -494,7 +494,7 @@ Private Function SelectModeWhileInAlphanumericMode( _
                 flg = cnt >= 17
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
 
@@ -523,20 +523,20 @@ Private Function SelectModeWhileInByteMode( _
     Dim flg     As Boolean
     Dim i       As Long
     
-    If m_encKanji.IsInSubset(Mid$(s, startIndex, 1)) Then
+    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInByteMode = EncodingMode.KANJI
         Exit Function
     End If
 
     For i = startIndex To Len(s)
-        If Not m_encByte.IsInSubset(Mid$(s, i, 1)) Then
+        If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
     
-        If m_encNum.IsInSubset(Mid$(s, i, 1)) Then
+        If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
             
-        ElseIf m_encByte.IsInExclusiveSubset(Mid$(s, i, 1)) Then
+        ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
             flg = True
             Exit For
             
@@ -558,7 +558,7 @@ Private Function SelectModeWhileInByteMode( _
                 flg = cnt >= 9
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
         
@@ -572,14 +572,14 @@ Private Function SelectModeWhileInByteMode( _
     flg = False
 
     For i = startIndex To Len(s)
-        If Not m_encByte.IsInSubset(Mid$(s, i, 1)) Then
+        If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
         
-        If m_encAlpha.IsInExclusiveSubset(Mid$(s, i, 1)) Then
+        If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
             
-        ElseIf m_encByte.IsInExclusiveSubset(Mid$(s, i, 1)) Then
+        ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
             flg = True
             Exit For
             
@@ -603,7 +603,7 @@ Private Function SelectModeWhileInByteMode( _
                 flg = cnt >= 16
                 
             Case Else
-                Err.Raise 51
+                Call Err.Raise(51)
             
         End Select
 

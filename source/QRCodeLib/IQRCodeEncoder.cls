@@ -20,5 +20,5 @@ Public Property Get BitCount() As Long: End Property
 Public Function Append(ByVal c As String) As Long: End Function
 Public Function GetCodewordBitLength(ByVal c As String) As Long: End Function
 Public Function GetBytes() As Byte(): End Function
-Public Function IsInSubset(ByVal c As String) As Boolean: End Function
-Public Function IsInExclusiveSubset(ByVal c As String) As Boolean: End Function
+Public Function InSubset(ByVal c As String) As Boolean: End Function
+Public Function InExclusiveSubset(ByVal c As String) As Boolean: End Function

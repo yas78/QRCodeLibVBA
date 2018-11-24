@@ -25,7 +25,7 @@ Public Function GetLength( _
                     GetLength = 8
                 
                 Case Else
-                    Err.Raise 5
+                    Call Err.Raise(5)
                 
             End Select
             
@@ -44,8 +44,7 @@ Public Function GetLength( _
                     GetLength = 10
                     
                 Case Else
-                    Err.Raise 5
-                
+                    Call Err.Raise(5)
             End Select
         
         Case 27 To 40
@@ -63,12 +62,12 @@ Public Function GetLength( _
                     GetLength = 12
                     
                 Case Else
-                    Err.Raise 5
+                    Call Err.Raise(5)
                     
             End Select
         
     Case Else
-        Err.Raise 5
+        Call Err.Raise(5)
         
     End Select
     

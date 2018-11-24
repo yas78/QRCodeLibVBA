@@ -66,7 +66,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     Dim ret As Long
@@ -102,7 +102,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     If m_charCounter Mod 3 = 0 Then
@@ -148,13 +148,13 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
 #End If
 
-    IQRCodeEncoder_IsInSubset = c >= "0" And c <= "9"
+    IQRCodeEncoder_InSubset = c Like "[0-9]"
     
 End Function
 
@@ -162,12 +162,12 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
 #End If
 
-    IQRCodeEncoder_IsInExclusiveSubset = IQRCodeEncoder_IsInSubset(c)
+    IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
     
 End Function

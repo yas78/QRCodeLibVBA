@@ -11,7 +11,7 @@ Public Function ToRGB(ByVal arg As String) As Long
                                      "[0-9A-Fa-f]" & _
                                      "[0-9A-Fa-f]"
 
-    If arg Like COLOR_CODE_PTN = False Then Err.Raise 5
+    If arg Like COLOR_CODE_PTN = False Then Call Err.Raise(5)
 
     Dim ret As Long
     ret = RGB(CInt("&h" & Mid$(arg, 2, 2)), _

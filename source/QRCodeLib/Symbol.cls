@@ -24,14 +24,14 @@ Private m_dataBitCapacity   As Long
 Private m_dataBitCounter    As Long
 
 Private m_segments          As New Collection ' Item : IQRCodeEncoder
-Private m_segmentCounter    As New Dictionary ' Key : EncodingMode, Item : Long
+Private m_segmentCounter    As Object ' Is Dictionary Key : EncodingMode, Item : Long
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
 Friend Sub Initialize(ByVal parentObj As Symbols)
-    
+
     Set m_parent = parentObj
 
     m_position = parentObj.Count
@@ -45,6 +45,9 @@ Friend Sub Initialize(ByVal parentObj As Symbols)
         
     m_dataBitCounter = 0
     
+    Set m_segments = New Collection
+    Set m_segmentCounter = CreateObject("Scripting.Dictionary")
+        
     Call m_segmentCounter.Add(EncodingMode.NUMERIC, 0)
     Call m_segmentCounter.Add(EncodingMode.ALPHA_NUMERIC, 0)
     Call m_segmentCounter.Add(EncodingMode.EIGHT_BIT_BYTE, 0)
@@ -628,14 +631,14 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 5, _
                            Optional ByVal foreRGB As String = "#000000", _
                            Optional ByVal backRGB As String = "#FFFFFF") As Byte()
     
-    If moduleSize < 1 Then Err.Raise 5
+    If moduleSize < 1 Then Call Err.Raise(5)
     
     Dim foreColorRGB As Long
     foreColorRGB = ColorCode.ToRGB(foreRGB)
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRGB)
     
-    If m_dataBitCounter = 0 Then Err.Raise 51
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -779,14 +782,14 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
                             Optional ByVal foreRGB As String = "#000000", _
                             Optional ByVal backRGB As String = "#FFFFFF") As Byte()
 
-    If moduleSize < 1 Then Err.Raise 5
+    If moduleSize < 1 Then Call Err.Raise(5)
     
     Dim foreColorRGB As Long
     foreColorRGB = ColorCode.ToRGB(foreRGB)
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRGB)
     
-    If m_dataBitCounter = 0 Then Err.Raise 51
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -898,7 +901,7 @@ Public Function Get1bppImage(Optional ByVal moduleSize As Long = 5, _
                              Optional ByVal foreRGB As String = "#000000", _
                              Optional ByVal backRGB As String = "#FFFFFF") As IPicture
 
-    If moduleSize < 1 Then Err.Raise 5
+    If moduleSize < 1 Then Call Err.Raise(5)
     
     Dim dib() As Byte
     dib = Get1bppDIB(moduleSize, foreRGB, backRGB)
@@ -918,7 +921,7 @@ Public Function Get24bppImage(Optional ByVal moduleSize As Long = 5, _
                               Optional ByVal foreRGB As String = "#000000", _
                               Optional ByVal backRGB As String = "#FFFFFF") As IPicture
 
-    If moduleSize < 1 Then Err.Raise 5
+    If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dib() As Byte
     dib = Get24bppDIB(moduleSize, foreRGB, backRGB)
@@ -939,10 +942,10 @@ Public Sub Save1bppDIB(ByVal filePath As String, _
                        Optional ByVal foreRGB As String = "#000000", _
                        Optional ByVal backRGB As String = "#FFFFFF")
     
-    If Len(filePath) = 0 Then Err.Raise 5
-    If moduleSize < 1 Then Err.Raise 5
+    If Len(filePath) = 0 Then Call Err.Raise(5)
+    If moduleSize < 1 Then Call Err.Raise(5)
 
-    If m_dataBitCounter = 0 Then Err.Raise 51
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim bitmapBytes() As Byte
     bitmapBytes = Get1bppDIB(moduleSize, foreRGB, backRGB)
@@ -965,10 +968,10 @@ Public Sub Save24bppDIB(ByVal filePath As String, _
                         Optional ByVal foreRGB As String = "#000000", _
                         Optional ByVal backRGB As String = "#FFFFFF")
     
-    If Len(filePath) = 0 Then Err.Raise 5
-    If moduleSize < 1 Then Err.Raise 5
+    If Len(filePath) = 0 Then Call Err.Raise(5)
+    If moduleSize < 1 Then Call Err.Raise(5)
     
-    If m_dataBitCounter = 0 Then Err.Raise 51
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim bitmapBytes() As Byte
     bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
@@ -982,3 +985,17 @@ Public Sub Save24bppDIB(ByVal filePath As String, _
     
 End Sub
 
+'------------------------------------------------------------------------------
+' (概要)
+'  シンボルをクリップボードに保存します。
+'------------------------------------------------------------------------------
+Public Sub SetToClipboard(Optional ByVal moduleSize As Long = 5, _
+                          Optional ByVal foreRGB As String = "#000000", _
+                          Optional ByVal backRGB As String = "#FFFFFF")
+    
+    Dim bitmapBytes() As Byte
+    bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
+
+    Call ClipboardUtil.SetDIB(bitmapBytes)
+    
+End Sub

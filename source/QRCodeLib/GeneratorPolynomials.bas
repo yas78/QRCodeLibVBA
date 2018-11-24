@@ -10,7 +10,7 @@ Public Function Item(ByVal numECCodewords As Long) As Variant
 
     Call Initialize
     
-    If IsEmpty(m_gp(numECCodewords)) Then Err.Raise 5
+    If IsEmpty(m_gp(numECCodewords)) Then Call Err.Raise(5)
     
     Item = m_gp(numECCodewords)
 

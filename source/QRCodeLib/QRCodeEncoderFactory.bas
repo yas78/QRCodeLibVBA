@@ -25,7 +25,7 @@ Public Function CreateEncoder( _
             Set ret = New KanjiEncoder
 
         Case Else
-            Err.Raise 5
+            Call Err.Raise(5)
 
     End Select
     

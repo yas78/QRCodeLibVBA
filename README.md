@@ -87,3 +87,18 @@ sbls(0).Save1bppDIB "D:\qrcode1bpp2.bmp", 10 ' 10 pixels per module
 sbls(0).Save24bppDIB "D:\qrcode24bpp1.bmp"
 sbls(0).Save24bppDIB "D:\qrcode24bpp2.bmp", 10 ' 10 pixels per module
 ```
+
+### 例７．クリップボードへ保存する
+SymbolクラスのSetToClipboardメソッドを使用します。
+
+```vbnet
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendString "012345abcdefg"
+
+sbls(0).SetToClipboard
+sbls(0).SetToClipBoard moduleSize:=10
+sbls(0).SetToClipBoard foreRGB:="#0000FF"
+sbls(0).SetToClipBoard backRGB:="#00FF00"
+```
+

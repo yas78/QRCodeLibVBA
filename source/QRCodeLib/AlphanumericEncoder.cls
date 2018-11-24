@@ -66,7 +66,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     Dim wd As Long
@@ -104,7 +104,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     If m_charCounter Mod 2 = 0 Then
@@ -149,7 +149,7 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
@@ -158,12 +158,6 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
     Dim ret As Boolean
     
     Select Case Asc(c)
-        ' A - Z
-        Case 65 To 90
-            ret = True
-        ' 0 - 9
-        Case 48 To 57
-            ret = True
         ' (Space)
         Case 32
             ret = True
@@ -179,8 +173,14 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
         ' /
         Case 47
             ret = True
+        ' 0 - 9
+        Case 48 To 57
+            ret = True
         ' :
         Case 58
+            ret = True
+        ' A - Z
+        Case 65 To 90
             ret = True
     
         Case Else
@@ -188,7 +188,7 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
             
     End Select
 
-    IQRCodeEncoder_IsInSubset = ret
+    IQRCodeEncoder_InSubset = ret
 
 End Function
 
@@ -196,7 +196,7 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
@@ -205,9 +205,6 @@ Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolea
     Dim ret As Boolean
     
     Select Case Asc(c)
-        ' A - Z
-        Case 65 To 90
-            ret = True
         ' (Space)
         Case 32
             ret = True
@@ -226,13 +223,16 @@ Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolea
         ' :
         Case 58
             ret = True
+        ' A - Z
+        Case 65 To 90
+            ret = True
     
         Case Else
             ret = False
         
     End Select
     
-    IQRCodeEncoder_IsInExclusiveSubset = ret
+    IQRCodeEncoder_InExclusiveSubset = ret
 
 End Function
 
@@ -251,12 +251,6 @@ Private Function ConvertCharCode(ByVal c As String) As Long
     code = Asc(c)
 
     Select Case code
-        ' A - Z
-        Case 65 To 90
-            ConvertCharCode = code - 55
-        ' 0 - 9
-        Case 48 To 57
-            ConvertCharCode = code - 48
         ' (Space)
         Case 32
             ConvertCharCode = 36
@@ -272,10 +266,16 @@ Private Function ConvertCharCode(ByVal c As String) As Long
         ' /
         Case 47
             ConvertCharCode = 43
+        ' 0 - 9
+        Case 48 To 57
+            ConvertCharCode = code - 48
         ' :
         Case 58
             ConvertCharCode = 44
-    
+        ' A - Z
+        Case 65 To 90
+            ConvertCharCode = code - 55
+            
         Case Else
             ConvertCharCode = -1
             

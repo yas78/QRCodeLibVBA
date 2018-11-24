@@ -74,7 +74,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     Dim charBytes() As Byte
@@ -89,7 +89,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         Case &HE040& To &HEBBF&
             wd = wd - &HC140&
         Case Else
-            Err.Raise 5
+            Call Err.Raise(5)
     End Select
 
     wd = ((wd \ 2 ^ 8) * &HC0&) + (wd And &HFF&)
@@ -116,7 +116,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     IQRCodeEncoder_GetCodewordBitLength = 13
@@ -146,7 +146,7 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
@@ -156,7 +156,7 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
     charBytes = m_textEncoding.GetBytes(c)
 
     If UBound(charBytes) <> 1 Then
-        IQRCodeEncoder_IsInSubset = False
+        IQRCodeEncoder_InSubset = False
         Exit Function
     End If
 
@@ -169,11 +169,11 @@ Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
     If code >= &H8140& And code <= &H9FFC& Or _
        code >= &HE040& And code <= &HEBBF& Then
        
-        IQRCodeEncoder_IsInSubset = lsb >= &H40& And _
+        IQRCodeEncoder_InSubset = lsb >= &H40& And _
                                     lsb <= &HFC& And _
                                     lsb <> &H7F&
     Else
-        IQRCodeEncoder_IsInSubset = False
+        IQRCodeEncoder_InSubset = False
     End If
     
 End Function
@@ -182,9 +182,9 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
-    IQRCodeEncoder_IsInExclusiveSubset = IQRCodeEncoder_IsInSubset(c)
+    IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
     
 End Function
 

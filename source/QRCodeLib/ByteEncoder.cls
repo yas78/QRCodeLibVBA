@@ -85,7 +85,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_IsInSubset(c)
+    Debug.Assert IQRCodeEncoder_InSubset(c)
 #End If
 
     Dim charBytes() As Byte
@@ -143,13 +143,13 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
 #End If
 
-    IQRCodeEncoder_IsInSubset = True
+    IQRCodeEncoder_InSubset = True
     
 End Function
 
@@ -157,28 +157,28 @@ End Function
 ' (概要)
 '  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
 '------------------------------------------------------------------------------
-Private Function IQRCodeEncoder_IsInExclusiveSubset(ByVal c As String) As Boolean
+Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
 #If [DEBUG] Then
     Debug.Assert Len(c) = 1
 #End If
 
-    If m_encAlpha.IsInSubset(c) Then
-        IQRCodeEncoder_IsInExclusiveSubset = False
+    If m_encAlpha.InSubset(c) Then
+        IQRCodeEncoder_InExclusiveSubset = False
         Exit Function
     End If
     
-    If m_encKanji.IsInSubset(c) Then
-        IQRCodeEncoder_IsInExclusiveSubset = False
+    If m_encKanji.InSubset(c) Then
+        IQRCodeEncoder_InExclusiveSubset = False
         Exit Function
     End If
         
-    If IQRCodeEncoder_IsInSubset(c) Then
-        IQRCodeEncoder_IsInExclusiveSubset = True
+    If IQRCodeEncoder_InSubset(c) Then
+        IQRCodeEncoder_InExclusiveSubset = True
         Exit Function
     End If
     
-    IQRCodeEncoder_IsInExclusiveSubset = False
+    IQRCodeEncoder_InExclusiveSubset = False
     
 End Function
 

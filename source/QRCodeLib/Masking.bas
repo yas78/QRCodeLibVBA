@@ -162,7 +162,7 @@ Private Function GetCondition(ByVal maskPatternReference As Long) As IMaskingCon
             Set ret = New Masking7Condition
             
         Case Else
-            Err.Raise 5
+            Call Err.Raise(5)
         
     End Select
     
