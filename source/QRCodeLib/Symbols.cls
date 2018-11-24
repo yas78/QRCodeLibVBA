@@ -205,9 +205,7 @@ Public Sub AppendText(ByVal s As String)
     Dim i       As Long
     Dim c       As String
 
-    
     For i = 1 To Len(s)
-        c = Mid$(s, i, 1)
         oldMode = m_currSymbol.CurrentEncodingMode
     
         Select Case oldMode
@@ -230,6 +228,8 @@ Public Sub AppendText(ByVal s As String)
                 Call Err.Raise(51)
             
         End Select
+    
+        c = Mid$(s, i, 1)
     
         If newMode <> oldMode Then
             If Not m_currSymbol.TrySetEncodingMode(newMode, c) Then
