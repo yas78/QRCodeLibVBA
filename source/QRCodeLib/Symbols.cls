@@ -196,15 +196,18 @@ End Function
 ' (äTóv)
 '  ï∂éöóÒÇí«â¡ÇµÇ‹Ç∑ÅB
 '------------------------------------------------------------------------------
-Public Sub AppendString(ByVal s As String)
+Public Sub AppendText(ByVal s As String)
+    
+    If Len(s) = 0 Then Call Err.Raise(5)
     
     Dim oldMode As EncodingMode
     Dim newMode As EncodingMode
     Dim i       As Long
+    Dim c       As String
 
-    If Len(s) = 0 Then Call Err.Raise(5)
     
     For i = 1 To Len(s)
+        c = Mid$(s, i, 1)
         oldMode = m_currSymbol.CurrentEncodingMode
     
         Select Case oldMode
@@ -229,27 +232,27 @@ Public Sub AppendString(ByVal s As String)
         End Select
     
         If newMode <> oldMode Then
-            If Not m_currSymbol.TrySetEncodingMode(newMode, Mid$(s, i, 1)) Then
+            If Not m_currSymbol.TrySetEncodingMode(newMode, c) Then
                 If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
                     Call Err.Raise(6)
                 End If
 
                 Call Add
                 newMode = SelectInitialMode(s, i)
-                Call m_currSymbol.TrySetEncodingMode(newMode, Mid$(s, i, 1))
+                Call m_currSymbol.TrySetEncodingMode(newMode, c)
                 
             End If
         End If
     
-        If Not m_currSymbol.TryAppend(Mid$(s, i, 1)) Then
+        If Not m_currSymbol.TryAppend(c) Then
             If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
                 Call Err.Raise(6)
             End If
             
             Call Add
             newMode = SelectInitialMode(s, i)
-            Call m_currSymbol.TrySetEncodingMode(newMode, Mid$(s, i, 1))
-            Call m_currSymbol.TryAppend(Mid$(s, i, 1))
+            Call m_currSymbol.TrySetEncodingMode(newMode, c)
+            Call m_currSymbol.TryAppend(c)
             
         End If
     Next

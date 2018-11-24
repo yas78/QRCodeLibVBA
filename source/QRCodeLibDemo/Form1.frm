@@ -38,7 +38,7 @@ On Error GoTo Catch_
                              CLng(cmbMaxVersion.Text), _
                              chkStructuredAppend.Value, _
                              cmbEncoding.Value)
-    Call sbls.AppendString(txtData.Text)
+    Call sbls.AppendText(txtData.Text)
     
     Dim sbl As Symbol
     Dim ctl As Control
@@ -102,7 +102,7 @@ On Error GoTo Catch_
                              CLng(cmbMaxVersion.Text), _
                              chkStructuredAppend.Value, _
                              cmbEncoding.Value)
-    Call sbls.AppendString(txtData.Text)
+    Call sbls.AppendText(txtData.Text)
     
     Dim filePath As String
     Dim sbl      As Symbol

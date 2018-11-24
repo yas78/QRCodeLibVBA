@@ -23,7 +23,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 Public Sub Example()
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
-    sbls.AppendString "012345abcdefg"
+    sbls.AppendText "012345abcdefg"
 
     Dim pict As stdole.IPicture
     Set pict = sbls(0).Get24bppImage()
@@ -65,7 +65,7 @@ Set sbls = CreateSymbols(allowStructuredAppend:=True)
 ```vbnet
 Dim sbls As Symbols
 Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
-sbls.AppendString "abcdefghijklmnopqrstuvwxyz"
+sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
 
 Dim pict As stdole.IPicture
 Dim sbl As Symbol
@@ -81,7 +81,7 @@ SymbolクラスのSave1bppDIB、またはSave24bppDIBメソッドを使用しま
 ```vbnet
 Dim sbls As Symbols
 Set sbls = CreateSymbols()
-sbls.AppendString "012345abcdefg"
+sbls.AppendText "012345abcdefg"
 
 sbls(0).Save1bppDIB "D:\qrcode1bpp1.bmp"
 sbls(0).Save1bppDIB "D:\qrcode1bpp2.bmp", 10 ' 10 pixels per module
@@ -95,7 +95,7 @@ SymbolクラスのSetToClipboardメソッドを使用します。
 ```vbnet
 Dim sbls As Symbols
 Set sbls = CreateSymbols()
-sbls.AppendString "012345abcdefg"
+sbls.AppendText "012345abcdefg"
 
 sbls(0).SetToClipboard
 sbls(0).SetToClipBoard moduleSize:=10
