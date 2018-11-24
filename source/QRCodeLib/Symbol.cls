@@ -23,7 +23,7 @@ Private m_currVersion       As Long
 Private m_dataBitCapacity   As Long
 Private m_dataBitCounter    As Long
 
-Private m_segments          As New Collection ' Item : IQRCodeEncoder
+Private m_segments          As Collection ' Item : IQRCodeEncoder
 Private m_segmentCounter    As Object ' Is Dictionary Key : EncodingMode, Item : Long
 
 '------------------------------------------------------------------------------
