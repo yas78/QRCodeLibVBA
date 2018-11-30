@@ -652,8 +652,8 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 5, _
     Dim pictHeight As Long
     pictHeight = moduleCount * moduleSize
     
-    Dim hByteLen As Long
-    hByteLen = (pictWidth + 7) \ 8
+    Dim rowBytesLen As Long
+    rowBytesLen = (pictWidth + 7) \ 8
     
     Dim pack8bit As Long
     If pictWidth Mod 8 > 0 Then
@@ -661,114 +661,51 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 5, _
     End If
     
     Dim pack32bit As Long
-    If hByteLen Mod 4 > 0 Then
-        pack32bit = 8 * (4 - (hByteLen Mod 4))
+    If rowBytesLen Mod 4 > 0 Then
+        pack32bit = 8 * (4 - (rowBytesLen Mod 4))
     End If
+        
+    Dim rowSize As Long
+    rowSize = (pictWidth + pack8bit + pack32bit) \ 8
     
+    Dim bitmapData() As Byte
+    ReDim bitmapData(rowSize * pictHeight - 1)
+    
+    Dim offset As Long
+    offset = 0
+
     Dim bs As BitSequence
     Set bs = New BitSequence
     
     Dim r As Long
     Dim c As Long
     Dim i As Long
-    Dim j As Long
+    Dim pixelColor As Long
     
     For r = UBound(moduleMatrix) To 0 Step -1
-        For i = 1 To moduleSize
-            For c = 0 To UBound(moduleMatrix(r))
-                For j = 1 To moduleSize
-                    Call bs.Append(IIf(moduleMatrix(r)(c) > 0, 0, 1), 1)
-                Next
-            Next
+        Call bs.Clear
 
-            Call bs.Append(0, pack8bit)
-            Call bs.Append(0, pack32bit)
+        For c = 0 To UBound(moduleMatrix(r))
+            pixelColor = IIf(moduleMatrix(r)(c) > 0, 0, 1)
+            
+            For i = 1 To moduleSize
+                Call bs.Append(pixelColor, 1)
+            Next
+        Next
+        Call bs.Append(0, pack8bit)
+        Call bs.Append(0, pack32bit)
+    
+        Dim bitmapRow() As Byte
+        bitmapRow = bs.GetBytes()
+    
+        For i = 1 To moduleSize
+            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            offset = offset + rowSize
         Next
     Next
 
-    Dim dataBlock() As Byte
-    dataBlock = bs.GetBytes()
-
-    Dim bfh         As BITMAPFILEHEADER
-    Dim bih         As BITMAPINFOHEADER
-    Dim palette(1)  As RGBQUAD
-
-    With bfh
-        .bfType = &H4D42
-        .bfSize = 62 + (UBound(dataBlock) + 1)
-        .bfReserved1 = 0
-        .bfReserved2 = 0
-        .bfOffBits = 62
-    End With
-                
-    With bih
-        .biSize = 40
-        .biWidth = pictWidth
-        .biHeight = pictHeight
-        .biPlanes = 1
-        .biBitCount = 1
-        .biCompression = 0
-        .biSizeImage = 0
-        .biXPelsPerMeter = 3780 ' 96dpi
-        .biYPelsPerMeter = 3780 ' 96dpi
-        .biClrUsed = 0
-        .biClrImportant = 0
-    End With
-    
-    With palette(0)
-        .rgbBlue = CByte((foreColorRGB And &HFF0000) \ 2 ^ 16)
-        .rgbGreen = CByte((foreColorRGB And &HFF00&) \ 2 ^ 8)
-        .rgbRed = CByte(foreColorRGB And &HFF&)
-        .rgbReserved = 0
-    End With
-    
-    With palette(1)
-        .rgbBlue = CByte((backColorRGB And &HFF0000) \ 2 ^ 16)
-        .rgbGreen = CByte((backColorRGB And &HFF00&) \ 2 ^ 8)
-        .rgbRed = CByte(backColorRGB And &HFF&)
-        .rgbReserved = 0
-    End With
-    
     Dim ret() As Byte
-    ReDim ret(62 + UBound(dataBlock))
-    
-    With bfh
-        Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
-        Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
-        Call MoveMemory(VarPtr(ret(6)), VarPtr(.bfReserved1), 2)
-        Call MoveMemory(VarPtr(ret(8)), VarPtr(.bfReserved2), 2)
-        Call MoveMemory(VarPtr(ret(10)), VarPtr(.bfOffBits), 4)
-    End With
-
-    With bih
-        Call MoveMemory(VarPtr(ret(14)), VarPtr(.biSize), 4)
-        Call MoveMemory(VarPtr(ret(18)), VarPtr(.biWidth), 4)
-        Call MoveMemory(VarPtr(ret(22)), VarPtr(.biHeight), 4)
-        Call MoveMemory(VarPtr(ret(26)), VarPtr(.biPlanes), 2)
-        Call MoveMemory(VarPtr(ret(28)), VarPtr(.biBitCount), 2)
-        Call MoveMemory(VarPtr(ret(30)), VarPtr(.biCompression), 4)
-        Call MoveMemory(VarPtr(ret(34)), VarPtr(.biSizeImage), 4)
-        Call MoveMemory(VarPtr(ret(38)), VarPtr(.biXPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(42)), VarPtr(.biYPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(46)), VarPtr(.biClrUsed), 4)
-        Call MoveMemory(VarPtr(ret(50)), VarPtr(.biClrImportant), 4)
-    End With
-
-    With palette(0)
-        Call MoveMemory(VarPtr(ret(54)), VarPtr(.rgbBlue), 1)
-        Call MoveMemory(VarPtr(ret(55)), VarPtr(.rgbGreen), 1)
-        Call MoveMemory(VarPtr(ret(56)), VarPtr(.rgbRed), 1)
-        Call MoveMemory(VarPtr(ret(57)), VarPtr(.rgbReserved), 1)
-    End With
-
-    With palette(1)
-        Call MoveMemory(VarPtr(ret(58)), VarPtr(.rgbBlue), 1)
-        Call MoveMemory(VarPtr(ret(59)), VarPtr(.rgbGreen), 1)
-        Call MoveMemory(VarPtr(ret(60)), VarPtr(.rgbRed), 1)
-        Call MoveMemory(VarPtr(ret(61)), VarPtr(.rgbReserved), 1)
-    End With
-    
-    Call MoveMemory(VarPtr(ret(62)), VarPtr(dataBlock(0)), UBound(dataBlock) + 1)
+    ret = DIB.Build1bppDIB(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
     
     Get1bppDIB = ret
     
@@ -800,94 +737,54 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
     Dim pictHeight As Long
     pictHeight = pictWidth
 
-    Dim hByteLen As Long
-    hByteLen = 3 * pictWidth
+    Dim rowBytesLen As Long
+    rowBytesLen = 3 * pictWidth
 
-    Dim pack4byte As Long
-    If hByteLen Mod 4 > 0 Then
-        pack4byte = 4 - (hByteLen Mod 4)
+    Dim pack4bytes As Long
+    If rowBytesLen Mod 4 > 0 Then
+        pack4bytes = 4 - (rowBytesLen Mod 4)
     End If
 
-    Dim dataBlock() As Byte
-    ReDim dataBlock((hByteLen + pack4byte) * pictHeight - 1)
+    Dim rowSize As Long
+    rowSize = rowBytesLen + pack4bytes
+    
+    Dim bitmapData() As Byte
+    ReDim bitmapData(rowSize * pictHeight - 1)
+    
+    Dim offset As Long
+    offset = 0
 
     Dim r As Long
     Dim c As Long
     Dim i As Long
-    Dim j As Long
     
     Dim colorRGB As Long
-    
+    Dim bitmapRow() As Byte
     Dim idx As Long
-    idx = 0
     
     For r = UBound(moduleMatrix) To 0 Step -1
-        For i = 1 To moduleSize
-            For c = 0 To UBound(moduleMatrix(r))
-                For j = 1 To moduleSize
-                    colorRGB = IIf(moduleMatrix(r)(c) > 0, foreColorRGB, backColorRGB)
-                    dataBlock(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
-                    dataBlock(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
-                    dataBlock(idx + 2) = CByte(colorRGB And &HFF&)               ' R
-                    idx = idx + 3
-                Next
-            Next
+        ReDim bitmapRow(rowSize - 1)
+        idx = 0
 
-            idx = idx + pack4byte
+        For c = 0 To UBound(moduleMatrix(r))
+            colorRGB = IIf(moduleMatrix(r)(c) > 0, foreColorRGB, backColorRGB)
+            
+            For i = 1 To moduleSize
+                bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
+                bitmapRow(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
+                bitmapRow(idx + 2) = CByte(colorRGB And &HFF&)               ' R
+                idx = idx + 3
+            Next
+        Next
+
+        For i = 1 To moduleSize
+            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            offset = offset + rowSize
         Next
     Next
 
-    Dim bfh As BITMAPFILEHEADER
-    Dim bih As BITMAPINFOHEADER
-
-    With bfh
-        .bfType = &H4D42
-        .bfSize = 54 + (UBound(dataBlock) + 1)
-        .bfReserved1 = 0
-        .bfReserved2 = 0
-        .bfOffBits = 54
-    End With
-
-    With bih
-        .biSize = 40
-        .biWidth = pictWidth
-        .biHeight = pictHeight
-        .biPlanes = 1
-        .biBitCount = 24
-        .biCompression = 0
-        .biSizeImage = 0
-        .biXPelsPerMeter = 3780 ' 96dpi
-        .biYPelsPerMeter = 3780 ' 96dpi
-        .biClrUsed = 0
-        .biClrImportant = 0
-    End With
-
     Dim ret() As Byte
-    ReDim ret(54 + UBound(dataBlock))
-    
-    With bfh
-        Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
-        Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
-        Call MoveMemory(VarPtr(ret(6)), VarPtr(.bfReserved1), 2)
-        Call MoveMemory(VarPtr(ret(8)), VarPtr(.bfReserved2), 2)
-        Call MoveMemory(VarPtr(ret(10)), VarPtr(.bfOffBits), 4)
-    End With
-
-    With bih
-        Call MoveMemory(VarPtr(ret(14)), VarPtr(.biSize), 4)
-        Call MoveMemory(VarPtr(ret(18)), VarPtr(.biWidth), 4)
-        Call MoveMemory(VarPtr(ret(22)), VarPtr(.biHeight), 4)
-        Call MoveMemory(VarPtr(ret(26)), VarPtr(.biPlanes), 2)
-        Call MoveMemory(VarPtr(ret(28)), VarPtr(.biBitCount), 2)
-        Call MoveMemory(VarPtr(ret(30)), VarPtr(.biCompression), 4)
-        Call MoveMemory(VarPtr(ret(34)), VarPtr(.biSizeImage), 4)
-        Call MoveMemory(VarPtr(ret(38)), VarPtr(.biXPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(42)), VarPtr(.biYPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(46)), VarPtr(.biClrUsed), 4)
-        Call MoveMemory(VarPtr(ret(50)), VarPtr(.biClrImportant), 4)
-    End With
-
-    Call MoveMemory(VarPtr(ret(54)), VarPtr(dataBlock(0)), UBound(dataBlock) + 1)
+    ret = DIB.Build24bppDIB(bitmapData, pictWidth, pictHeight)
     
     Get24bppDIB = ret
 
@@ -903,11 +800,11 @@ Public Function Get1bppImage(Optional ByVal moduleSize As Long = 5, _
 
     If moduleSize < 1 Then Call Err.Raise(5)
     
-    Dim dib() As Byte
-    dib = Get1bppDIB(moduleSize, foreRGB, backRGB)
+    Dim dibData() As Byte
+    dibData = Get1bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim ret As IPicture
-    Set ret = ImageConverter.ConvertFrom(dib)
+    Set ret = ImageConverter.ConvertFrom(dibData)
 
     Set Get1bppImage = ret
     
@@ -923,11 +820,11 @@ Public Function Get24bppImage(Optional ByVal moduleSize As Long = 5, _
 
     If moduleSize < 1 Then Call Err.Raise(5)
 
-    Dim dib() As Byte
-    dib = Get24bppDIB(moduleSize, foreRGB, backRGB)
+    Dim dibData() As Byte
+    dibData = Get24bppDIB(moduleSize, foreRGB, backRGB)
     
     Dim ret As IPicture
-    Set ret = ImageConverter.ConvertFrom(dib)
+    Set ret = ImageConverter.ConvertFrom(dibData)
 
     Set Get24bppImage = ret
     

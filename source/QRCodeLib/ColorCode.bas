@@ -1,4 +1,5 @@
 Attribute VB_Name = "ColorCode"
+Option Private Module
 Option Explicit
 
 Public Function ToRGB(ByVal arg As String) As Long

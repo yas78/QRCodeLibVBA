@@ -19,10 +19,10 @@ Private Declare Function SetClipboardData Lib "user32" (ByVal wFormat As Long, B
 
 Const CF_DIB As Long = 8
 
-Public Sub SetDIB(ByRef dib() As Byte)
+Public Sub SetDIB(ByRef dibData() As Byte)
     
     Dim sz As Long
-    sz = UBound(dib) - 14 + 1
+    sz = UBound(dibData) - 14 + 1
 
     Dim hMem As Long
     hMem = GlobalAlloc(GHND, sz)
@@ -32,7 +32,7 @@ Public Sub SetDIB(ByRef dib() As Byte)
     lpMem = GlobalLock(hMem)
     If lpMem = 0 Then Exit Sub
 
-    Call MoveMemory(lpMem, VarPtr(dib(14)), sz)
+    Call MoveMemory(lpMem, VarPtr(dibData(14)), sz)
     Call GlobalUnlock(hMem)
 
     Call OpenClipboard(0)

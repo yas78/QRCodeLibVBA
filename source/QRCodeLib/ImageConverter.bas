@@ -39,10 +39,10 @@ Private Type UUID
     Data4(7) As Byte
 End Type
 
-Public Function ConvertFrom(ByRef dib() As Byte) As IPicture
+Public Function ConvertFrom(ByRef dibData() As Byte) As IPicture
 
     Dim sz As Long
-    sz = UBound(dib) + 1
+    sz = UBound(dibData) + 1
 
     Dim hMem As Long
     hMem = GlobalAlloc(GMEM_MOVEABLE, sz)
@@ -52,7 +52,7 @@ Public Function ConvertFrom(ByRef dib() As Byte) As IPicture
     lpMem = GlobalLock(hMem)
     If lpMem = 0 Then Exit Function
     
-    Call MoveMemory(lpMem, VarPtr(dib(0)), sz)
+    Call MoveMemory(lpMem, VarPtr(dibData(0)), sz)
     Call GlobalUnlock(hMem)
     
     Dim stm  As IUnknown
