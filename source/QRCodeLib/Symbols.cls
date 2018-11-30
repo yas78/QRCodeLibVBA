@@ -27,6 +27,7 @@ Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
 Private m_byteModeEncoding As TextEncoding
+Private m_shiftJISEncoding As TextEncoding
 
 '------------------------------------------------------------------------------
 ' (ŠT—v)
@@ -63,6 +64,8 @@ Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
     
     Set m_byteModeEncoding = New TextEncoding
     Call m_byteModeEncoding.Init(byteModeCharsetName)
+    Set m_shiftJISEncoding = New TextEncoding
+    Call m_shiftJISEncoding.Init("shift_jis")
 
     Set m_currSymbol = New Symbol
     Call m_currSymbol.Initialize(Me)
@@ -270,7 +273,11 @@ Friend Sub UpdateParity(ByVal c As String)
 #End If
 
     Dim charBytes() As Byte
-    charBytes = m_byteModeEncoding.GetBytes(c)
+    If m_encKanji.InSubset(c) Then
+        charBytes = m_shiftJISEncoding.GetBytes(c)
+    Else
+        charBytes = m_byteModeEncoding.GetBytes(c)
+    End If
 
     Dim i As Long
     
