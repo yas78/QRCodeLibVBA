@@ -740,13 +740,13 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
     Dim rowBytesLen As Long
     rowBytesLen = 3 * pictWidth
 
-    Dim pack4bytes As Long
+    Dim pack4byte As Long
     If rowBytesLen Mod 4 > 0 Then
-        pack4bytes = 4 - (rowBytesLen Mod 4)
+        pack4byte = 4 - (rowBytesLen Mod 4)
     End If
 
     Dim rowSize As Long
-    rowSize = rowBytesLen + pack4bytes
+    rowSize = rowBytesLen + pack4byte
     
     Dim bitmapData() As Byte
     ReDim bitmapData(rowSize * pictHeight - 1)

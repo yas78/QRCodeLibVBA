@@ -36,8 +36,6 @@ End Sub
 
 Public Function GetBytes(ByVal s As String) As Byte()
 
-    Const BOM_LENGTH As Long = 3
-
     Call m_sr.Open
 
     m_sr.Position = 0
@@ -46,31 +44,20 @@ Public Function GetBytes(ByVal s As String) As Byte()
 
     m_sr.Position = 0
     m_sr.Type = adTypeBinary
-
-    Dim buf() As Byte
-    buf = m_sr.Read()
-
-    Dim temp() As Byte
-    Dim srcIdx  As Long
-    Dim destIdx As Long
     
     Select Case LCase(m_charset)
+        Case "utf-16", "unicode"
+            m_sr.Position = 2
         Case "utf-8"
-            ReDim temp(UBound(buf) - BOM_LENGTH)
-    
-            ' Remove BOM
-            For srcIdx = BOM_LENGTH To UBound(buf)
-                temp(destIdx) = buf(srcIdx)
-                destIdx = destIdx + 1
-            Next
-            
-            GetBytes = temp
-
+            m_sr.Position = 3
         Case Else
-            GetBytes = buf
-            
+            ' NOP
     End Select
     
+    Dim ret() As Byte
+    ret = m_sr.Read()
     Call m_sr.Close
+    
+    GetBytes = ret
     
 End Function
