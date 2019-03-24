@@ -77,17 +77,17 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
     End With
 
     With palette(0)
-        Call MoveMemory(VarPtr(ret(54)), VarPtr(.rgbBlue), 1)
-        Call MoveMemory(VarPtr(ret(55)), VarPtr(.rgbGreen), 1)
-        Call MoveMemory(VarPtr(ret(56)), VarPtr(.rgbRed), 1)
-        Call MoveMemory(VarPtr(ret(57)), VarPtr(.rgbReserved), 1)
+        ret(54) = .rgbBlue
+        ret(55) = .rgbGreen
+        ret(56) = .rgbRed
+        ret(57) = .rgbReserved
     End With
 
     With palette(1)
-        Call MoveMemory(VarPtr(ret(58)), VarPtr(.rgbBlue), 1)
-        Call MoveMemory(VarPtr(ret(59)), VarPtr(.rgbGreen), 1)
-        Call MoveMemory(VarPtr(ret(60)), VarPtr(.rgbRed), 1)
-        Call MoveMemory(VarPtr(ret(61)), VarPtr(.rgbReserved), 1)
+        ret(58) = .rgbBlue
+        ret(59) = .rgbGreen
+        ret(60) = .rgbRed
+        ret(61) = .rgbReserved
     End With
     
     Call MoveMemory(VarPtr(ret(62)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)

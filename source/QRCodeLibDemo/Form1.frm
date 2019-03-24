@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form1 
    Caption         =   "QR Code"
-   ClientHeight    =   8430
+   ClientHeight    =   8910
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   10590
@@ -57,7 +57,8 @@ On Error GoTo Catch_
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text))
+        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text), _
+            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
     
     fraQRCodeImage.ScrollHeight = _
@@ -121,7 +122,8 @@ On Error GoTo Catch_
             Call fs.DeleteFile(filePath)
         End If
         
-        Call sbl.Save1bppDIB(filePath, CLng(txtModuleSize.Text))
+        Call sbl.Save1bppDIB(filePath, CLng(txtModuleSize.Text), _
+            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
 
 Finally_:
@@ -162,6 +164,22 @@ Private Sub spbModuleSize_Change()
 
     Call Set_txtModuleSize(spbModuleSize.Value)
     
+End Sub
+
+Private Sub txtForeColor_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+    txtForeColor.Text = Left$(txtForeColor.Text & String(6, "0"), 6)
+    
+    If txtForeColor.Text Like "*[!0-9A-Fa-f]*" Then
+        txtForeColor.Text = "000000"
+    End If
+End Sub
+
+Private Sub txtBackColor_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+    txtBackColor.Text = Left$(txtBackColor.Text & String(6, "0"), 6)
+    
+    If txtBackColor.Text Like "*[!0-9A-Fa-f]*" Then
+        txtBackColor.Text = "FFFFFF"
+    End If
 End Sub
 
 Private Sub txtModuleSize_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
@@ -255,6 +273,9 @@ Private Sub UserForm_Initialize()
     
     Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
     chkStructuredAppend.Value = False
+
+    txtForeColor.Text = "000000"
+    txtBackColor.Text = "FFFFFF"
 
     btnSave.Enabled = False
     

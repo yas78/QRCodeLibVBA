@@ -24,12 +24,6 @@ Public Type BITMAPINFOHEADER
     biClrImportant  As Long
 End Type
 
-Public Type RGB
-    rgbBlue     As Byte
-    rgbGreen    As Byte
-    rgbRed      As Byte
-End Type
-
 Public Type RGBQUAD
     rgbBlue     As Byte
     rgbGreen    As Byte

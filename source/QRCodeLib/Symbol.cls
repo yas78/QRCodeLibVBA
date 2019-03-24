@@ -63,7 +63,7 @@ End Sub
 ' (概要)
 '  親オブジェクトを取得します。
 '------------------------------------------------------------------------------
-Public Property Get Parent() As Symbols
+Friend Property Get Parent() As Symbols
 
     Set Parent = m_parent
     
@@ -73,7 +73,7 @@ End Property
 ' (概要)
 '  型番を取得します。
 '------------------------------------------------------------------------------
-Public Property Get Version() As Long
+Friend Property Get Version() As Long
     
     Version = m_currVersion
 
