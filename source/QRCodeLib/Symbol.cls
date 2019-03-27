@@ -9,6 +9,11 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+Private Const COLOR_WHITE As String = "#FFFFFF"
+Private Const COLOR_BLACK As String = "#000000"
+
+Private Const DEFAULT_MODULE_SIZE As Long = 5
+
 Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
     ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 
@@ -627,9 +632,9 @@ End Sub
 ' (概要)
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
-Public Function Get1bppDIB(Optional ByVal moduleSize As Long = 5, _
-                           Optional ByVal foreRGB As String = "#000000", _
-                           Optional ByVal backRGB As String = "#FFFFFF") As Byte()
+Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                           Optional ByVal foreRGB As String = COLOR_BLACK, _
+                           Optional ByVal backRGB As String = COLOR_WHITE) As Byte()
     
     If moduleSize < 1 Then Call Err.Raise(5)
     
@@ -715,9 +720,9 @@ End Function
 ' (概要)
 '  色深度24bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
-Public Function Get24bppDIB(Optional ByVal moduleSize As Long = 5, _
-                            Optional ByVal foreRGB As String = "#000000", _
-                            Optional ByVal backRGB As String = "#FFFFFF") As Byte()
+Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                            Optional ByVal foreRGB As String = COLOR_BLACK, _
+                            Optional ByVal backRGB As String = COLOR_WHITE) As Byte()
 
     If moduleSize < 1 Then Call Err.Raise(5)
     
@@ -794,9 +799,9 @@ End Function
 ' (概要)
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
-Public Function Get1bppImage(Optional ByVal moduleSize As Long = 5, _
-                             Optional ByVal foreRGB As String = "#000000", _
-                             Optional ByVal backRGB As String = "#FFFFFF") As IPicture
+Public Function Get1bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                             Optional ByVal foreRGB As String = COLOR_BLACK, _
+                             Optional ByVal backRGB As String = COLOR_WHITE) As IPicture
 
     If moduleSize < 1 Then Call Err.Raise(5)
     
@@ -814,9 +819,9 @@ End Function
 ' (概要)
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
-Public Function Get24bppImage(Optional ByVal moduleSize As Long = 5, _
-                              Optional ByVal foreRGB As String = "#000000", _
-                              Optional ByVal backRGB As String = "#FFFFFF") As IPicture
+Public Function Get24bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                              Optional ByVal foreRGB As String = COLOR_BLACK, _
+                              Optional ByVal backRGB As String = COLOR_WHITE) As IPicture
 
     If moduleSize < 1 Then Call Err.Raise(5)
 
@@ -835,9 +840,9 @@ End Function
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
 Public Sub Save1bppDIB(ByVal filePath As String, _
-                       Optional ByVal moduleSize As Long = 5, _
-                       Optional ByVal foreRGB As String = "#000000", _
-                       Optional ByVal backRGB As String = "#FFFFFF")
+                       Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                       Optional ByVal foreRGB As String = COLOR_BLACK, _
+                       Optional ByVal backRGB As String = COLOR_WHITE)
     
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
@@ -861,9 +866,9 @@ End Sub
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
 Public Sub Save24bppDIB(ByVal filePath As String, _
-                        Optional ByVal moduleSize As Long = 5, _
-                        Optional ByVal foreRGB As String = "#000000", _
-                        Optional ByVal backRGB As String = "#FFFFFF")
+                        Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                        Optional ByVal foreRGB As String = COLOR_BLACK, _
+                        Optional ByVal backRGB As String = COLOR_WHITE)
     
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
@@ -886,9 +891,9 @@ End Sub
 ' (概要)
 '  シンボルをクリップボードに保存します。
 '------------------------------------------------------------------------------
-Public Sub SetToClipboard(Optional ByVal moduleSize As Long = 5, _
-                          Optional ByVal foreRGB As String = "#000000", _
-                          Optional ByVal backRGB As String = "#FFFFFF")
+Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                          Optional ByVal foreRGB As String = COLOR_BLACK, _
+                          Optional ByVal backRGB As String = COLOR_WHITE)
     
     Dim bitmapBytes() As Byte
     bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
