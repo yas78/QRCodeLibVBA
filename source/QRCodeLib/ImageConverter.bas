@@ -39,7 +39,7 @@ Private Type UUID
     Data4(7) As Byte
 End Type
 
-Public Function ConvertFrom(ByRef dibData() As Byte) As IPicture
+Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPicture
 
     Dim sz As Long
     sz = UBound(dibData) + 1
@@ -63,7 +63,7 @@ Public Function ConvertFrom(ByRef dibData() As Byte) As IPicture
     Dim iid As UUID
     Call IIDFromString(StrPtr(IID_IPicture), iid)
     
-    Dim ret As IPicture
+    Dim ret As stdole.IPicture
     Call OleLoadPicture(ObjPtr(stm), sz, 0, iid, ret)
     Call GlobalFree(hMem)
     

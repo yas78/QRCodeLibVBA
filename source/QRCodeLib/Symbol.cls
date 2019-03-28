@@ -801,14 +801,14 @@ End Function
 '------------------------------------------------------------------------------
 Public Function Get1bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                              Optional ByVal foreRGB As String = COLOR_BLACK, _
-                             Optional ByVal backRGB As String = COLOR_WHITE) As IPicture
+                             Optional ByVal backRGB As String = COLOR_WHITE) As stdole.IPicture
 
     If moduleSize < 1 Then Call Err.Raise(5)
     
     Dim dibData() As Byte
     dibData = Get1bppDIB(moduleSize, foreRGB, backRGB)
     
-    Dim ret As IPicture
+    Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
 
     Set Get1bppImage = ret
@@ -821,14 +821,14 @@ End Function
 '------------------------------------------------------------------------------
 Public Function Get24bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                               Optional ByVal foreRGB As String = COLOR_BLACK, _
-                              Optional ByVal backRGB As String = COLOR_WHITE) As IPicture
+                              Optional ByVal backRGB As String = COLOR_WHITE) As stdole.IPicture
 
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
     dibData = Get24bppDIB(moduleSize, foreRGB, backRGB)
     
-    Dim ret As IPicture
+    Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
 
     Set Get24bppImage = ret
