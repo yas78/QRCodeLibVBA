@@ -170,8 +170,8 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
        code >= &HE040& And code <= &HEBBF& Then
        
         IQRCodeEncoder_InSubset = lsb >= &H40& And _
-                                    lsb <= &HFC& And _
-                                    lsb <> &H7F&
+                                  lsb <= &HFC& And _
+                                  lsb <> &H7F&
     Else
         IQRCodeEncoder_InSubset = False
     End If

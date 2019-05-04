@@ -2,8 +2,13 @@ Attribute VB_Name = "DIB"
 Option Private Module
 Option Explicit
 
-Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
-    ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
+#If VBA7 Then
+    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
+        ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
+#Else
+    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
+        ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
+#End If
 
 Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
                              ByVal pictWidth As Long, _

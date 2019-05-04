@@ -14,8 +14,11 @@ Private Const COLOR_BLACK As String = "#000000"
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
 
-Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
-    ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
+#If VBA7 Then
+    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
+#Else
+    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
+#End If
 
 Private m_parent As Symbols
 

@@ -19,9 +19,7 @@ Private m_space      As Long
 
 Private Sub Class_Initialize()
 
-    Set m_buffer = CreateObject("Scripting.Dictionary")
-    m_bitCounter = 0
-    m_space = 0
+    Call Clear
 
 End Sub
 
@@ -34,6 +32,14 @@ Public Property Get Length() As Long
     Length = m_bitCounter
 
 End Property
+
+Public Sub Clear()
+    
+    Set m_buffer = CreateObject("Scripting.Dictionary")
+    m_bitCounter = 0
+    m_space = 0
+
+End Sub
 
 '------------------------------------------------------------------------------
 ' (ŠT—v)

@@ -7,7 +7,7 @@ Option Explicit
 '
 ' (パラメータ)
 '  ecLevel               : 誤り訂正レベル
-'　maxVer                : 型番の上限
+'  maxVer                : 型番の上限
 '  allowStructuredAppend : 複数シンボルへの分割を許可するには True を指定します。
 '  byteModeCharsetName   : バイトモードの文字コードを指定します。
 '------------------------------------------------------------------------------
