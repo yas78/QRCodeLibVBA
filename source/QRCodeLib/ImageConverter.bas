@@ -35,7 +35,7 @@ Private Const WIN32_FALSE As Long = 0
     Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
     Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
     Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
-    Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As Long, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
+    Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As IUnknown, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
 #End If
 
 Private Type UUID

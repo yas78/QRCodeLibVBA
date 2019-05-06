@@ -42,7 +42,6 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
                i = maxIndex And j = 0 Then
                 
                 GoTo Continue_j
-                
             End If
             
             moduleMatrix(r - 2)(c - 2) = 2

@@ -243,7 +243,6 @@ Public Sub AppendText(ByVal s As String)
                 Call Add
                 newMode = SelectInitialMode(s, i)
                 Call m_currSymbol.TrySetEncodingMode(newMode, c)
-                
             End If
         End If
     
@@ -256,7 +255,6 @@ Public Sub AppendText(ByVal s As String)
             newMode = SelectInitialMode(s, i)
             Call m_currSymbol.TrySetEncodingMode(newMode, c)
             Call m_currSymbol.TryAppend(c)
-            
         End If
     Next
     

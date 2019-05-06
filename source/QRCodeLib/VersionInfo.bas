@@ -49,7 +49,6 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
             p1 = p1 + 1
             p2 = numModulesPerSide - 11
         End If
-        
     Next
 
 End Sub
