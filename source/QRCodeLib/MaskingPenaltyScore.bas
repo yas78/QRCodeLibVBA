@@ -331,11 +331,11 @@ Private Function MatrixRotate90(ByRef arg() As Variant) As Variant()
 
     Dim i As Long
     Dim j As Long
-    Dim cols() As Long
+    Dim rowArray() As Long
 
     For i = 0 To UBound(ret)
-        ReDim cols(UBound(arg))
-        ret(i) = cols
+        ReDim rowArray(UBound(arg))
+        ret(i) = rowArray
     Next
 
     Dim k As Long
