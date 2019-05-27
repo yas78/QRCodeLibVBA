@@ -56,15 +56,15 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
     Dim penalty As Long
     penalty = 0
 
-    Dim r As Long
-    Dim c As Long
+    Dim rowArray As Variant
+    Dim i As Long
     Dim cnt As Long
 
-    For r = 0 To UBound(moduleMatrix)
+    For Each rowArray In moduleMatrix
         cnt = 1
 
-        For c = 0 To UBound(moduleMatrix(r)) - 1
-            If (moduleMatrix(r)(c) > 0) = (moduleMatrix(r)(c + 1) > 0) Then
+        For i = 0 To UBound(rowArray) - 1
+            If (rowArray(i) > 0) = (rowArray(i + 1) > 0) Then
                 cnt = cnt + 1
             Else
                 If cnt >= 5 Then
@@ -268,15 +268,15 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Dim s As Long
     Dim e As Long
 
-    Dim c As Long
+    Dim i As Long
 
-    For c = 4 To UBound(arg) - 4
-        If arg(c) > 0 And arg(c - 1) <= 0 Then
-            s = c
+    For i = 4 To UBound(arg) - 4
+        If arg(i) > 0 And arg(i - 1) <= 0 Then
+            s = i
         End If
 
-        If arg(c) > 0 And arg(c + 1) <= 0 Then
-            e = c
+        If arg(i) > 0 And arg(i + 1) <= 0 Then
+            e = i
 
             If (e + 1 - s) Mod 3 = 0 Then
                 Call ret.Add(Array(s, e))
