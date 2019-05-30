@@ -165,11 +165,12 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ratio4 = ratio1 * 4
             impose = False
 
-            ' light ratio 1
             i = rng(0) - 1
+
+            ' light ratio 1
             cnt = 0
-            Do While i > 0
-                If rowArray(i) <= 0 And rowArray(i - 1) > 0 Then
+            Do While i >= 0
+                If rowArray(i) <= 0 Then
                     cnt = cnt + 1
                     i = i - 1
                 Else
@@ -181,8 +182,8 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
 
             ' dark ratio 1
             cnt = 0
-            Do While i > 0
-                If rowArray(i) > 0 And rowArray(i - 1) <= 0 Then
+            Do While i >= 0
+                If rowArray(i) > 0 Then
                     cnt = cnt + 1
                     i = i - 1
                 Else
@@ -207,11 +208,12 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
                 impose = True
             End If
 
-            ' light ratio 1
             i = rng(1) + 1
+
+            ' light ratio 1
             cnt = 0
-            Do While i < UBound(rowArray)
-                If rowArray(i) <= 0 And rowArray(i + 1) > 0 Then
+            Do While i <= UBound(rowArray)
+                If rowArray(i) <= 0 Then
                     cnt = cnt + 1
                     i = i + 1
                 Else
@@ -223,8 +225,8 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
 
             ' dark ratio 1
             cnt = 0
-            Do While i < UBound(rowArray)
-                If rowArray(i) > 0 And rowArray(i - 1) <= 0 Then
+            Do While i <= UBound(rowArray)
+                If rowArray(i) > 0 Then
                     cnt = cnt + 1
                     i = i + 1
                 Else
@@ -350,4 +352,3 @@ Private Function MatrixRotate90(ByRef arg() As Variant) As Variant()
     MatrixRotate90 = ret
 
 End Function
-
