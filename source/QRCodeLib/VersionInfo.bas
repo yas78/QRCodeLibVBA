@@ -15,34 +15,29 @@ Private m_initialized As Boolean
 '------------------------------------------------------------------------------
 Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
 
-#If [DEBUG] Then
-    Debug.Assert ver >= 7 And _
-                 ver <= Constants.MAX_VERSION
-#End If
-
     Call Initialize
 
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
-    
+
     Dim versionInfoValue As Long
     versionInfoValue = m_versionInfoValues(ver)
-    
+
     Dim p1  As Long
     p1 = 0
-    
+
     Dim p2  As Long
     p2 = numModulesPerSide - 11
-    
+
     Dim i   As Long
     Dim v   As Long
-    
+
     For i = 0 To 17
         v = IIf((versionInfoValue And 2 ^ i) > 0, 3, -3)
-        
+
         moduleMatrix(p1)(p2) = v
         moduleMatrix(p2)(p1) = v
-        
+
         p2 = p2 + 1
 
         If i Mod 3 = 2 Then
@@ -52,7 +47,7 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
     Next
 
 End Sub
- 
+
 '------------------------------------------------------------------------------
 ' (äTóv)
 '  å^î‘èÓïÒÇÃó\ñÒóÃàÊÇîzíuÇµÇ‹Ç∑°
@@ -61,7 +56,7 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
-    
+
     Dim i As Long
     Dim j As Long
 
@@ -71,7 +66,7 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
             moduleMatrix(j)(i) = -3  ' ç∂â∫
         Next
     Next
-    
+
 End Sub
 
 '------------------------------------------------------------------------------

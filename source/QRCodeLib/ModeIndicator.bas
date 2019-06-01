@@ -13,4 +13,3 @@ Public Const ALPAHNUMERIC_VALUE         As Long = &H2
 Public Const STRUCTURED_APPEND_VALUE    As Long = &H3
 Public Const BYTE_VALUE                 As Long = &H4
 Public Const KANJI_VALUE                As Long = &H8
-

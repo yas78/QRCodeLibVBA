@@ -12,7 +12,7 @@ Option Explicit
 Implements IMaskingCondition
 
 Private Function IMaskingCondition_Evaluate(ByVal r As Long, ByVal c As Long) As Boolean
-    
+
     IMaskingCondition_Evaluate = c Mod 3 = 0
 
 End Function

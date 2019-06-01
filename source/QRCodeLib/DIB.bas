@@ -25,7 +25,7 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .bfReserved2 = 0
         .bfOffBits = 62
     End With
-                
+
     With bih
         .biSize = 40
         .biWidth = pictWidth
@@ -39,24 +39,24 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .biClrUsed = 0
         .biClrImportant = 0
     End With
-    
+
     With palette(0)
         .rgbBlue = CByte((foreColorRGB And &HFF0000) \ 2 ^ 16)
         .rgbGreen = CByte((foreColorRGB And &HFF00&) \ 2 ^ 8)
         .rgbRed = CByte(foreColorRGB And &HFF&)
         .rgbReserved = 0
     End With
-    
+
     With palette(1)
         .rgbBlue = CByte((backColorRGB And &HFF0000) \ 2 ^ 16)
         .rgbGreen = CByte((backColorRGB And &HFF00&) \ 2 ^ 8)
         .rgbRed = CByte(backColorRGB And &HFF&)
         .rgbReserved = 0
     End With
-    
+
     Dim ret() As Byte
     ReDim ret(62 + UBound(bitmapData))
-    
+
     With bfh
         Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
         Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
@@ -92,17 +92,17 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         ret(60) = .rgbRed
         ret(61) = .rgbReserved
     End With
-    
+
     Call MoveMemory(VarPtr(ret(62)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
-    
+
     Build1bppDIB = ret
-    
+
 End Function
-        
+
 Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
                               ByVal pictWidth As Long, _
                               ByVal pictHeight As Long) As Byte()
-        
+
     Dim bfh As BITMAPFILEHEADER
     Dim bih As BITMAPINFOHEADER
 
@@ -130,7 +130,7 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
 
     Dim ret() As Byte
     ReDim ret(54 + UBound(bitmapData))
-    
+
     With bfh
         Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
         Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
@@ -154,8 +154,7 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
     End With
 
     Call MoveMemory(VarPtr(ret(54)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
-    
-    Build24bppDIB = ret
-    
-End Function
 
+    Build24bppDIB = ret
+
+End Function

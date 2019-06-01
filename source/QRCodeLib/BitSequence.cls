@@ -34,7 +34,7 @@ Public Property Get Length() As Long
 End Property
 
 Public Sub Clear()
-    
+
     Set m_buffer = CreateObject("Scripting.Dictionary")
     m_bitCounter = 0
     m_space = 0
@@ -50,11 +50,6 @@ End Sub
 '  bitLength : データのビット数
 '------------------------------------------------------------------------------
 Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
-
-#If [DEBUG] Then
-    Debug.Assert data >= 0
-    Debug.Assert bitLength >= 0
-#End If
 
     Dim remainingLength As Long
     remainingLength = bitLength
@@ -87,7 +82,7 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
             m_space = m_space - remainingLength
             remainingLength = 0
         End If
-        
+
         m_buffer(m_buffer.Count - 1) = temp
     Loop
 
@@ -111,4 +106,3 @@ Public Function GetBytes() As Byte()
     GetBytes = ret
 
 End Function
-

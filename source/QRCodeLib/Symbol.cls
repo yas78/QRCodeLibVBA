@@ -9,16 +9,16 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Const COLOR_WHITE As String = "#FFFFFF"
-Private Const COLOR_BLACK As String = "#000000"
-
-Private Const DEFAULT_MODULE_SIZE As Long = 5
-
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
 #Else
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
+
+Private Const COLOR_WHITE As String = "#FFFFFF"
+Private Const COLOR_BLACK As String = "#000000"
+
+Private Const DEFAULT_MODULE_SIZE As Long = 5
 
 Private m_parent As Symbols
 
@@ -106,10 +106,6 @@ End Property
 '------------------------------------------------------------------------------
 Friend Function TryAppend(ByVal c As String) As Boolean
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
-
     Dim bitLength  As Long
     bitLength = m_currEncoder.GetCodewordBitLength(c)
 
@@ -139,10 +135,6 @@ End Function
 '------------------------------------------------------------------------------
 Friend Function TrySetEncodingMode( _
     ByVal encMode As EncodingMode, ByVal c As String) As Boolean
-
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
 
     Dim encoder As IQRCodeEncoder
     Set encoder = QRCodeEncoderFactory.CreateEncoder( _
@@ -427,10 +419,6 @@ Private Function GetMessageBytes() As Byte()
 End Function
 
 Private Sub WriteStructuredAppendHeader(ByVal bs As BitSequence)
-
-#If [DEBUG] Then
-    Debug.Assert m_parent.Count > 1
-#End If
 
     Call bs.Append(ModeIndicator.STRUCTURED_APPEND_VALUE, _
                    ModeIndicator.Length)

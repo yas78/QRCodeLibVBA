@@ -33,7 +33,7 @@ End Sub
 Private Property Get IQRCodeEncoder_BitCount() As Long
 
     IQRCodeEncoder_BitCount = m_bitCounter
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ End Property
 Private Property Get IQRCodeEncoder_CharCount() As Long
 
     IQRCodeEncoder_CharCount = m_charCounter
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ End Property
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
 
     IQRCodeEncoder_EncodingMode = EncodingMode.KANJI
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ End Property
 Private Property Get IQRCodeEncoder_ModeIndicator() As Long
 
     IQRCodeEncoder_ModeIndicator = ModeIndicator.KANJI_VALUE
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -71,18 +71,13 @@ End Property
 '  現在のモードシーケンスに文字を追加し、追加に要したビット数を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
-    
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
 
     Dim charBytes() As Byte
     charBytes = m_textEncoding.GetBytes(c)
 
-    Dim wd  As Long
+    Dim wd As Long
     wd = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
-    
+
     Select Case wd
         Case &H8140& To &H9FFC&
             wd = wd - &H8140&
@@ -98,14 +93,14 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Else
         ReDim Preserve m_data(UBound(m_data) + 1)
     End If
-    
+
     m_data(UBound(m_data)) = wd
-    
+
     m_charCounter = m_charCounter + 1
     m_bitCounter = m_bitCounter + 13
-    
+
     IQRCodeEncoder_Append = 13
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -114,13 +109,8 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
-
     IQRCodeEncoder_GetCodewordBitLength = 13
-     
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -133,13 +123,13 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     Set bs = New BitSequence
 
     Dim i As Long
-    
+
     For i = 0 To UBound(m_data)
         Call bs.Append(m_data(i), 13)
     Next
 
     IQRCodeEncoder_GetBytes = bs.GetBytes()
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -147,10 +137,6 @@ End Function
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
-
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
 
     Dim charBytes() As Byte
     charBytes = m_textEncoding.GetBytes(c)
@@ -162,20 +148,19 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
     Dim code As Long
     code = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
-    
+
     Dim lsb As Long
     lsb = code And &HFF&
-    
-    If code >= &H8140& And code <= &H9FFC& Or _
-       code >= &HE040& And code <= &HEBBF& Then
-       
-        IQRCodeEncoder_InSubset = lsb >= &H40& And _
-                                  lsb <= &HFC& And _
-                                  lsb <> &H7F&
+
+    If &H8140& <= code And code <= &H9FFC& Or _
+       &HE040& <= code And code <= &HEBBF& Then
+
+        IQRCodeEncoder_InSubset = &H40& <= lsb And lsb <= &HFC& And _
+                                  &H7F& <> lsb
     Else
         IQRCodeEncoder_InSubset = False
     End If
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -185,6 +170,5 @@ End Function
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
-    
-End Function
 
+End Function

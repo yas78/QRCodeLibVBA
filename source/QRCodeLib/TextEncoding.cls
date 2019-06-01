@@ -20,18 +20,18 @@ Private m_charset   As String
 Public Property Get Charset() As String
 
     Charset = m_charset
-    
+
 End Property
 
 Public Sub Init(ByVal charsetName As String)
-    
+
     m_charset = charsetName
-        
+
     Set m_sr = CreateObject("ADODB.Stream")
-    
+
     m_sr.Mode = adModeReadWrite
     m_sr.Charset = charsetName
-    
+
 End Sub
 
 Public Function GetBytes(ByVal s As String) As Byte()
@@ -44,7 +44,7 @@ Public Function GetBytes(ByVal s As String) As Byte()
 
     m_sr.Position = 0
     m_sr.Type = adTypeBinary
-    
+
     Select Case LCase(m_charset)
         Case "utf-16", "unicode"
             m_sr.Position = 2
@@ -53,11 +53,11 @@ Public Function GetBytes(ByVal s As String) As Byte()
         Case Else
             ' NOP
     End Select
-    
+
     Dim ret() As Byte
     ret = m_sr.Read()
     Call m_sr.Close
-    
+
     GetBytes = ret
-    
+
 End Function

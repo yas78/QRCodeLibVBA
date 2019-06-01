@@ -23,4 +23,3 @@ Public Enum EncodingMode
     EIGHT_BIT_BYTE
     KANJI
 End Enum
-

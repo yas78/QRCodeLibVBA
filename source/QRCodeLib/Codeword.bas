@@ -15,15 +15,10 @@ Private m_initialized As Boolean
 '------------------------------------------------------------------------------
 Public Function GetTotalNumber(ByVal ver As Long) As Long
 
-#If [DEBUG] Then
-    Debug.Assert ver >= Constants.MIN_VERSION And _
-                 ver <= Constants.MAX_VERSION
-#End If
-
     Call Initialize
 
     GetTotalNumber = m_totalNumbers(ver)
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -43,5 +38,5 @@ Private Sub Initialize()
         1156, 1258, 1364, 1474, 1588, 1706, 1828, 1921, 2051, 2185, _
         2323, 2465, 2611, 2761, 2876, 3034, 3196, 3362, 3532, 3706 _
     )
-        
+
 End Sub

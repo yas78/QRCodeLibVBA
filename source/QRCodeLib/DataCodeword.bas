@@ -16,18 +16,10 @@ Private m_initialized As Boolean
 Public Function GetTotalNumber( _
     ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
 
-#If [DEBUG] Then
-    Debug.Assert ecLevel >= ErrorCorrectionLevel.L And _
-                 ecLevel <= ErrorCorrectionLevel.H
-
-    Debug.Assert ver >= Constants.MIN_VERSION And _
-                 ver <= Constants.MAX_VERSION
-#End If
-
     Call Initialize
-  
+
     GetTotalNumber = m_totalNumbers(ecLevel)(ver)
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -39,7 +31,7 @@ Private Sub Initialize()
     If m_initialized Then Exit Sub
 
     m_initialized = True
-    
+
     Dim ecLevelL() As Variant
     ecLevelL = Array( _
            0, _
@@ -48,7 +40,7 @@ Private Sub Initialize()
          932, 1006, 1094, 1174, 1276, 1370, 1468, 1531, 1631, 1735, _
         1843, 1955, 2071, 2191, 2306, 2434, 2566, 2702, 2812, 2956 _
     )
-    
+
     Dim ecLevelM() As Variant
     ecLevelM = Array( _
            0, _
@@ -57,7 +49,7 @@ Private Sub Initialize()
          714, 782, 860, 914, 1000, 1062, 1128, 1193, 1267, 1373, _
         1455, 1541, 1631, 1725, 1812, 1914, 1992, 2102, 2216, 2334 _
     )
-    
+
     Dim ecLevelQ() As Variant
     ecLevelQ = Array( _
            0, _
@@ -66,7 +58,7 @@ Private Sub Initialize()
          512, 568, 614, 664, 718, 754, 808, 871, 911, 985, _
         1033, 1115, 1171, 1231, 1286, 1354, 1426, 1502, 1582, 1666 _
     )
-    
+
     Dim ecLevelH() As Variant
     ecLevelH = Array( _
           0, _
@@ -75,7 +67,7 @@ Private Sub Initialize()
         406, 442, 464, 514, 538, 596, 628, 661, 701, 745, _
         793, 845, 901, 961, 986, 1054, 1096, 1142, 1222, 1276 _
     )
-    
+
     m_totalNumbers = Array(ecLevelL, ecLevelM, ecLevelQ, ecLevelH)
 
 End Sub

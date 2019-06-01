@@ -2,17 +2,6 @@ Attribute VB_Name = "ImageConverter"
 Option Private Module
 Option Explicit
 
-Private Const IID_IPicture As String = "{7BF80980-BF32-101A-8BBB-00AA00300CAB}"
-
-Private Const S_OK As Long = 0
-
-Private Const GMEM_MOVEABLE As Long = &H2
-Private Const GMEM_ZEROINIT As Long = &H40
-Private Const GHND          As Long = GMEM_MOVEABLE Or GMEM_ZEROINIT
-
-Private Const WIN32_TRUE  As Long = 1
-Private Const WIN32_FALSE As Long = 0
-
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
     Private Declare PtrSafe Function IIDFromString Lib "ole32" (ByVal lpsz As LongPtr, ByRef lpiid As UUID) As Long
@@ -21,7 +10,7 @@ Private Const WIN32_FALSE As Long = 0
     Private Declare PtrSafe Function GlobalLock Lib "kernel32" (ByVal hMem As LongPtr) As LongPtr
     Private Declare PtrSafe Function GlobalUnlock Lib "kernel32" (ByVal hMem As LongPtr) As Long
     Private Declare PtrSafe Function GlobalFree Lib "kernel32" (ByVal hMem As LongPtr) As LongPtr
-    
+
     #If Win64 Then
         Private Declare PtrSafe Function OleLoadPicture Lib "oleaut32" (ByVal pStream As IUnknown, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
     #Else
@@ -37,6 +26,17 @@ Private Const WIN32_FALSE As Long = 0
     Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
     Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As IUnknown, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
 #End If
+
+Private Const IID_IPicture As String = "{7BF80980-BF32-101A-8BBB-00AA00300CAB}"
+
+Private Const S_OK As Long = 0
+
+Private Const GMEM_MOVEABLE As Long = &H2
+Private Const GMEM_ZEROINIT As Long = &H40
+Private Const GHND          As Long = GMEM_MOVEABLE Or GMEM_ZEROINIT
+
+Private Const WIN32_TRUE  As Long = 1
+Private Const WIN32_FALSE As Long = 0
 
 Private Type UUID
     Data1    As Long

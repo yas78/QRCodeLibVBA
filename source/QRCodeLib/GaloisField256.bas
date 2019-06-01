@@ -12,14 +12,14 @@ Public Function ToExp(ByVal arg As Long) As Long
 
     Call Initialize
     ToExp = m_intToExpTable(arg)
-    
+
 End Function
 
 Public Function ToInt(ByVal arg As Long) As Long
 
     Call Initialize
     ToInt = m_expToIntTable(arg)
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ Private Sub Initialize()
         118, 196, 23, 73, 236, 127, 12, 111, 246, 108, 161, 59, 82, 41, 157, 85, 170, 251, 96, 134, _
         177, 187, 204, 62, 90, 203, 89, 95, 176, 156, 169, 160, 81, 11, 245, 22, 235, 122, 117, _
         44, 215, 79, 174, 213, 233, 230, 231, 173, 232, 116, 214, 244, 234, 168, 80, 88, 175)
-      
+
     m_expToIntTable = Array( _
         1, 2, 4, 8, 16, 32, 64, 128, 29, 58, 116, 232, 205, 135, 19, 38, 76, 152, 45, 90, 180, 117, _
         234, 201, 143, 3, 6, 12, 24, 48, 96, 192, 157, 39, 78, 156, 37, 74, 148, 53, 106, 212, 181, _

@@ -12,10 +12,6 @@ Private m_initialized As Boolean
 '------------------------------------------------------------------------------
 Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
 
-#If [DEBUG] Then
-    Debug.Assert ver >= 2 And ver <= Constants.MAX_VERSION
-#End If
-
     Call Initialize
 
     Dim centerArray As Variant
@@ -23,13 +19,13 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
 
     Dim maxIndex As Long
     maxIndex = UBound(centerArray)
-    
+
     Dim i As Long
     Dim j As Long
-    
+
     Dim r As Long
     Dim c As Long
-    
+
     For i = 0 To maxIndex
         r = centerArray(i)
 
@@ -40,44 +36,44 @@ Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
             If i = 0 And j = 0 Or _
                i = 0 And j = maxIndex Or _
                i = maxIndex And j = 0 Then
-                
+
                 GoTo Continue_j
             End If
-            
+
             moduleMatrix(r - 2)(c - 2) = 2
             moduleMatrix(r - 2)(c - 1) = 2
             moduleMatrix(r - 2)(c + 0) = 2
             moduleMatrix(r - 2)(c + 1) = 2
             moduleMatrix(r - 2)(c + 2) = 2
-            
+
             moduleMatrix(r - 1)(c - 2) = 2
             moduleMatrix(r - 1)(c - 1) = -2
             moduleMatrix(r - 1)(c + 0) = -2
             moduleMatrix(r - 1)(c + 1) = -2
             moduleMatrix(r - 1)(c + 2) = 2
-            
+
             moduleMatrix(r + 0)(c - 2) = 2
             moduleMatrix(r + 0)(c - 1) = -2
             moduleMatrix(r + 0)(c + 0) = 2
             moduleMatrix(r + 0)(c + 1) = -2
             moduleMatrix(r + 0)(c + 2) = 2
-            
+
             moduleMatrix(r + 1)(c - 2) = 2
             moduleMatrix(r + 1)(c - 1) = -2
             moduleMatrix(r + 1)(c + 0) = -2
             moduleMatrix(r + 1)(c + 1) = -2
             moduleMatrix(r + 1)(c + 2) = 2
-            
+
             moduleMatrix(r + 2)(c - 2) = 2
             moduleMatrix(r + 2)(c - 1) = 2
             moduleMatrix(r + 2)(c + 0) = 2
             moduleMatrix(r + 2)(c + 1) = 2
             moduleMatrix(r + 2)(c + 2) = 2
-            
+
 Continue_j:
         Next
     Next
-    
+
 End Sub
 
 '------------------------------------------------------------------------------
@@ -130,5 +126,5 @@ Private Sub Initialize()
     m_centerPosArrays(38) = Array(6, 32, 58, 84, 110, 136, 162)
     m_centerPosArrays(39) = Array(6, 26, 54, 82, 110, 138, 166)
     m_centerPosArrays(40) = Array(6, 30, 58, 86, 114, 142, 170)
-    
+
 End Sub

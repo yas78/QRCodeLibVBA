@@ -23,7 +23,7 @@ Private m_bitCounter    As Long
 '  ビット数を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_BitCount() As Long
-    
+
     IQRCodeEncoder_BitCount = m_bitCounter
 
 End Property
@@ -33,7 +33,7 @@ End Property
 '  文字数を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_CharCount() As Long
-    
+
     IQRCodeEncoder_CharCount = m_charCounter
 
 End Property
@@ -43,7 +43,7 @@ End Property
 '  符号化モードを表す EncodingMode 列挙体の値を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
-    
+
     IQRCodeEncoder_EncodingMode = EncodingMode.ALPHA_NUMERIC
 
 End Property
@@ -53,7 +53,7 @@ End Property
 '  モード指示子を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_ModeIndicator() As Long
-    
+
     IQRCodeEncoder_ModeIndicator = ModeIndicator.ALPAHNUMERIC_VALUE
 
 End Property
@@ -64,23 +64,18 @@ End Property
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
-
     Dim wd As Long
     wd = ConvertCharCode(c)
-    
+
     Dim ret As Long
-    
+
     If m_charCounter Mod 2 = 0 Then
         If m_charCounter = 0 Then
             ReDim m_data(0)
         Else
             ReDim Preserve m_data(UBound(m_data) + 1)
         End If
-        
+
         m_data(UBound(m_data)) = wd
         ret = 6
     Else
@@ -91,7 +86,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
     m_charCounter = m_charCounter + 1
     m_bitCounter = m_bitCounter + ret
-    
+
     IQRCodeEncoder_Append = ret
 
 End Function
@@ -102,17 +97,12 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
-
     If m_charCounter Mod 2 = 0 Then
         IQRCodeEncoder_GetCodewordBitLength = 6
     Else
         IQRCodeEncoder_GetCodewordBitLength = 5
     End If
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -123,26 +113,26 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
 
     Dim bs As BitSequence
     Set bs = New BitSequence
-    
+
     Dim bitLength As Long
     bitLength = 11
-    
+
     Dim i As Long
-    
+
     For i = 0 To UBound(m_data) - 1
         Call bs.Append(m_data(i), bitLength)
     Next
-    
+
     If m_charCounter Mod 2 = 0 Then
         bitLength = 11
     Else
         bitLength = 6
     End If
-    
+
     Call bs.Append(m_data(UBound(m_data)), bitLength)
-            
+
     IQRCodeEncoder_GetBytes = bs.GetBytes()
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -151,12 +141,8 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
-
     Dim ret As Boolean
-    
+
     Select Case Asc(c)
         ' (Space)
         Case 32
@@ -182,10 +168,10 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
         ' A - Z
         Case 65 To 90
             ret = True
-    
+
         Case Else
             ret = False
-            
+
     End Select
 
     IQRCodeEncoder_InSubset = ret
@@ -198,12 +184,8 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
-
     Dim ret As Boolean
-    
+
     Select Case Asc(c)
         ' (Space)
         Case 32
@@ -226,12 +208,12 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
         ' A - Z
         Case 65 To 90
             ret = True
-    
+
         Case Else
             ret = False
-        
+
     End Select
-    
+
     IQRCodeEncoder_InExclusiveSubset = ret
 
 End Function
@@ -242,10 +224,6 @@ End Function
 '  場合は -1 を返します。
 '------------------------------------------------------------------------------
 Private Function ConvertCharCode(ByVal c As String) As Long
-
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
 
     Dim code As Long
     code = Asc(c)
@@ -275,11 +253,10 @@ Private Function ConvertCharCode(ByVal c As String) As Long
         ' A - Z
         Case 65 To 90
             ConvertCharCode = code - 55
-            
+
         Case Else
             ConvertCharCode = -1
-            
+
     End Select
 
 End Function
-

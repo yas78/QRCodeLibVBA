@@ -5,9 +5,9 @@ Attribute VB_Name = "QuietZone"
 Option Private Module
 Option Explicit
 
-Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
+Public Const QUIET_ZONE_WIDTH As Long = 4
 
-    Const QUIET_ZONE_WIDTH As Long = 4
+Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
 
     Dim ret() As Variant
     ReDim ret(UBound(moduleMatrix) + QUIET_ZONE_WIDTH * 2)

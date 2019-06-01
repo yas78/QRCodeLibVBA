@@ -23,65 +23,60 @@ Public Sub Place(ByRef moduleMatrix() As Variant, _
                  ByVal ecLevel As ErrorCorrectionLevel, _
                  ByVal maskPatternReference As Long)
 
-#If [DEBUG] Then
-    Debug.Assert maskPatternReference >= 0 And _
-                 maskPatternReference <= 7
-#End If
-
     Call Initialize
 
     Dim formatInfoValue As Long
     formatInfoValue = GetFormatInfoValue(ecLevel, maskPatternReference)
-    
+
     Dim temp As Long
     Dim v    As Long
-    
+
     Dim i As Long
-           
+
     Dim r1 As Long
     r1 = 0
-    
+
     Dim c1 As Long
     c1 = UBound(moduleMatrix)
-    
+
     For i = 0 To 7
         temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
-        
+
         v = IIf(temp > 0, 3, -3)
-        
+
         moduleMatrix(r1)(8) = v
         moduleMatrix(8)(c1) = v
-        
+
         r1 = r1 + 1
         c1 = c1 - 1
-        
+
         If r1 = 6 Then
             r1 = r1 + 1
         End If
     Next
-    
+
     Dim r2 As Long
     r2 = UBound(moduleMatrix) - 6
-    
+
     Dim c2 As Long
     c2 = 7
-    
+
     For i = 8 To 14
         temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
-               
+
         v = IIf(temp > 0, 3, -3)
-        
+
         moduleMatrix(r2)(8) = v
         moduleMatrix(8)(c2) = v
-        
+
         r2 = r2 + 1
         c2 = c2 - 1
-        
+
         If c2 = 6 Then
             c2 = c2 - 1
         End If
     Next
-    
+
 End Sub
 
 '------------------------------------------------------------------------------
@@ -92,9 +87,9 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
-    
+
     Dim i As Long
-    
+
     For i = 0 To 8
         ' タイミグパターンの領域ではない場合
         If i <> 6 Then
@@ -102,15 +97,15 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
             moduleMatrix(i)(8) = -3
         End If
     Next
-    
+
     For i = numModulesPerSide - 8 To numModulesPerSide - 1
         moduleMatrix(8)(i) = -3
         moduleMatrix(i)(8) = -3
     Next
-    
+
     ' 固定暗モジュールを配置(マスクの適用前に配置する)
     moduleMatrix(numModulesPerSide - 8)(8) = 2
-    
+
 End Sub
 
 '------------------------------------------------------------------------------
@@ -126,27 +121,27 @@ Private Function GetFormatInfoValue( _
     Call Initialize
 
     Dim indicator As Long
-    
+
     Select Case ecLevel
         Case ErrorCorrectionLevel.L
             indicator = 1
-            
+
         Case ErrorCorrectionLevel.M
             indicator = 0
-            
+
         Case ErrorCorrectionLevel.Q
             indicator = 3
-            
+
         Case ErrorCorrectionLevel.H
             indicator = 2
-            
+
         Case Else
             Call Err.Raise(5)
-        
+
     End Select
 
     GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPatternReference)
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -169,6 +164,5 @@ Private Sub Initialize()
 
     ' 形式情報のマスクパターン
     m_formatInfoMaskArray = Array(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
-        
-End Sub
 
+End Sub

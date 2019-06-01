@@ -14,6 +14,5 @@ Implements IMaskingCondition
 Private Function IMaskingCondition_Evaluate(ByVal r As Long, ByVal c As Long) As Boolean
 
     IMaskingCondition_Evaluate = r Mod 2 = 0
-    
-End Function
 
+End Function

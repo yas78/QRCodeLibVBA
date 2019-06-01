@@ -8,7 +8,7 @@ Public Function CreateEncoder( _
 
     Dim ret As IQRCodeEncoder
     Dim enc As ByteEncoder
-    
+
     Select Case encMode
         Case EncodingMode.NUMERIC
             Set ret = New NumericEncoder
@@ -28,8 +28,7 @@ Public Function CreateEncoder( _
             Call Err.Raise(5)
 
     End Select
-    
+
     Set CreateEncoder = ret
 
 End Function
-

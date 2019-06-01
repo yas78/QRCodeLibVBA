@@ -272,7 +272,7 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
 
     Dim i As Long
 
-    For i = 4 To UBound(arg) - 4
+    For i = QuietZone.QUIET_ZONE_WIDTH To UBound(arg) - QuietZone.QUIET_ZONE_WIDTH
         If arg(i) > 0 And arg(i - 1) <= 0 Then
             s = i
         End If
@@ -299,12 +299,12 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
 
     Dim darkCount As Long
 
-    Dim r As Long
-    Dim c As Long
+    Dim rowArray As Variant
+    Dim v As Variant
 
-    For r = 0 To UBound(moduleMatrix)
-        For c = 0 To UBound(moduleMatrix(r))
-            If moduleMatrix(r)(c) > 0 Then
+    For Each rowArray In moduleMatrix
+        For Each v In rowArray
+            If v > 0 Then
                 darkCount = darkCount + 1
             End If
         Next

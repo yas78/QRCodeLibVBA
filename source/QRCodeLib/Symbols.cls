@@ -37,14 +37,14 @@ Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
                       ByVal maxVer As Long, _
                       ByVal allowStructuredAppend As Boolean, _
                       ByVal byteModeCharsetName As String)
-    
+
     If maxVer < Constants.MIN_VERSION Or _
        maxVer > Constants.MAX_VERSION Then
         Call Err.Raise(5)
     End If
 
     Set m_items = New Collection
-    
+
     Set m_encNum = QRCodeEncoderFactory.CreateEncoder( _
             EncodingMode.NUMERIC, byteModeCharsetName)
     Set m_encAlpha = QRCodeEncoderFactory.CreateEncoder( _
@@ -61,7 +61,7 @@ Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
     m_byteModeCharsetName = byteModeCharsetName
 
     m_structuredAppendParity = 0
-    
+
     Set m_byteModeEncoding = New TextEncoding
     Call m_byteModeEncoding.Init(byteModeCharsetName)
     Set m_shiftJISEncoding = New TextEncoding
@@ -79,7 +79,6 @@ End Sub
 '  既定メンバとして [Attribute Item.VB_UserMemId = 0] が指定されています。
 '------------------------------------------------------------------------------
 Public Property Get Item(ByVal idx As Long) As Symbol
-Attribute Item.VB_UserMemId = 0
 
     Set Item = m_items(idx + 1)
 
@@ -90,7 +89,7 @@ End Property
 '  シンボル数を取得します。
 '------------------------------------------------------------------------------
 Public Property Get Count() As Long
-    
+
     Count = m_items.Count
 
 End Property
@@ -100,7 +99,7 @@ End Property
 '  構造的連接モードの使用可否を表すブール値を取得します。
 '------------------------------------------------------------------------------
 Friend Property Get StructuredAppendAllowed() As Boolean
-    
+
     StructuredAppendAllowed = m_structuredAppendAllowed
 
 End Property
@@ -110,7 +109,7 @@ End Property
 '  構造的連接のパリティを取得します。
 '------------------------------------------------------------------------------
 Friend Property Get StructuredAppendParity() As Long
-    
+
     StructuredAppendParity = m_structuredAppendParity
 
 End Property
@@ -122,12 +121,12 @@ End Property
 Friend Property Get MinVersion() As Long
 
     MinVersion = m_minVersion
-    
+
 End Property
 Friend Property Let MinVersion(ByVal Value As Long)
 
     m_minVersion = Value
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -137,7 +136,7 @@ End Property
 Friend Property Get MaxVersion() As Long
 
     MaxVersion = m_maxVersion
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -155,7 +154,7 @@ End Property
 '  バイトモードの文字コードを取得します。
 '------------------------------------------------------------------------------
 Friend Property Get ByteModeCharset() As String
-    
+
     ByteModeCharset = m_byteModeCharsetName
 
 End Property
@@ -166,9 +165,7 @@ End Property
 '  [Attribute NewEnum.VB_UserMemId = -4] が指定されています。
 '------------------------------------------------------------------------------
 Public Property Get NewEnum() As IUnknown
-Attribute NewEnum.VB_UserMemId = -4
-Attribute NewEnum.VB_MemberFlags = "40"
-    
+
     Set NewEnum = m_items.[_NewEnum]
 
 End Property
@@ -181,18 +178,13 @@ End Property
 '  追加したシンボルを表すオブジェクト
 '------------------------------------------------------------------------------
 Private Function Add() As Symbol
-    
-#If [DEBUG] Then
-    Debug.Assert m_structuredAppendAllowed
-    Debug.Assert m_items.Count < 16
-#End If
 
     Set m_currSymbol = New Symbol
     Call m_currSymbol.Initialize(Me)
     Call m_items.Add(m_currSymbol)
 
     Set Add = m_currSymbol
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -200,9 +192,9 @@ End Function
 '  文字列を追加します。
 '------------------------------------------------------------------------------
 Public Sub AppendText(ByVal s As String)
-    
+
     If Len(s) = 0 Then Call Err.Raise(5)
-    
+
     Dim oldMode As EncodingMode
     Dim newMode As EncodingMode
     Dim i       As Long
@@ -210,30 +202,30 @@ Public Sub AppendText(ByVal s As String)
 
     For i = 1 To Len(s)
         oldMode = m_currSymbol.CurrentEncodingMode
-    
+
         Select Case oldMode
             Case EncodingMode.UNKNOWN
                 newMode = SelectInitialMode(s, i)
-                
+
             Case EncodingMode.NUMERIC
                 newMode = SelectModeWhileInNumericMode(s, i)
-                
+
             Case EncodingMode.ALPHA_NUMERIC
                 newMode = SelectModeWhileInAlphanumericMode(s, i)
-                
+
             Case EncodingMode.EIGHT_BIT_BYTE
                 newMode = SelectModeWhileInByteMode(s, i)
-                
+
             Case EncodingMode.KANJI
                 newMode = SelectInitialMode(s, i)
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
-    
+
         c = Mid$(s, i, 1)
-    
+
         If newMode <> oldMode Then
             If Not m_currSymbol.TrySetEncodingMode(newMode, c) Then
                 If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
@@ -245,19 +237,19 @@ Public Sub AppendText(ByVal s As String)
                 Call m_currSymbol.TrySetEncodingMode(newMode, c)
             End If
         End If
-    
+
         If Not m_currSymbol.TryAppend(c) Then
             If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
                 Call Err.Raise(6)
             End If
-            
+
             Call Add
             newMode = SelectInitialMode(s, i)
             Call m_currSymbol.TrySetEncodingMode(newMode, c)
             Call m_currSymbol.TryAppend(c)
         End If
     Next
-    
+
 End Sub
 
 '------------------------------------------------------------------------------
@@ -265,10 +257,6 @@ End Sub
 '  構造的連接のパリティを更新します。
 '------------------------------------------------------------------------------
 Friend Sub UpdateParity(ByVal c As String)
-    
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
 
     Dim charBytes() As Byte
     If m_encKanji.InSubset(c) Then
@@ -278,7 +266,7 @@ Friend Sub UpdateParity(ByVal c As String)
     End If
 
     Dim i As Long
-    
+
     For i = 0 To UBound(charBytes)
         m_structuredAppendParity = m_structuredAppendParity Xor charBytes(i)
     Next
@@ -295,13 +283,13 @@ End Sub
 '------------------------------------------------------------------------------
 Private Function SelectInitialMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    
+
     Dim cnt     As Long
     Dim flg     As Boolean
     Dim flg1    As Boolean
     Dim flg2    As Boolean
     Dim i       As Long
-            
+
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.KANJI
         Exit Function
@@ -309,11 +297,11 @@ Private Function SelectInitialMode( _
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-    
+
     ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
         flg = False
-        
+
         For i = startIndex To Len(s)
             If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
                 cnt = cnt + 1
@@ -325,18 +313,18 @@ Private Function SelectInitialMode( _
         Select Case m_currSymbol.Version
             Case 1 To 9
                 flg = cnt < 6
-                
+
             Case 10 To 26
                 flg = cnt < 7
-                
+
             Case 27 To 40
                 flg = cnt < 8
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
-        
+
         If flg Then
             If (startIndex + cnt) <= Len(s) Then
                 If m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
@@ -359,7 +347,7 @@ Private Function SelectInitialMode( _
         cnt = 0
         flg1 = False
         flg2 = False
-        
+
         For i = startIndex To Len(s)
             If m_encNum.InSubset(Mid$(s, i, 1)) Then
                 cnt = cnt + 1
@@ -367,23 +355,23 @@ Private Function SelectInitialMode( _
                 Exit For
             End If
         Next
-        
+
         Select Case m_currSymbol.Version
             Case 1 To 9
                 flg1 = cnt < 4
                 flg2 = cnt < 7
-            
+
             Case 10 To 26
                 flg1 = cnt < 4
                 flg2 = cnt < 8
-                
+
             Case 27 To 40
                 flg1 = cnt < 5
                 flg2 = cnt < 9
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
 
         If flg1 Then
@@ -412,10 +400,8 @@ Private Function SelectInitialMode( _
             SelectInitialMode = EncodingMode.NUMERIC
             Exit Function
         End If
-        
     Else
         Call Err.Raise(51)
-        
     End If
 
 End Function
@@ -430,21 +416,21 @@ End Function
 '------------------------------------------------------------------------------
 Private Function SelectModeWhileInNumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    
+
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.KANJI
         Exit Function
-        
+
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-    
+
     ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.ALPHA_NUMERIC
         Exit Function
-        
+
     End If
-    
+
     SelectModeWhileInNumericMode = EncodingMode.NUMERIC
 
 End Function
@@ -459,21 +445,21 @@ End Function
 '------------------------------------------------------------------------------
 Private Function SelectModeWhileInAlphanumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    
+
     Dim cnt As Long
     Dim flg As Boolean
     Dim i   As Long
-    
+
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.KANJI
         Exit Function
-    
+
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-        
+
     End If
-    
+
     cnt = 0
     flg = False
 
@@ -481,7 +467,7 @@ Private Function SelectModeWhileInAlphanumericMode( _
         If Not m_encAlpha.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
-        
+
         If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
         Else
@@ -489,7 +475,7 @@ Private Function SelectModeWhileInAlphanumericMode( _
             Exit For
         End If
     Next
-        
+
     If flg Then
         Select Case m_currSymbol.Version
             Case 1 To 9
@@ -497,13 +483,13 @@ Private Function SelectModeWhileInAlphanumericMode( _
 
             Case 10 To 26
                 flg = cnt >= 15
-                
+
             Case 27 To 40
                 flg = cnt >= 17
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
 
         If flg Then
@@ -526,11 +512,11 @@ End Function
 '------------------------------------------------------------------------------
 Private Function SelectModeWhileInByteMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    
+
     Dim cnt     As Long
     Dim flg     As Boolean
     Dim i       As Long
-    
+
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInByteMode = EncodingMode.KANJI
         Exit Function
@@ -540,17 +526,17 @@ Private Function SelectModeWhileInByteMode( _
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
-    
+
         If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
-            
+
         ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
             flg = True
             Exit For
-            
+
         Else
             Exit For
-            
+
         End If
     Next
 
@@ -558,18 +544,18 @@ Private Function SelectModeWhileInByteMode( _
         Select Case m_currSymbol.Version
             Case 1 To 9
                 flg = cnt >= 6
-                
+
             Case 10 To 26
                 flg = cnt >= 8
-                
+
             Case 27 To 40
                 flg = cnt >= 9
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
-        
+
         If flg Then
             SelectModeWhileInByteMode = EncodingMode.NUMERIC
             Exit Function
@@ -583,19 +569,19 @@ Private Function SelectModeWhileInByteMode( _
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For
         End If
-        
+
         If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
-            
+
         ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
             flg = True
             Exit For
-            
+
         Else
             Exit For
-            
+
         End If
-        
+
         i = i + 1
     Next
 
@@ -603,27 +589,24 @@ Private Function SelectModeWhileInByteMode( _
         Select Case m_currSymbol.Version
             Case 1 To 9
                 flg = cnt >= 11
-                
+
             Case 10 To 26
                 flg = cnt >= 15
-                
+
             Case 27 To 40
                 flg = cnt >= 16
-                
+
             Case Else
                 Call Err.Raise(51)
-            
+
         End Select
 
         If flg Then
             SelectModeWhileInByteMode = EncodingMode.ALPHA_NUMERIC
             Exit Function
-            
         End If
-        
     End If
 
     SelectModeWhileInByteMode = EncodingMode.EIGHT_BIT_BYTE
-    
-End Function
 
+End Function

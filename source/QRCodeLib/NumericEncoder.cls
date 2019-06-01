@@ -25,7 +25,7 @@ Private m_bitCounter    As Long
 Private Property Get IQRCodeEncoder_BitCount() As Long
 
     IQRCodeEncoder_BitCount = m_bitCounter
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ End Property
 Private Property Get IQRCodeEncoder_CharCount() As Long
 
     IQRCodeEncoder_CharCount = m_charCounter
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ End Property
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
 
     IQRCodeEncoder_EncodingMode = EncodingMode.NUMERIC
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ End Property
 Private Property Get IQRCodeEncoder_ModeIndicator() As Long
 
     IQRCodeEncoder_ModeIndicator = ModeIndicator.NUMERIC_VALUE
-    
+
 End Property
 
 '------------------------------------------------------------------------------
@@ -64,27 +64,22 @@ End Property
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
-
     Dim ret As Long
-    
+
     If m_charCounter Mod 3 = 0 Then
         If m_charCounter = 0 Then
             ReDim m_data(0)
         Else
             ReDim Preserve m_data(UBound(m_data) + 1)
         End If
-        
+
         m_data(UBound(m_data)) = CLng(c)
         ret = 4
-        
+
     Else
         m_data(UBound(m_data)) = m_data(UBound(m_data)) * 10 + CLng(c)
         ret = 3
-        
+
     End If
 
     m_charCounter = m_charCounter + 1
@@ -100,17 +95,12 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-    Debug.Assert IQRCodeEncoder_InSubset(c)
-#End If
-
     If m_charCounter Mod 3 = 0 Then
         IQRCodeEncoder_GetCodewordBitLength = 4
     Else
         IQRCodeEncoder_GetCodewordBitLength = 3
     End If
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -121,25 +111,25 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
 
     Dim bs As BitSequence
     Set bs = New BitSequence
-    
+
     Dim i As Long
-    
+
     For i = 0 To UBound(m_data) - 1
         Call bs.Append(m_data(i), 10)
     Next
-            
+
     Select Case m_charCounter Mod 3
         Case 1
             Call bs.Append(m_data(UBound(m_data)), 4)
-    
+
         Case 2
             Call bs.Append(m_data(UBound(m_data)), 7)
-            
+
         Case Else
             Call bs.Append(m_data(UBound(m_data)), 10)
 
     End Select
-    
+
     IQRCodeEncoder_GetBytes = bs.GetBytes()
 
 End Function
@@ -150,12 +140,8 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
-
     IQRCodeEncoder_InSubset = c Like "[0-9]"
-    
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -164,10 +150,6 @@ End Function
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
-#If [DEBUG] Then
-    Debug.Assert Len(c) = 1
-#End If
-
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
-    
+
 End Function
