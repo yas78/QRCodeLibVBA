@@ -13,7 +13,7 @@ Private m_initialized As Boolean
 ' (ŠT—v)
 '  Œ^”Ôî•ñ‚ğ”z’u‚µ‚Ü‚·¡
 '------------------------------------------------------------------------------
-Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
+Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
 
     Call Initialize
 

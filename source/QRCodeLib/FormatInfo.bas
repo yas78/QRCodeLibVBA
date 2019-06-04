@@ -19,9 +19,9 @@ Private m_initialized As Boolean
 '  ecLevel              : 誤り訂正レベル
 '  maskPatternReference : マスクパターン参照子
 '------------------------------------------------------------------------------
-Public Sub Place(ByRef moduleMatrix() As Variant, _
-                 ByVal ecLevel As ErrorCorrectionLevel, _
-                 ByVal maskPatternReference As Long)
+Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
+                 ByVal maskPatternReference As Long, _
+                 ByRef moduleMatrix() As Variant)
 
     Call Initialize
 

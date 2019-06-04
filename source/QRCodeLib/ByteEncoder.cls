@@ -87,17 +87,16 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     charBytes = m_textEncoding.GetBytes(c)
 
     Dim ret As Long
-    Dim i   As Long
+    Dim v   As Variant
 
-    For i = 0 To UBound(charBytes)
-
+    For Each v In charBytes
         If m_charCounter = 0 Then
             ReDim m_data(0)
         Else
             ReDim Preserve m_data(UBound(m_data) + 1)
         End If
 
-        m_data(UBound(m_data)) = charBytes(i)
+        m_data(UBound(m_data)) = v
         m_charCounter = m_charCounter + 1
         m_bitCounter = m_bitCounter + 8
         ret = ret + 8

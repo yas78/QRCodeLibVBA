@@ -10,7 +10,7 @@ Private m_initialized As Boolean
 ' (概要)
 '  位置合わせパターンを配置します。
 '------------------------------------------------------------------------------
-Public Sub Place(ByRef moduleMatrix() As Variant, ByVal ver As Long)
+Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
 
     Call Initialize
 

@@ -99,15 +99,13 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
     For r = 0 To UBound(moduleMatrix) - 1
         For c = 0 To UBound(moduleMatrix(r)) - 1
             temp = moduleMatrix(r)(c) > 0
-            isSameColor = True
 
-            isSameColor = isSameColor And (moduleMatrix(r + 0)(c + 1) > 0 = temp)
-            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 0) > 0 = temp)
-            isSameColor = isSameColor And (moduleMatrix(r + 1)(c + 1) > 0 = temp)
-
-            If isSameColor Then
+            If (moduleMatrix(r + 0)(c + 1) > 0 = temp) And _
+               (moduleMatrix(r + 1)(c + 0) > 0 = temp) And _
+               (moduleMatrix(r + 1)(c + 1) > 0 = temp) Then
                 penalty = penalty + 3
             End If
+
         Next
     Next
 

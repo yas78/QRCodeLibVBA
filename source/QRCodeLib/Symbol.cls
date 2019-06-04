@@ -178,7 +178,7 @@ Private Sub SelectVersion()
 
     Dim encMode As Variant ' Subtype : EncodingMode
 
-    For Each encMode In m_segmentCounter.Keys
+    For Each encMode In m_segmentCounter.Keys()
         Dim num As Long
         num = m_segmentCounter(encMode)
 
@@ -525,7 +525,7 @@ Private Function GetModuleMatrix() As Variant()
     Call TimingPattern.Place(moduleMatrix)
 
     If m_currVersion >= 2 Then
-        Call AlignmentPattern.Place(moduleMatrix, m_currVersion)
+        Call AlignmentPattern.Place(m_currVersion, moduleMatrix)
     End If
 
     Call FormatInfo.PlaceTempBlank(moduleMatrix)
@@ -537,17 +537,7 @@ Private Function GetModuleMatrix() As Variant()
     Call PlaceSymbolChar(moduleMatrix)
     Call RemainderBit.Place(moduleMatrix)
 
-    Dim maskPatternReference As Long
-    maskPatternReference = Masking.Apply( _
-        moduleMatrix, m_currVersion, m_parent.ErrorCorrectionLevel)
-
-    Call FormatInfo.Place(moduleMatrix, _
-                          m_parent.ErrorCorrectionLevel, _
-                          maskPatternReference)
-
-    If m_currVersion >= 7 Then
-        Call VersionInfo.Place(moduleMatrix, m_currVersion)
-    End If
+    Call Masking.Apply(m_currVersion, m_parent.ErrorCorrectionLevel, moduleMatrix)
 
     GetModuleMatrix = moduleMatrix
 
@@ -575,14 +565,14 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     rowDirection = -1
 
     Dim bitPos As Long
-    Dim i As Long
-
-    For i = 0 To UBound(data)
+    Dim v As Variant
+    
+    For Each v In data
         bitPos = 7
 
         Do While bitPos >= 0
             If moduleMatrix(r)(c) = 0 Then
-                moduleMatrix(r)(c) = IIf((data(i) And 2 ^ bitPos) > 0, 1, -1)
+                moduleMatrix(r)(c) = IIf((v And 2 ^ bitPos) > 0, 1, -1)
                 bitPos = bitPos - 1
             End If
 

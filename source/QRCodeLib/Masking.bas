@@ -17,67 +17,43 @@ Option Explicit
 ' (戻り値)
 '  適用されたマスクパターン参照子
 '------------------------------------------------------------------------------
-Public Function Apply(ByRef moduleMatrix() As Variant, _
-                      ByVal ver As Long, _
-                      ByVal ecLevel As ErrorCorrectionLevel) As Long
-
-    Dim maskPatternReference As Long
-    maskPatternReference = SelectMaskPattern(moduleMatrix, ver, ecLevel)
-    Call Mask(moduleMatrix, maskPatternReference)
-
-    Apply = maskPatternReference
-
-End Function
-
-'------------------------------------------------------------------------------
-' (概要)
-'  マスクパターンを決定します。
-'
-' (パラメータ)
-'  moduleMatrix : シンボルの明暗パターン
-'  ver          : 型番
-'  ecLevel      : 誤り訂正レベル
-'
-' (戻り値)
-'  マスクパターン参照子
-'------------------------------------------------------------------------------
-Private Function SelectMaskPattern(ByRef moduleMatrix() As Variant, _
-                                   ByVal ver As Long, _
-                                   ByVal ecLevel As ErrorCorrectionLevel) As Long
+Public Function Apply(ByVal ver As Long, _
+                      ByVal ecLevel As ErrorCorrectionLevel, _
+                      ByRef moduleMatrix() As Variant) As Long
 
     Dim minPenalty As Long
     minPenalty = &H7FFFFFFF
 
-    Dim ret As Long
-    ret = 0
-
     Dim temp()  As Variant
     Dim penalty As Long
     Dim maskPatternReference As Long
+    Dim maskedMatrix() As Variant
 
-    For maskPatternReference = 0 To 7
+    Dim i As Long
+    
+    For i = 0 To 7
         temp = moduleMatrix
 
-        Call Mask(temp, maskPatternReference)
-
-        Call FormatInfo.Place(temp, ecLevel, maskPatternReference)
+        Call Mask(i, temp)
+        Call FormatInfo.Place(ecLevel, i, temp)
 
         If ver >= 7 Then
-            Call VersionInfo.Place(temp, ver)
+            Call VersionInfo.Place(ver, temp)
         End If
 
         penalty = MaskingPenaltyScore.CalcTotal(temp)
 
         If penalty < minPenalty Then
             minPenalty = penalty
-            ret = maskPatternReference
+            maskPatternReference = i
+            maskedMatrix = temp
         End If
     Next
 
-    SelectMaskPattern = ret
+    moduleMatrix = maskedMatrix
+    Apply = maskPatternReference
 
 End Function
-
 
 '------------------------------------------------------------------------------
 ' (概要)
@@ -87,7 +63,7 @@ End Function
 '  moduleMatrix()       : シンボルの明暗パターン
 '  maskPatternReference : マスクパターン参照子を表す0から7までの値
 '------------------------------------------------------------------------------
-Private Sub Mask(ByRef moduleMatrix() As Variant, ByVal maskPatternReference As Long)
+Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Variant)
 
     Dim condition As IMaskingCondition
     Set condition = GetCondition(maskPatternReference)
