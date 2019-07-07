@@ -41,7 +41,7 @@ Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant)
     penalty = 0
 
     penalty = penalty + CalcAdjacentModulesInRowInSameColor(moduleMatrix)
-    penalty = penalty + CalcAdjacentModulesInRowInSameColor(MatrixRotate90(moduleMatrix))
+    penalty = penalty + CalcAdjacentModulesInRowInSameColor(ArrayUtil.Rotate90(moduleMatrix))
 
     CalcAdjacentModulesInSameColor = penalty
 
@@ -126,7 +126,7 @@ Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     penalty = 0
 
     penalty = penalty + CalcModuleRatioInRow(moduleMatrixTemp)
-    penalty = penalty + CalcModuleRatioInRow(MatrixRotate90(moduleMatrixTemp))
+    penalty = penalty + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrixTemp))
 
     CalcModuleRatio = penalty
 
@@ -320,33 +320,3 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
 
 End Function
 
-'------------------------------------------------------------------------------
-' (äTóv)
-'  ç∂Ç…90ìxâÒì]ÇµÇΩîzóÒÇï‘ÇµÇ‹Ç∑ÅB
-'------------------------------------------------------------------------------
-Private Function MatrixRotate90(ByRef arg() As Variant) As Variant()
-
-    Dim ret() As Variant
-    ReDim ret(UBound(arg(0)))
-
-    Dim i As Long
-    Dim j As Long
-    Dim rowArray() As Long
-
-    For i = 0 To UBound(ret)
-        ReDim rowArray(UBound(arg))
-        ret(i) = rowArray
-    Next
-
-    Dim k As Long
-    k = UBound(ret)
-
-    For i = 0 To UBound(ret)
-        For j = 0 To UBound(ret(i))
-            ret(i)(j) = arg(j)(k - i)
-        Next
-    Next
-
-    MatrixRotate90 = ret
-
-End Function

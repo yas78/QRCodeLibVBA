@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Const DEFAULT_MODULE_SIZE As Long = 5
+Private Const DEFAULT_MODULE_SIZE As Long = 4
 Private Const DEFAULT_VERSION     As Long = 40
 Private Const IMAGE_WIDTH         As Long = 122
 Private Const IMAGE_HEIGHT        As Long = 122
@@ -96,7 +96,7 @@ Private Sub btnSave_Click()
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
     
-On Error GoTo Catch_
+On Error GoTo Catch
     
     Dim sbls As Symbols
     Set sbls = CreateSymbols(ecLevel, _
@@ -126,11 +126,11 @@ On Error GoTo Catch_
             "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
 
-Finally_:
+Finally:
 On Error GoTo 0
     Exit Sub
     
-Catch_:
+Catch:
     Call MsgBox(Err.Description, vbExclamation, "")
     Resume Finally_
     

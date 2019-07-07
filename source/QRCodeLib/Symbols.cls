@@ -38,8 +38,7 @@ Friend Sub Initialize(ByVal ecLevel As ErrorCorrectionLevel, _
                       ByVal allowStructuredAppend As Boolean, _
                       ByVal byteModeCharsetName As String)
 
-    If maxVer < Constants.MIN_VERSION Or _
-       maxVer > Constants.MAX_VERSION Then
+    If Not (Constants.MIN_VERSION <= maxVer And maxVer <= Constants.MAX_VERSION) Then
         Call Err.Raise(5)
     End If
 

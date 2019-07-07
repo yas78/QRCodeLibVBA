@@ -18,7 +18,7 @@ Option Explicit
 Private Const COLOR_WHITE As String = "#FFFFFF"
 Private Const COLOR_BLACK As String = "#000000"
 
-Private Const DEFAULT_MODULE_SIZE As Long = 5
+Private Const DEFAULT_MODULE_SIZE As Long = 4
 
 Private m_parent As Symbols
 
@@ -664,15 +664,15 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     Set bs = New BitSequence
 
     Dim r As Long
-    Dim c As Long
     Dim i As Long
     Dim pixelColor As Long
+    Dim v As Variant
 
     For r = UBound(moduleMatrix) To 0 Step -1
         Call bs.Clear
 
-        For c = 0 To UBound(moduleMatrix(r))
-            pixelColor = IIf(moduleMatrix(r)(c) > 0, 0, 1)
+        For Each v In moduleMatrix(r)
+            pixelColor = IIf(v > 0, 0, 1)
 
             For i = 1 To moduleSize
                 Call bs.Append(pixelColor, 1)
@@ -741,8 +741,8 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_S
     offset = 0
 
     Dim r As Long
-    Dim c As Long
     Dim i As Long
+    Dim v As Variant
 
     Dim colorRGB As Long
     Dim bitmapRow() As Byte
@@ -752,8 +752,8 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_S
         ReDim bitmapRow(rowSize - 1)
         idx = 0
 
-        For c = 0 To UBound(moduleMatrix(r))
-            colorRGB = IIf(moduleMatrix(r)(c) > 0, foreColorRGB, backColorRGB)
+        For Each v In moduleMatrix(r)
+            colorRGB = IIf(v > 0, foreColorRGB, backColorRGB)
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
