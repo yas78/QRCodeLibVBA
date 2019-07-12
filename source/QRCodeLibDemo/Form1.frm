@@ -32,7 +32,7 @@ Private Sub Update_fraQRCodeImage()
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
 
-On Error GoTo Catch_
+On Error GoTo Catch
     Dim sbls As QRCodeLib.Symbols
     Set sbls = CreateSymbols(ecLevel, _
                              CLng(cmbMaxVersion.Text), _
@@ -66,13 +66,13 @@ On Error GoTo Catch_
         IMAGE_MARGIN
     btnSave.Enabled = txtData.TextLength > 0
 
-Finally_:
+Finally:
 On Error GoTo 0
     Exit Sub
 
-Catch_:
+Catch:
     Call MsgBox(Err.Description, vbExclamation, "")
-    Resume Finally_
+    Resume Finally
 
 End Sub
 
@@ -132,7 +132,7 @@ On Error GoTo 0
     
 Catch:
     Call MsgBox(Err.Description, vbExclamation, "")
-    Resume Finally_
+    Resume Finally
     
 End Sub
 
