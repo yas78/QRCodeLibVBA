@@ -78,7 +78,8 @@ End Sub
 '  既定メンバとして [Attribute Item.VB_UserMemId = 0] が指定されています。
 '------------------------------------------------------------------------------
 Public Property Get Item(ByVal idx As Long) As Symbol
-
+Attribute Item.VB_UserMemId = 0
+    
     Set Item = m_items(idx + 1)
 
 End Property
@@ -164,7 +165,8 @@ End Property
 '  [Attribute NewEnum.VB_UserMemId = -4] が指定されています。
 '------------------------------------------------------------------------------
 Public Property Get NewEnum() As IUnknown
-
+Attribute NewEnum.VB_UserMemId = -4
+    
     Set NewEnum = m_items.[_NewEnum]
 
 End Property
