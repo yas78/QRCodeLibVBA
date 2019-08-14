@@ -5,6 +5,7 @@ Attribute VB_Name = "Masking"
 Option Private Module
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  マスクを適用します。
@@ -20,7 +21,6 @@ Option Explicit
 Public Function Apply(ByVal ver As Long, _
                       ByVal ecLevel As ErrorCorrectionLevel, _
                       ByRef moduleMatrix() As Variant) As Long
-
     Dim minPenalty As Long
     minPenalty = &H7FFFFFFF
 
@@ -52,7 +52,6 @@ Public Function Apply(ByVal ver As Long, _
 
     moduleMatrix = maskedMatrix
     Apply = maskPatternReference
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -64,7 +63,6 @@ End Function
 '  maskPatternReference : マスクパターン参照子を表す0から7までの値
 '------------------------------------------------------------------------------
 Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Variant)
-
     Dim condition As IMaskingCondition
     Set condition = GetCondition(maskPatternReference)
 
@@ -80,7 +78,6 @@ Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Var
             End If
         Next
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -88,39 +85,28 @@ End Sub
 '  マスク条件を返します。
 '------------------------------------------------------------------------------
 Private Function GetCondition(ByVal maskPatternReference As Long) As IMaskingCondition
-
     Dim ret As IMaskingCondition
 
     Select Case maskPatternReference
         Case 0
-            Set ret = New Masking0Condition
-
+            Set ret = New MaskingCondition0
         Case 1
-            Set ret = New Masking1Condition
-
+            Set ret = New MaskingCondition1
         Case 2
-            Set ret = New Masking2Condition
-
+            Set ret = New MaskingCondition2
         Case 3
-            Set ret = New Masking3Condition
-
+            Set ret = New MaskingCondition3
         Case 4
-            Set ret = New Masking4Condition
-
+            Set ret = New MaskingCondition4
         Case 5
-            Set ret = New Masking5Condition
-
+            Set ret = New MaskingCondition5
         Case 6
-            Set ret = New Masking6Condition
-
+            Set ret = New MaskingCondition6
         Case 7
-            Set ret = New Masking7Condition
-
+            Set ret = New MaskingCondition7
         Case Else
             Call Err.Raise(5)
-
     End Select
 
     Set GetCondition = ret
-
 End Function

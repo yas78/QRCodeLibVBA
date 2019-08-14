@@ -2,12 +2,12 @@ Attribute VB_Name = "ArrayUtil"
 Option Private Module
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  二次元配列を左に90度回転した配列を返します。
 '------------------------------------------------------------------------------
 Public Function Rotate90(ByRef array2D() As Variant) As Variant()
-
     Dim ret() As Variant
     ReDim ret(UBound(array2D(0)))
 
@@ -30,6 +30,5 @@ Public Function Rotate90(ByRef array2D() As Variant) As Variant()
     Next
 
     Rotate90 = ret
-
 End Function
 

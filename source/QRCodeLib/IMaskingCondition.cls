@@ -9,4 +9,5 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+
 Public Function Evaluate(ByVal r As Long, ByVal c As Long) As Boolean: End Function

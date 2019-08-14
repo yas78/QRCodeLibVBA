@@ -9,14 +9,12 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
+
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
 #Else
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
-
-Private Const COLOR_WHITE As String = "#FFFFFF"
-Private Const COLOR_BLACK As String = "#000000"
 
 Private Const DEFAULT_MODULE_SIZE As Long = 4
 
@@ -34,13 +32,15 @@ Private m_dataBitCounter    As Long
 Private m_segments          As Collection ' Item : IQRCodeEncoder
 Private m_segmentCounter    As Object ' Is Dictionary Key : EncodingMode, Item : Long
 
+Private m_Index As Long
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Friend Sub Initialize(ByVal parentObj As Symbols)
-
+Friend Sub Init(ByVal parentObj As Symbols)
     Set m_parent = parentObj
+    m_Index = parentObj.Count
 
     m_position = parentObj.Count
 
@@ -64,7 +64,6 @@ Friend Sub Initialize(ByVal parentObj As Symbols)
     If parentObj.StructuredAppendAllowed Then
         m_dataBitCapacity = m_dataBitCapacity - StructuredAppend.HEADER_LENGTH
     End If
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -72,9 +71,11 @@ End Sub
 '  親オブジェクトを取得します。
 '------------------------------------------------------------------------------
 Friend Property Get Parent() As Symbols
-
     Set Parent = m_parent
+End Property
 
+Friend Property Get Index() As Long
+    Index = m_Index
 End Property
 
 '------------------------------------------------------------------------------
@@ -82,9 +83,7 @@ End Property
 '  型番を取得します。
 '------------------------------------------------------------------------------
 Friend Property Get Version() As Long
-
     Version = m_currVersion
-
 End Property
 
 '------------------------------------------------------------------------------
@@ -92,9 +91,7 @@ End Property
 '  符号化モードを取得します。
 '------------------------------------------------------------------------------
 Friend Property Get CurrentEncodingMode() As EncodingMode
-
     CurrentEncodingMode = m_currEncodingMode
-
 End Property
 
 '------------------------------------------------------------------------------
@@ -105,7 +102,6 @@ End Property
 '  正常終了時は True を返します。シンボル容量が不足している場合は False を返します。
 '------------------------------------------------------------------------------
 Friend Function TryAppend(ByVal c As String) As Boolean
-
     Dim bitLength  As Long
     bitLength = m_currEncoder.GetCodewordBitLength(c)
 
@@ -123,7 +119,6 @@ Friend Function TryAppend(ByVal c As String) As Boolean
     Call m_parent.UpdateParity(c)
 
     TryAppend = True
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -133,22 +128,19 @@ End Function
 ' (戻り値)
 '  正常終了は True、シンボル容量が不足している場合は False を返します。
 '------------------------------------------------------------------------------
-Friend Function TrySetEncodingMode( _
-    ByVal encMode As EncodingMode, ByVal c As String) As Boolean
-
-    Dim encoder As IQRCodeEncoder
-    Set encoder = QRCodeEncoderFactory.CreateEncoder( _
-            encMode, m_parent.ByteModeCharset)
+Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
+                                   ByVal c As String) As Boolean
+    Dim enc As IQRCodeEncoder
+    Set enc = Encoder.Create(encMode, m_parent.ByteModeCharset)
 
     Dim bitLength As Long
-    bitLength = encoder.GetCodewordBitLength(c)
+    bitLength = enc.GetCodewordBitLength(c)
 
     Do While (m_dataBitCapacity < _
                 m_dataBitCounter + _
                 ModeIndicator.Length + _
                 CharCountIndicator.GetLength(m_currVersion, encMode) + _
                 bitLength)
-
         If m_currVersion >= m_parent.MaxVersion Then
             TrySetEncodingMode = False
             Exit Function
@@ -161,13 +153,12 @@ Friend Function TrySetEncodingMode( _
                        ModeIndicator.Length + _
                        CharCountIndicator.GetLength(m_currVersion, encMode)
 
-    Set m_currEncoder = encoder
-    Call m_segments.Add(encoder)
+    Set m_currEncoder = enc
+    Call m_segments.Add(enc)
     m_segmentCounter(encMode) = m_segmentCounter(encMode) + 1
     m_currEncodingMode = encMode
 
     TrySetEncodingMode = True
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -175,7 +166,6 @@ End Function
 '  型番を決定します。
 '------------------------------------------------------------------------------
 Private Sub SelectVersion()
-
     Dim encMode As Variant ' Subtype : EncodingMode
 
     For Each encMode In m_segmentCounter.Keys()
@@ -197,7 +187,6 @@ Private Sub SelectVersion()
     If m_parent.StructuredAppendAllowed Then
         m_dataBitCapacity = m_dataBitCapacity - StructuredAppend.HEADER_LENGTH
     End If
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -205,7 +194,6 @@ End Sub
 '  データ領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
 '------------------------------------------------------------------------------
 Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
-
     Dim dataBytes() As Byte
     dataBytes = GetMessageBytes()
 
@@ -258,16 +246,13 @@ Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
     Next
 
     BuildDataBlock = ret
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  誤り訂正領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
 '------------------------------------------------------------------------------
-Private Function BuildErrorCorrectionBlock( _
-    ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
-
+Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
     Dim i As Long
     Dim j As Long
 
@@ -332,7 +317,6 @@ Private Function BuildErrorCorrectionBlock( _
     Next
 
     BuildErrorCorrectionBlock = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -340,7 +324,6 @@ End Function
 '  符号化領域のバイトデータを返します。
 '------------------------------------------------------------------------------
 Private Function GetEncodingRegionBytes() As Byte()
-
     Dim dataBlock() As Variant ' Subtype : Byte()
     dataBlock = BuildDataBlock()
 
@@ -393,7 +376,6 @@ Private Function GetEncodingRegionBytes() As Byte()
     Loop
 
     GetEncodingRegionBytes = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -401,7 +383,6 @@ End Function
 '  コード語に変換するメッセージビット列を返します。
 '------------------------------------------------------------------------------
 Private Function GetMessageBytes() As Byte()
-
     Dim bs As BitSequence
     Set bs = New BitSequence
 
@@ -415,11 +396,9 @@ Private Function GetMessageBytes() As Byte()
     Call WritePadCodewords(bs)
 
     GetMessageBytes = bs.GetBytes()
-
 End Function
 
 Private Sub WriteStructuredAppendHeader(ByVal bs As BitSequence)
-
     Call bs.Append(ModeIndicator.STRUCTURED_APPEND_VALUE, _
                    ModeIndicator.Length)
     Call bs.Append(m_position, _
@@ -428,11 +407,9 @@ Private Sub WriteStructuredAppendHeader(ByVal bs As BitSequence)
                    SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH)
     Call bs.Append(m_parent.StructuredAppendParity, _
                    StructuredAppend.PARITY_DATA_LENGTH)
-
 End Sub
 
 Private Sub WriteSegments(ByVal bs As BitSequence)
-
     Dim i As Long
     Dim data() As Byte
     Dim codewordBitLength As Long
@@ -460,11 +437,9 @@ Private Sub WriteSegments(ByVal bs As BitSequence)
         Call bs.Append(data(UBound(data)) \ _
                        2 ^ (8 - codewordBitLength), codewordBitLength)
     Next
-
 End Sub
 
 Private Sub WriteTerminator(ByVal bs As BitSequence)
-
     Dim terminatorLength As Long
     terminatorLength = m_dataBitCapacity - m_dataBitCounter
 
@@ -473,19 +448,15 @@ Private Sub WriteTerminator(ByVal bs As BitSequence)
     End If
 
     Call bs.Append(ModeIndicator.TERMINATOR_VALUE, terminatorLength)
-
 End Sub
 
 Private Sub WritePaddingBits(ByVal bs As BitSequence)
-
     If bs.Length Mod 8 > 0 Then
         Call bs.Append(&H0, 8 - (bs.Length Mod 8))
     End If
-
 End Sub
 
 Private Sub WritePadCodewords(ByVal bs As BitSequence)
-
     Dim numDataCodewords As Long
     numDataCodewords = DataCodeword.GetTotalNumber( _
         m_parent.ErrorCorrectionLevel, m_currVersion)
@@ -497,7 +468,6 @@ Private Sub WritePadCodewords(ByVal bs As BitSequence)
         Call bs.Append(IIf(flag, 236, 17), 8)
         flag = Not flag
     Loop
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -505,7 +475,6 @@ End Sub
 '  シンボルの明暗パターンを返します。
 '------------------------------------------------------------------------------
 Private Function GetModuleMatrix() As Variant()
-
     Dim numModulesPerSide As Long
     numModulesPerSide = Module.GetNumModulesPerSide(m_currVersion)
 
@@ -540,7 +509,6 @@ Private Function GetModuleMatrix() As Variant()
     Call Masking.Apply(m_currVersion, m_parent.ErrorCorrectionLevel, moduleMatrix)
 
     GetModuleMatrix = moduleMatrix
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -548,7 +516,6 @@ End Function
 ' シンボルキャラクタを配置します。
 '------------------------------------------------------------------------------
 Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
-
     Dim data() As Byte
     data = GetEncodingRegionBytes()
 
@@ -606,7 +573,6 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
             toLeft = Not toLeft
         Loop
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -614,9 +580,8 @@ End Sub
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
 Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                           Optional ByVal foreRGB As String = COLOR_BLACK, _
-                           Optional ByVal backRGB As String = COLOR_WHITE) As Byte()
-
+                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                           Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim foreColorRGB As Long
@@ -694,7 +659,6 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     ret = DIB.Build1bppDIB(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
 
     Get1bppDIB = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -702,9 +666,8 @@ End Function
 '  色深度24bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
 Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                            Optional ByVal foreRGB As String = COLOR_BLACK, _
-                            Optional ByVal backRGB As String = COLOR_WHITE) As Byte()
-
+                            Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                            Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim foreColorRGB As Long
@@ -773,17 +736,15 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_S
     ret = DIB.Build24bppDIB(bitmapData, pictWidth, pictHeight)
 
     Get24bppDIB = ret
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
-Public Function Get1bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                             Optional ByVal foreRGB As String = COLOR_BLACK, _
-                             Optional ByVal backRGB As String = COLOR_WHITE) As stdole.IPicture
-
+Private Function GetPicture1(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                             Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                             Optional ByVal backRGB As String = ColorCode.WHITE) As stdole.IPicture
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
@@ -792,18 +753,16 @@ Public Function Get1bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_
     Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
 
-    Set Get1bppImage = ret
-
+    Set GetPicture1 = ret
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  シンボルのイメージを返します。
 '------------------------------------------------------------------------------
-Public Function Get24bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                              Optional ByVal foreRGB As String = COLOR_BLACK, _
-                              Optional ByVal backRGB As String = COLOR_WHITE) As stdole.IPicture
-
+Private Function GetPicture24(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                              Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                              Optional ByVal backRGB As String = ColorCode.WHITE) As stdole.IPicture
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
@@ -812,19 +771,30 @@ Public Function Get24bppImage(Optional ByVal moduleSize As Long = DEFAULT_MODULE
     Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
 
-    Set Get24bppImage = ret
+    Set GetPicture24 = ret
+End Function
 
+Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                           Optional ByVal backRGB As String = ColorCode.WHITE, _
+                           Optional ByVal monochrome As Boolean = False)
+    If moduleSize < 1 Then Call Err.Raise(5)
+
+    If monochrome Then
+        Set GetPicture = GetPicture1(moduleSize, foreRGB, backRGB)
+    Else
+        Set GetPicture = GetPicture24(moduleSize, foreRGB, backRGB)
+    End If
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
-Public Sub Save1bppDIB(ByVal filePath As String, _
-                       Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                       Optional ByVal foreRGB As String = COLOR_BLACK, _
-                       Optional ByVal backRGB As String = COLOR_WHITE)
-
+Private Sub Save1bppDIB(ByVal filePath As String, _
+                        Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                        Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                        Optional ByVal backRGB As String = ColorCode.WHITE)
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
 
@@ -839,18 +809,16 @@ Public Sub Save1bppDIB(ByVal filePath As String, _
     Open filePath For Binary As #fNum Len = &H7FFF
     Put #fNum, , bitmapBytes
     Close #fNum
-
 End Sub
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
-Public Sub Save24bppDIB(ByVal filePath As String, _
-                        Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                        Optional ByVal foreRGB As String = COLOR_BLACK, _
-                        Optional ByVal backRGB As String = COLOR_WHITE)
-
+Private Sub Save24bppDIB(ByVal filePath As String, _
+                         Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                         Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                         Optional ByVal backRGB As String = ColorCode.WHITE)
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
 
@@ -865,7 +833,25 @@ Public Sub Save24bppDIB(ByVal filePath As String, _
     Open filePath For Binary As #fNum Len = &H7FFF
     Put #fNum, , bitmapBytes
     Close #fNum
+End Sub
 
+'----------------------------------------------------------------------------------------
+' (概要)
+'  シンボルをビットマップ形式で保存します。
+'----------------------------------------------------------------------------------------
+Public Sub SaveToFile(ByVal filePath As String, _
+                      Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                      Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                      Optional ByVal backRGB As String = ColorCode.WHITE, _
+                      Optional ByVal monochrome As Boolean = False)
+    If Len(filePath) = 0 Then Call Err.Raise(5)
+    If moduleSize < 1 Then Call Err.Raise(5)
+
+    If monochrome Then
+        Call Save1bppDIB(filePath, moduleSize, foreRGB, backRGB)
+    Else
+        Call Save24bppDIB(filePath, moduleSize, foreRGB, backRGB)
+    End If
 End Sub
 
 '------------------------------------------------------------------------------
@@ -873,12 +859,10 @@ End Sub
 '  シンボルをクリップボードに保存します。
 '------------------------------------------------------------------------------
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                          Optional ByVal foreRGB As String = COLOR_BLACK, _
-                          Optional ByVal backRGB As String = COLOR_WHITE)
-
+                          Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                          Optional ByVal backRGB As String = ColorCode.WHITE)
     Dim bitmapBytes() As Byte
     bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
-
 End Sub

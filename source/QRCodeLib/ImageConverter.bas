@@ -2,6 +2,7 @@ Attribute VB_Name = "ImageConverter"
 Option Private Module
 Option Explicit
 
+
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
     Private Declare PtrSafe Function IIDFromString Lib "ole32" (ByVal lpsz As LongPtr, ByRef lpiid As UUID) As Long
@@ -46,7 +47,6 @@ Private Type UUID
 End Type
 
 Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPicture
-
     Dim sz As Long
     sz = UBound(dibData) + 1
 
@@ -84,5 +84,4 @@ Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPicture
     Call GlobalFree(hMem)
 
     Set ConvertFrom = ret
-
 End Function

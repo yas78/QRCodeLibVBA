@@ -2,8 +2,8 @@ Attribute VB_Name = "AlignmentPattern"
 Option Private Module
 Option Explicit
 
-Private m_centerPosArrays(40) As Variant
 
+Private m_centerPosArrays(40) As Variant
 Private m_initialized As Boolean
 
 '------------------------------------------------------------------------------
@@ -11,8 +11,7 @@ Private m_initialized As Boolean
 '  位置合わせパターンを配置します。
 '------------------------------------------------------------------------------
 Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
-
-    Call Initialize
+    Call Init
 
     Dim centerArray As Variant
     centerArray = m_centerPosArrays(ver)
@@ -37,7 +36,7 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
                i = 0 And j = maxIndex Or _
                i = maxIndex And j = 0 Then
 
-                GoTo Continue_j
+                GoTo Continue
             End If
 
             moduleMatrix(r - 2)(c - 2) = 2
@@ -70,18 +69,16 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
             moduleMatrix(r + 2)(c + 1) = 2
             moduleMatrix(r + 2)(c + 2) = 2
 
-Continue_j:
+Continue:
         Next
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -126,5 +123,4 @@ Private Sub Initialize()
     m_centerPosArrays(38) = Array(6, 32, 58, 84, 110, 136, 162)
     m_centerPosArrays(39) = Array(6, 26, 54, 82, 110, 138, 166)
     m_centerPosArrays(40) = Array(6, 30, 58, 86, 114, 142, 170)
-
 End Sub

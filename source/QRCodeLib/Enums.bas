@@ -1,10 +1,7 @@
 Attribute VB_Name = "Enums"
 Option Explicit
 
-'------------------------------------------------------------------------------
-' (概要)
-'  誤り訂正レベル
-'------------------------------------------------------------------------------
+
 Public Enum ErrorCorrectionLevel
     L
     M
@@ -12,10 +9,6 @@ Public Enum ErrorCorrectionLevel
     H
 End Enum
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化モード
-'------------------------------------------------------------------------------
 Public Enum EncodingMode
     UNKNOWN
     NUMERIC
@@ -23,3 +16,4 @@ Public Enum EncodingMode
     EIGHT_BIT_BYTE
     KANJI
 End Enum
+

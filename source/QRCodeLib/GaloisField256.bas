@@ -2,32 +2,26 @@ Attribute VB_Name = "GaloisField256"
 Option Private Module
 Option Explicit
 
+
 Private m_intToExpTable  As Variant
 Private m_expToIntTable  As Variant
-
 Private m_initialized As Boolean
 
-
 Public Function ToExp(ByVal arg As Long) As Long
-
-    Call Initialize
+    Call Init
     ToExp = m_intToExpTable(arg)
-
 End Function
 
 Public Function ToInt(ByVal arg As Long) As Long
-
-    Call Initialize
+    Call Init
     ToInt = m_expToIntTable(arg)
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -61,5 +55,4 @@ Private Sub Initialize()
         83, 166, 81, 162, 89, 178, 121, 242, 249, 239, 195, 155, 43, 86, 172, 69, 138, 9, 18, 36, 72, 144, _
         61, 122, 244, 245, 247, 243, 251, 235, 203, 139, 11, 22, 44, 88, 176, 125, 250, 233, 207, 131, 27, _
         54, 108, 216, 173, 71, 142, 1)
-
 End Sub

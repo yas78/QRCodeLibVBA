@@ -5,6 +5,7 @@ Attribute VB_Name = "SymbolSequenceIndicator"
 Option Private Module
 Option Explicit
 
+
 ' シンボル位置のビット数
 Public Const POSITION_LENGTH As Long = 4
 

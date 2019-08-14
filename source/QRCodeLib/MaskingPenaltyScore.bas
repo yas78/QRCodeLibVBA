@@ -5,12 +5,12 @@ Attribute VB_Name = "MaskingPenaltyScore"
 Option Private Module
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  マスクパターン失点の合計を返します。
 '------------------------------------------------------------------------------
 Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
-
     Dim total   As Long
     Dim penalty As Long
 
@@ -27,16 +27,13 @@ Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
     total = total + penalty
 
     CalcTotal = total
-
 End Function
-
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  行／列の同色隣接モジュールパターンの失点を計算します。
 '------------------------------------------------------------------------------
 Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
-
     Dim penalty As Long
     penalty = 0
 
@@ -44,7 +41,6 @@ Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant)
     penalty = penalty + CalcAdjacentModulesInRowInSameColor(ArrayUtil.Rotate90(moduleMatrix))
 
     CalcAdjacentModulesInSameColor = penalty
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -52,7 +48,6 @@ End Function
 '  行の同色隣接モジュールパターンの失点を計算します。
 '------------------------------------------------------------------------------
 Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Variant) As Long
-
     Dim penalty As Long
     penalty = 0
 
@@ -81,7 +76,6 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
     Next
 
     CalcAdjacentModulesInRowInSameColor = penalty
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -89,7 +83,6 @@ End Function
 '  2x2の同色モジュールパターンの失点を計算します。
 '------------------------------------------------------------------------------
 Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
-
     Dim penalty     As Long
     Dim isSameColor As Boolean
     Dim r           As Long
@@ -110,7 +103,6 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
     Next
 
     CalcBlockOfModulesInSameColor = penalty
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -118,7 +110,6 @@ End Function
 '  行／列における1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
 '------------------------------------------------------------------------------
 Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
-
     Dim moduleMatrixTemp() As Variant
     moduleMatrixTemp = QuietZone.Place(moduleMatrix)
 
@@ -129,16 +120,13 @@ Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     penalty = penalty + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrixTemp))
 
     CalcModuleRatio = penalty
-
 End Function
-
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  行の1 : 1 : 3 : 1 : 1 比率のパターンを評価し、失点を返します。
 '------------------------------------------------------------------------------
 Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
-
     Dim penalty As Long
 
     Dim ratio3Ranges As Collection
@@ -257,17 +245,14 @@ Continue:
     Next
 
     CalcModuleRatioInRow = penalty
-
 End Function
 
 Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
-
     Dim ret As Collection
     Set ret = New Collection
 
     Dim s As Long
     Dim e As Long
-
     Dim i As Long
 
     For i = QuietZone.QUIET_ZONE_WIDTH To UBound(arg) - QuietZone.QUIET_ZONE_WIDTH
@@ -285,16 +270,13 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Next
 
     Set GetRatio3Ranges = ret
-
 End Function
-
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  全体に対する暗モジュールの占める割合について失点を計算します。
 '------------------------------------------------------------------------------
 Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As Long
-
     Dim darkCount As Long
 
     Dim rowArray As Variant
@@ -317,6 +299,5 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
     temp = (temp + 4) \ 5
 
     CalcProportionOfDarkModules = temp * 10
-
 End Function
 

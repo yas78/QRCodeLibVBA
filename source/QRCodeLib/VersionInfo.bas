@@ -5,8 +5,8 @@ Attribute VB_Name = "VersionInfo"
 Option Private Module
 Option Explicit
 
-Private m_versionInfoValues() As Variant
 
+Private m_versionInfoValues() As Variant
 Private m_initialized As Boolean
 
 '------------------------------------------------------------------------------
@@ -14,8 +14,7 @@ Private m_initialized As Boolean
 '  型番情報を配置します｡
 '------------------------------------------------------------------------------
 Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
-
-    Call Initialize
+    Call Init
 
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
@@ -45,7 +44,6 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
             p2 = numModulesPerSide - 11
         End If
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -53,7 +51,6 @@ End Sub
 '  型番情報の予約領域を配置します｡
 '------------------------------------------------------------------------------
 Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
-
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
 
@@ -66,15 +63,13 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
             moduleMatrix(j)(i) = -3  ' 左下
         Next
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -88,5 +83,4 @@ Private Sub Initialize()
         &H1F250, &H209D5, &H216F0, &H228BA, &H2379F, &H24B0B, &H2542E, &H26A64, _
         &H27541, &H28C69 _
     )
-
 End Sub

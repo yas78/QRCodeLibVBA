@@ -5,6 +5,7 @@ Attribute VB_Name = "ModeIndicator"
 Option Private Module
 Option Explicit
 
+
 Public Const Length As Long = 4
 
 Public Const TERMINATOR_VALUE           As Long = &H0

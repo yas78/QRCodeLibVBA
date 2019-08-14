@@ -12,15 +12,13 @@ Attribute VB_Exposed = False
 '------------------------------------------------------------------------------
 Option Explicit
 
-Private m_buffer As Object ' Is Dictionary
 
+Private m_buffer As Object ' Is Dictionary
 Private m_bitCounter As Long
 Private m_space      As Long
 
 Private Sub Class_Initialize()
-
     Call Clear
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -28,17 +26,13 @@ End Sub
 '  ビット数を取得します。
 '------------------------------------------------------------------------------
 Public Property Get Length() As Long
-
     Length = m_bitCounter
-
 End Property
 
 Public Sub Clear()
-
     Set m_buffer = CreateObject("Scripting.Dictionary")
     m_bitCounter = 0
     m_space = 0
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -50,7 +44,6 @@ End Sub
 '  bitLength : データのビット数
 '------------------------------------------------------------------------------
 Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
-
     Dim remainingLength As Long
     remainingLength = bitLength
 
@@ -85,7 +78,6 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
 
         m_buffer(m_buffer.Count - 1) = temp
     Loop
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -93,7 +85,6 @@ End Sub
 '  データのバイト配列を返します。
 '------------------------------------------------------------------------------
 Public Function GetBytes() As Byte()
-
     Dim ret() As Byte
     ReDim ret(m_buffer.Count - 1)
 
@@ -104,5 +95,4 @@ Public Function GetBytes() As Byte()
     Next
 
     GetBytes = ret
-
 End Function

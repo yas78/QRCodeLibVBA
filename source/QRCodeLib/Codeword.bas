@@ -5,8 +5,8 @@ Attribute VB_Name = "Codeword"
 Option Private Module
 Option Explicit
 
-Private m_totalNumbers() As Variant
 
+Private m_totalNumbers() As Variant
 Private m_initialized As Boolean
 
 '------------------------------------------------------------------------------
@@ -14,19 +14,16 @@ Private m_initialized As Boolean
 '  コード語総数を返します。
 '------------------------------------------------------------------------------
 Public Function GetTotalNumber(ByVal ver As Long) As Long
-
-    Call Initialize
+    Call Init
 
     GetTotalNumber = m_totalNumbers(ver)
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -38,5 +35,4 @@ Private Sub Initialize()
         1156, 1258, 1364, 1474, 1588, 1706, 1828, 1921, 2051, 2185, _
         2323, 2465, 2611, 2761, 2876, 3034, 3196, 3362, 3532, 3706 _
     )
-
 End Sub

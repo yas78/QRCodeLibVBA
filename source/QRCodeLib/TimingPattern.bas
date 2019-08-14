@@ -5,12 +5,12 @@ Attribute VB_Name = "TimingPattern"
 Option Private Module
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  タイミングパターンを配置します。
 '------------------------------------------------------------------------------
 Public Sub Place(ByRef moduleMatrix() As Variant)
-
     Dim i As Long
     Dim v As Long
 
@@ -20,5 +20,4 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
         moduleMatrix(6)(i) = v
         moduleMatrix(i)(6) = v
     Next
-
 End Sub

@@ -2,6 +2,7 @@ Attribute VB_Name = "DIB"
 Option Private Module
 Option Explicit
 
+
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
 #Else
@@ -13,7 +14,6 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
                              ByVal pictHeight As Long, _
                              ByVal foreColorRGB As Long, _
                              ByVal backColorRGB As Long) As Byte()
-
     Dim bfh         As BITMAPFILEHEADER
     Dim bih         As BITMAPINFOHEADER
     Dim palette(1)  As RGBQUAD
@@ -96,13 +96,11 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
     Call MoveMemory(VarPtr(ret(62)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
 
     Build1bppDIB = ret
-
 End Function
 
 Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
                               ByVal pictWidth As Long, _
                               ByVal pictHeight As Long) As Byte()
-
     Dim bfh As BITMAPFILEHEADER
     Dim bih As BITMAPINFOHEADER
 
@@ -156,5 +154,4 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
     Call MoveMemory(VarPtr(ret(54)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
 
     Build24bppDIB = ret
-
 End Function

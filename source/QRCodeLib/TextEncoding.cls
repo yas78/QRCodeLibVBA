@@ -9,6 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+
 Private Const adTypeBinary      As Long = 1
 Private Const adTypeText        As Long = 2
 
@@ -18,24 +19,19 @@ Private m_sr        As Object ' Is ADODB.Stream
 Private m_charset   As String
 
 Public Property Get Charset() As String
-
     Charset = m_charset
-
 End Property
 
 Public Sub Init(ByVal charsetName As String)
-
     m_charset = charsetName
 
     Set m_sr = CreateObject("ADODB.Stream")
 
     m_sr.Mode = adModeReadWrite
     m_sr.Charset = charsetName
-
 End Sub
 
 Public Function GetBytes(ByVal s As String) As Byte()
-
     Call m_sr.Open
 
     m_sr.Position = 0
@@ -59,5 +55,4 @@ Public Function GetBytes(ByVal s As String) As Byte()
     Call m_sr.Close
 
     GetBytes = ret
-
 End Function

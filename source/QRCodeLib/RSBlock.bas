@@ -5,23 +5,21 @@ Attribute VB_Name = "RSBlock"
 Option Private Module
 Option Explicit
 
-Private m_totalNumbers() As Variant
 
+Private m_totalNumbers() As Variant
 Private m_initialized As Boolean
 
 '---------------------------------------------------------------------------
 ' (概要)
 '  RSブロック数を返します。
 '  ---------------------------------------------------------------------------
-Public Function GetTotalNumber( _
-    ByVal ecLevel As ErrorCorrectionLevel, _
-    ByVal ver As Long, _
-    ByVal preceding As Boolean) As Long
+Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, _
+                               ByVal ver As Long, _
+                               ByVal preceding As Boolean) As Long
+    Call Init
 
-    Call Initialize
-
-    Dim dataWordCapacity    As Long
-    Dim blockCount          As Variant
+    Dim dataWordCapacity As Long
+    Dim blockCount       As Variant
 
     dataWordCapacity = DataCodeword.GetTotalNumber(ecLevel, ver)
     blockCount = m_totalNumbers(ecLevel)
@@ -31,7 +29,6 @@ Public Function GetTotalNumber( _
     Else
         GetTotalNumber = dataWordCapacity Mod blockCount(ver)
     End If
-
 End Function
 
 '---------------------------------------------------------------------------
@@ -41,14 +38,10 @@ End Function
 ' (パラメータ)
 '  先行するRSブロックは Trueを指定します。
 '---------------------------------------------------------------------------
-Public Function GetNumberDataCodewords( _
-    ByVal ecLevel As ErrorCorrectionLevel, _
-    ByVal ver As Long, _
-    ByVal preceding As Boolean) As Long
-
-    Call Initialize
-
-    Dim ret As Long
+Public Function GetNumberDataCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
+                                       ByVal ver As Long, _
+                                       ByVal preceding As Boolean) As Long
+    Call Init
 
     Dim numDataCodewords As Long
     numDataCodewords = DataCodeword.GetTotalNumber(ecLevel, ver)
@@ -59,9 +52,10 @@ Public Function GetNumberDataCodewords( _
     Dim numPreBlockCodewords As Long
     numPreBlockCodewords = numDataCodewords \ numBlocks
 
+    Dim ret As Long
     Dim numPreBlocks As Long
     Dim numFolBlocks As Long
-
+    
     If preceding Then
         ret = numPreBlockCodewords
 
@@ -84,10 +78,9 @@ End Function
 ' (概要)
 '  RSブロックの誤り訂正コード語数を返します。
 '---------------------------------------------------------------------------
-Public Function GetNumberECCodewords( _
-    ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
-
-    Call Initialize
+Public Function GetNumberECCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
+                                     ByVal ver As Long) As Long
+    Call Init
 
     Dim numDataCodewords As Long
     numDataCodewords = DataCodeword.GetTotalNumber(ecLevel, ver)
@@ -98,15 +91,13 @@ Public Function GetNumberECCodewords( _
     GetNumberECCodewords = _
         (Codeword.GetTotalNumber(ver) \ numBlocks) - _
             (numDataCodewords \ numBlocks)
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -148,5 +139,4 @@ Private Sub Initialize()
     )
 
     m_totalNumbers = Array(ecLevelL, ecLevelM, ecLevelQ, ecLevelH)
-
 End Sub

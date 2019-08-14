@@ -5,29 +5,25 @@ Attribute VB_Name = "DataCodeword"
 Option Private Module
 Option Explicit
 
-Private m_totalNumbers() As Variant
 
+Private m_totalNumbers() As Variant
 Private m_initialized As Boolean
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  データコード語数を返します。
 '------------------------------------------------------------------------------
-Public Function GetTotalNumber( _
-    ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
-
-    Call Initialize
+Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
+    Call Init
 
     GetTotalNumber = m_totalNumbers(ecLevel)(ver)
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -69,5 +65,4 @@ Private Sub Initialize()
     )
 
     m_totalNumbers = Array(ecLevelL, ecLevelM, ecLevelQ, ecLevelH)
-
 End Sub

@@ -1,6 +1,7 @@
 Attribute VB_Name = "Factory"
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  Symbolsクラスのインスタンスを生成します。
@@ -13,13 +14,12 @@ Option Explicit
 '------------------------------------------------------------------------------
 Public Function CreateSymbols( _
     Optional ByVal ecLevel As ErrorCorrectionLevel = ErrorCorrectionLevel.M, _
-    Optional ByVal maxVer As Long = Constants.MAX_VERSION, _
+    Optional ByVal maxVer As Long = MAX_VERSION, _
     Optional ByVal allowStructuredAppend As Boolean = False, _
     Optional ByVal byteModeCharsetName As String = "Shift_JIS") As Symbols
 
     Dim sbls As New Symbols
 
-    Call sbls.Initialize(ecLevel, maxVer, allowStructuredAppend, byteModeCharsetName)
+    Call sbls.Init(ecLevel, maxVer, allowStructuredAppend, byteModeCharsetName)
     Set CreateSymbols = sbls
-
 End Function

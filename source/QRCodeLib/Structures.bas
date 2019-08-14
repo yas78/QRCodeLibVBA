@@ -2,6 +2,7 @@ Attribute VB_Name = "Structures"
 Option Private Module
 Option Explicit
 
+
 Public Type BITMAPFILEHEADER
     bfType      As Integer
     bfSize      As Long

@@ -5,9 +5,9 @@ Attribute VB_Name = "FormatInfo"
 Option Private Module
 Option Explicit
 
+
 Private m_formatInfoValues()     As Variant
 Private m_formatInfoMaskArray()  As Variant
-
 Private m_initialized As Boolean
 
 '------------------------------------------------------------------------------
@@ -22,8 +22,7 @@ Private m_initialized As Boolean
 Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
                  ByVal maskPatternReference As Long, _
                  ByRef moduleMatrix() As Variant)
-
-    Call Initialize
+    Call Init
 
     Dim formatInfoValue As Long
     formatInfoValue = GetFormatInfoValue(ecLevel, maskPatternReference)
@@ -76,7 +75,6 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
             c2 = c2 - 1
         End If
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -84,7 +82,6 @@ End Sub
 '  形式情報の予約領域を配置します｡
 '------------------------------------------------------------------------------
 Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
-
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
 
@@ -105,7 +102,6 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 
     ' 固定暗モジュールを配置(マスクの適用前に配置する)
     moduleMatrix(numModulesPerSide - 8)(8) = 2
-
 End Sub
 
 '------------------------------------------------------------------------------
@@ -115,41 +111,33 @@ End Sub
 '  ecLevel              : 誤り訂正レベル
 '  maskPatternReference : マスクパターン参照子
 '------------------------------------------------------------------------------
-Private Function GetFormatInfoValue( _
-    ByVal ecLevel As ErrorCorrectionLevel, ByVal maskPatternReference As Long) As Long
-
-    Call Initialize
+Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
+                                    ByVal maskPatternReference As Long) As Long
+    Call Init
 
     Dim indicator As Long
 
     Select Case ecLevel
         Case ErrorCorrectionLevel.L
             indicator = 1
-
         Case ErrorCorrectionLevel.M
             indicator = 0
-
         Case ErrorCorrectionLevel.Q
             indicator = 3
-
         Case ErrorCorrectionLevel.H
             indicator = 2
-
         Case Else
             Call Err.Raise(5)
-
     End Select
 
     GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPatternReference)
-
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -164,5 +152,4 @@ Private Sub Initialize()
 
     ' 形式情報のマスクパターン
     m_formatInfoMaskArray = Array(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
-
 End Sub

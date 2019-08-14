@@ -5,12 +5,12 @@ Attribute VB_Name = "Separator"
 Option Private Module
 Option Explicit
 
+
 '------------------------------------------------------------------------------
 ' (概要)
 '  分離パターンを配置します。
 '------------------------------------------------------------------------------
 Public Sub Place(ByRef moduleMatrix() As Variant)
-
     Dim offset As Long
     offset = UBound(moduleMatrix) - 7
 
@@ -26,5 +26,4 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
          moduleMatrix(i)(offset + 0) = -2
          moduleMatrix(7)(offset + i) = -2
      Next
-
 End Sub

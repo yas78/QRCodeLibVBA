@@ -5,8 +5,8 @@ Attribute VB_Name = "RemainderBit"
 Option Private Module
 Option Explicit
 
-Public Sub Place(ByRef moduleMatrix() As Variant)
 
+Public Sub Place(ByRef moduleMatrix() As Variant)
     Dim r As Long
     Dim c As Long
 
@@ -17,5 +17,4 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
             End If
         Next
     Next
-
 End Sub

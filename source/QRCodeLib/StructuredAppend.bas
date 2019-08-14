@@ -5,6 +5,7 @@ Attribute VB_Name = "StructuredAppend"
 Option Private Module
 Option Explicit
 
+
 ' パリティデータのビット数
 Public Const PARITY_DATA_LENGTH As Long = 8
 

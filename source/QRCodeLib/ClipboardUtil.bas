@@ -2,6 +2,7 @@ Attribute VB_Name = "ClipboardUtil"
 Option Private Module
 Option Explicit
 
+
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
     Private Declare PtrSafe Function GlobalAlloc Lib "kernel32" (ByVal uFlags As Long, ByVal dwBytes As Long) As LongPtr
@@ -29,7 +30,6 @@ Private Const GHND          As Long = GMEM_MOVEABLE Or GMEM_ZEROINIT
 Private Const CF_DIB As Long = 8
 
 Public Sub SetDIB(ByRef dibData() As Byte)
-
     Dim sz As Long
     sz = UBound(dibData) - 14 + 1
 
@@ -58,5 +58,4 @@ Public Sub SetDIB(ByRef dibData() As Byte)
     Call EmptyClipboard
     Call SetClipboardData(CF_DIB, lpMem)
     Call CloseClipboard
-
 End Sub

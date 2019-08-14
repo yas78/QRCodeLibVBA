@@ -12,6 +12,7 @@ Attribute VB_Exposed = False
 '------------------------------------------------------------------------------
 Option Explicit
 
+
 Implements IQRCodeEncoder
 
 Private m_data()        As Long
@@ -23,9 +24,7 @@ Private m_bitCounter    As Long
 '  ビット数を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_BitCount() As Long
-
     IQRCodeEncoder_BitCount = m_bitCounter
-
 End Property
 
 '------------------------------------------------------------------------------
@@ -33,9 +32,7 @@ End Property
 '  文字数を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_CharCount() As Long
-
     IQRCodeEncoder_CharCount = m_charCounter
-
 End Property
 
 '------------------------------------------------------------------------------
@@ -43,9 +40,7 @@ End Property
 '  符号化モードを表す EncodingMode 列挙体の値を取得します。
 '------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
-
     IQRCodeEncoder_EncodingMode = EncodingMode.ALPHA_NUMERIC
-
 End Property
 
 '------------------------------------------------------------------------------
@@ -63,7 +58,6 @@ End Property
 '  現在のモードシーケンスに文字を追加し、追加に要したビット数を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
-
     Dim wd As Long
     wd = ConvertCharCode(c)
 
@@ -88,7 +82,6 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     m_bitCounter = m_bitCounter + ret
 
     IQRCodeEncoder_Append = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -96,13 +89,11 @@ End Function
 '  指定の文字をエンコードしたコード語のビット数を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
-
     If m_charCounter Mod 2 = 0 Then
         IQRCodeEncoder_GetCodewordBitLength = 6
     Else
         IQRCodeEncoder_GetCodewordBitLength = 5
     End If
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -110,7 +101,6 @@ End Function
 '  エンコードされたバイトデータを返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetBytes() As Byte()
-
     Dim bs As BitSequence
     Set bs = New BitSequence
 
@@ -132,7 +122,6 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     Call bs.Append(m_data(UBound(m_data)), bitLength)
 
     IQRCodeEncoder_GetBytes = bs.GetBytes()
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -140,7 +129,6 @@ End Function
 '  指定の文字が符号化モードに適合する場合は True を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
-
     Dim ret As Boolean
 
     Select Case Asc(c)
@@ -171,11 +159,9 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
 
         Case Else
             ret = False
-
     End Select
 
     IQRCodeEncoder_InSubset = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -183,7 +169,6 @@ End Function
 '  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
 '------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
-
     Dim ret As Boolean
 
     Select Case Asc(c)
@@ -215,7 +200,6 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
     End Select
 
     IQRCodeEncoder_InExclusiveSubset = ret
-
 End Function
 
 '------------------------------------------------------------------------------
@@ -224,7 +208,6 @@ End Function
 '  場合は -1 を返します。
 '------------------------------------------------------------------------------
 Private Function ConvertCharCode(ByVal c As String) As Long
-
     Dim code As Long
     code = Asc(c)
 
@@ -253,10 +236,8 @@ Private Function ConvertCharCode(ByVal c As String) As Long
         ' A - Z
         Case 65 To 90
             ConvertCharCode = code - 55
-
+            
         Case Else
             ConvertCharCode = -1
-
     End Select
-
 End Function

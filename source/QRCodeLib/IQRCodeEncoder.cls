@@ -12,6 +12,7 @@ Attribute VB_Exposed = False
 ' ---------------------------------------------------------------------------
 Option Explicit
 
+
 Public Property Get EncodingMode() As EncodingMode: End Property
 Public Property Get ModeIndicator() As Long: End Property
 Public Property Get CharCount() As Long: End Property

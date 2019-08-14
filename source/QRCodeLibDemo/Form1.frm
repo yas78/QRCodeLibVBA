@@ -56,7 +56,7 @@ On Error GoTo Catch
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.Get24bppImage(CLng(txtModuleSize.Text), _
+        img.Picture = sbl.GetPicture(CLng(txtModuleSize.Text), _
             "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
 
@@ -116,8 +116,8 @@ On Error GoTo Catch
             Call fs.DeleteFile(filePath)
         End If
 
-        Call sbl.Save1bppDIB(filePath, CLng(txtModuleSize.Text), _
-            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
+        Call sbl.SaveToFile(filePath, CLng(txtModuleSize.Text), _
+            "#" & txtForeColor.Text, "#" & txtBackColor.Text, True)
     Next
 
 Finally:
@@ -236,14 +236,14 @@ Private Sub UserForm_Initialize()
         .ListIndex = 1
     End With
 
-    cmbEncoding.AddItem "Shift_JIS"
-    cmbEncoding.AddItem "UTF-8"
+    Call cmbEncoding.AddItem("Shift_JIS")
+    Call cmbEncoding.AddItem("UTF-8")
     cmbEncoding.ListIndex = 0
 
     Dim i As Long
 
-    For i = QRCodeLib.Constants.MIN_VERSION To QRCodeLib.Constants.MAX_VERSION
-        cmbMaxVersion.AddItem i
+    For i = 1 To 40
+        Call cmbMaxVersion.AddItem(i)
     Next
 
     cmbMaxVersion.Value = DEFAULT_VERSION

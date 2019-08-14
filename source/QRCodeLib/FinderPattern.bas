@@ -5,8 +5,8 @@ Attribute VB_Name = "FinderPattern"
 Option Private Module
 Option Explicit
 
-Private m_finderPattern() As Variant
 
+Private m_finderPattern() As Variant
 Private m_initialized As Boolean
 
 '--------------------------------------------------------------------------------
@@ -14,16 +14,14 @@ Private m_initialized As Boolean
 '  位置検出パターンを配置します。
 '--------------------------------------------------------------------------------
 Public Sub Place(ByRef moduleMatrix() As Variant)
-
-    Call Initialize
+    Call Init
 
     Dim offset As Long
     offset = (UBound(moduleMatrix) + 1) - (UBound(m_finderPattern) + 1)
 
     Dim i As Long
     Dim j As Long
-
-    Dim v  As Long
+    Dim v As Long
 
     For i = 0 To UBound(m_finderPattern)
         For j = 0 To UBound(m_finderPattern(i))
@@ -34,15 +32,13 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
             moduleMatrix(i + offset)(j) = v
         Next
     Next
-
 End Sub
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  オブジェクトを初期化します。
 '------------------------------------------------------------------------------
-Private Sub Initialize()
-
+Private Sub Init()
     If m_initialized Then Exit Sub
 
     m_initialized = True
@@ -57,5 +53,4 @@ Private Sub Initialize()
         Array(2, -2, -2, -2, -2, -2, 2), _
         Array(2, 2, 2, 2, 2, 2, 2) _
     )
-
 End Sub
