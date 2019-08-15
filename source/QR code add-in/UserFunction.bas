@@ -17,32 +17,32 @@ On Error GoTo Catch
     If Not (ColorCode.IsWebColor(ForeColor)) Then Err.Raise (5)
     If Not (ColorCode.IsWebColor(BackColor)) Then Err.Raise (5)
     If Not (1 <= VersionLimit And VersionLimit <= 40) Then Call Err.Raise(5)
-    
+
     Dim filePath As String
     filePath = Directory.GetTempPath()
-    
+
     If Directory.FileExists(filePath) Then
         Call Directory.DeleteFile(filePath)
     End If
-            
+
     Dim rng As Range
     Set rng = Application.Caller.MergeArea
-    
+
     Call DeleteShape(rng)
-    
+
     Dim sbls As Symbols
     Set sbls = CreateSymbols(maxVer:=VersionLimit)
     Call sbls.AppendText(Text)
-    
+
     Call sbls(0).SaveToFile(filePath, ModuleSize, ForeColor, BackColor, True)
-    
+
     Dim shp As Shape
     Set shp = AddPicture(filePath, rng)
     Call FitToCell(shp, rng)
-    
+
     Dim ret As String
     ret = "QR code"
-    
+
     QRcode = ret
 
 Finally:
@@ -60,7 +60,7 @@ End Function
 
 Private Sub DeleteShape(ByVal rng As Range)
     Dim shp As Shape
-    
+
     For Each shp In rng.Parent.Shapes
         If rng.Left <= shp.Left And (shp.Left + shp.Width) < (rng.Left + rng.Width) And _
             rng.Top <= shp.Top And (shp.Top + shp.Height) < (rng.Top + rng.Height) Then
@@ -72,7 +72,7 @@ End Sub
 Private Function AddPicture(ByVal filePath As String, ByVal rng As Range) As Shape
     Dim shp As Shape
     Set shp = rng.Parent.Shapes.AddPicture(filePath, msoFalse, msoTrue, rng.Left, rng.Top, 0, 0)
-    
+
     Call shp.ScaleHeight(1, msoTrue)
     Call shp.ScaleWidth(1, msoTrue)
     shp.LockAspectRatio = msoTrue

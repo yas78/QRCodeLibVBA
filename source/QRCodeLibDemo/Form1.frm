@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+
 Private Const DEFAULT_MODULE_SIZE As Long = 4
 Private Const DEFAULT_VERSION     As Long = 40
 Private Const IMAGE_WIDTH         As Long = 122
