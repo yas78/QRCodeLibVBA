@@ -67,7 +67,7 @@ CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成し
 型番1を超える場合に分割し、各QRコードのIPictureオブジェクトを取得する例を示します。
 
 ```vbnet
-Public Sub Example6()
+Public Sub Example5()
     Dim sbls As Symbols
     Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
     sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
