@@ -30,7 +30,7 @@ Public Function Apply(ByVal ver As Long, _
     Dim maskedMatrix() As Variant
 
     Dim i As Long
-    
+
     For i = 0 To 7
         temp = moduleMatrix
 

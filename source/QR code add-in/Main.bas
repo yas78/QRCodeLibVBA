@@ -5,13 +5,13 @@ Private Sub ShowQRCodeWindow()
 On Error GoTo Catch
     Dim dataText As String
     dataText = ActiveCell.Text
-    
+
     If Len(dataText) = 0 Then Exit Sub
-    
+
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
     Call sbls.AppendText(dataText)
-    
+
     Dim sbl As Symbol
     Set sbl = sbls(0)
 

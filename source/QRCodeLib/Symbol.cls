@@ -533,7 +533,7 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
 
     Dim bitPos As Long
     Dim v As Variant
-    
+
     For Each v In data
         bitPos = 7
 
@@ -579,9 +579,9 @@ End Sub
 ' (概要)
 '  色深度1bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
-Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                           Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+Private Function GetBitmap1(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                            Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                            Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim foreColorRGB As Long
@@ -658,16 +658,16 @@ Public Function Get1bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     Dim ret() As Byte
     ret = DIB.Build1bppDIB(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
 
-    Get1bppDIB = ret
+    GetBitmap1 = ret
 End Function
 
 '------------------------------------------------------------------------------
 ' (概要)
 '  色深度24bppビットマップファイルのバイトデータを返します。
 '------------------------------------------------------------------------------
-Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                            Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                            Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+Private Function GetBitmap24(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                             Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                             Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim foreColorRGB As Long
@@ -735,7 +735,22 @@ Public Function Get24bppDIB(Optional ByVal moduleSize As Long = DEFAULT_MODULE_S
     Dim ret() As Byte
     ret = DIB.Build24bppDIB(bitmapData, pictWidth, pictHeight)
 
-    Get24bppDIB = ret
+    GetBitmap24 = ret
+End Function
+
+Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                          Optional ByVal foreRGB As String = ColorCode.BLACK, _
+                          Optional ByVal backRGB As String = ColorCode.WHITE, _
+                          Optional ByVal monochrome As Boolean = False) As Byte()
+
+    If moduleSize < 1 Then Call Err.Raise(5)
+
+    If monochrome Then
+        GetBitmap = GetBitmap1(moduleSize, foreRGB, backRGB)
+    Else
+        GetBitmap = GetBitmap24(moduleSize, foreRGB, backRGB)
+    End If
+
 End Function
 
 '------------------------------------------------------------------------------
@@ -748,7 +763,7 @@ Private Function GetPicture1(Optional ByVal moduleSize As Long = DEFAULT_MODULE_
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
-    dibData = Get1bppDIB(moduleSize, foreRGB, backRGB)
+    dibData = GetBitmap1(moduleSize, foreRGB, backRGB)
 
     Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
@@ -766,7 +781,7 @@ Private Function GetPicture24(Optional ByVal moduleSize As Long = DEFAULT_MODULE
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
-    dibData = Get24bppDIB(moduleSize, foreRGB, backRGB)
+    dibData = GetBitmap24(moduleSize, foreRGB, backRGB)
 
     Dim ret As stdole.IPicture
     Set ret = ImageConverter.ConvertFrom(dibData)
@@ -791,7 +806,7 @@ End Function
 ' (概要)
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
-Private Sub Save1bppDIB(ByVal filePath As String, _
+Private Sub SaveBitmap1(ByVal filePath As String, _
                         Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                         Optional ByVal foreRGB As String = ColorCode.BLACK, _
                         Optional ByVal backRGB As String = ColorCode.WHITE)
@@ -801,7 +816,7 @@ Private Sub Save1bppDIB(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim bitmapBytes() As Byte
-    bitmapBytes = Get1bppDIB(moduleSize, foreRGB, backRGB)
+    bitmapBytes = GetBitmap1(moduleSize, foreRGB, backRGB)
 
     Dim fNum As Integer
     fNum = FreeFile()
@@ -815,7 +830,7 @@ End Sub
 ' (概要)
 '  シンボルをビットマップ形式で保存します。
 '------------------------------------------------------------------------------
-Private Sub Save24bppDIB(ByVal filePath As String, _
+Private Sub SaveBitmap24(ByVal filePath As String, _
                          Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                          Optional ByVal foreRGB As String = ColorCode.BLACK, _
                          Optional ByVal backRGB As String = ColorCode.WHITE)
@@ -825,7 +840,7 @@ Private Sub Save24bppDIB(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim bitmapBytes() As Byte
-    bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
+    bitmapBytes = GetBitmap24(moduleSize, foreRGB, backRGB)
 
     Dim fNum As Integer
     fNum = FreeFile()
@@ -848,9 +863,9 @@ Public Sub SaveToFile(ByVal filePath As String, _
     If moduleSize < 1 Then Call Err.Raise(5)
 
     If monochrome Then
-        Call Save1bppDIB(filePath, moduleSize, foreRGB, backRGB)
+        Call SaveBitmap1(filePath, moduleSize, foreRGB, backRGB)
     Else
-        Call Save24bppDIB(filePath, moduleSize, foreRGB, backRGB)
+        Call SaveBitmap24(filePath, moduleSize, foreRGB, backRGB)
     End If
 End Sub
 
@@ -862,7 +877,7 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
                           Optional ByVal backRGB As String = ColorCode.WHITE)
     Dim bitmapBytes() As Byte
-    bitmapBytes = Get24bppDIB(moduleSize, foreRGB, backRGB)
+    bitmapBytes = GetBitmap24(moduleSize, foreRGB, backRGB)
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
 End Sub

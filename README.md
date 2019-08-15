@@ -21,14 +21,13 @@ QRCodeLib.xlam を参照設定してください。
 ### 例１．単一シンボルで構成される(分割QRコードではない)QRコードの、最小限のコードを示します。
 
 ```vbnet
-Public Sub Example()
+Public Sub Example1()
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
     sbls.AppendText "012345abcdefg"
 
     Dim pict As stdole.IPicture
-    Set pict = sbls(0).Get24bppImage()
-    
+    Set pict = sbls(0).GetPicture()
 End Sub
 ```
 
@@ -36,71 +35,87 @@ End Sub
 CreateSymbols関数の引数に、ErrorCorrectionLevel列挙型の値を設定してSymbolsオブジェクトを生成します。
 
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
+Public Sub Example2()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
+End Sub
 ```
 
 ### 例３．型番の上限を指定する
 CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。
+
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols(maxVer:=10)
+Public Sub Example3()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols(maxVer:=10)
+End Sub
 ```
 
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
 CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。
+
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
+Public Sub Example4()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
+End Sub
 ```
 
 ### 例５．分割QRコードを作成する
-CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。型番の上限を指定しない場合は、型番40を上限として分割されます。
-```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols(allowStructuredAppend:=True)
-```
+CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。型番の上限を指定しない場合は、型番40を上限として分割されます。  
 
 型番1を超える場合に分割し、各QRコードのIPictureオブジェクトを取得する例を示します。
 
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
-sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
-
-Dim pict As stdole.IPicture
-Dim sbl As Symbol
-
-For Each sbl In sbls
-    Set pict = sbl.Get24bppImage()
-Next
+Public Sub Example6()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
+    sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
+    
+    Dim pict As stdole.IPicture
+    Dim sbl As Symbol
+    
+    For Each sbl In sbls
+        Set pict = sbl.GetPicture()
+    Next
+End Sub
 ```
 
 ### 例６．BMPファイルへ保存する
-SymbolクラスのSave1bppDIB、またはSave24bppDIBメソッドを使用します。
+SymbolクラスのSaveToFileメソッドを使用します。
 
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols()
-sbls.AppendText "012345abcdefg"
-
-sbls(0).Save1bppDIB "D:\qrcode1bpp1.bmp"
-sbls(0).Save1bppDIB "D:\qrcode1bpp2.bmp", 10 ' 10 pixels per module
-sbls(0).Save24bppDIB "D:\qrcode24bpp1.bmp"
-sbls(0).Save24bppDIB "D:\qrcode24bpp2.bmp", 10 ' 10 pixels per module
+Public Sub Example6()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols()
+    sbls.AppendText "012345abcdefg"
+    
+    ' 24bpp DIB
+    sbls(0).SaveToFile "D:\QRcode_24bpp(1).bmp"
+    
+    ' 10 pixels per module
+    sbls(0).SaveToFile "D:\QRcode_24bpp(2).bmp", moduleSize:=10
+    
+    ' Specify foreground and background colors.
+    sbls(0).SaveToFile "D:\QRcode_24bpp(3).bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
+    
+    ' 1bpp DIB
+    sbls(0).SaveToFile "D:\QRcode_1bpp(1).bmp", monochrome:=True
+End Sub
 ```
 
 ### 例７．クリップボードへ保存する
 SymbolクラスのSetToClipboardメソッドを使用します。
 
 ```vbnet
-Dim sbls As Symbols
-Set sbls = CreateSymbols()
-sbls.AppendText "012345abcdefg"
-
-sbls(0).SetToClipboard
-sbls(0).SetToClipBoard moduleSize:=10
-sbls(0).SetToClipBoard foreRGB:="#0000FF"
-sbls(0).SetToClipBoard backRGB:="#00FF00"
+Public Sub Example7()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols()
+    sbls.AppendText "012345abcdefg"
+    
+    sbls(0).SetToClipBoard
+    sbls(0).SetToClipBoard moduleSize:=10
+    sbls(0).SetToClipBoard foreRGB:="#0000FF", backRGB:="#FFFF00"
+End Sub
 ```
 

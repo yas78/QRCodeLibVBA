@@ -170,7 +170,7 @@ Public Sub AppendText(ByVal s As String)
 
     Dim oldMode As EncodingMode
     Dim newMode As EncodingMode
-    
+
     Dim i As Long
     Dim c As String
 
@@ -257,12 +257,12 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
         SelectInitialMode = EncodingMode.KANJI
         Exit Function
     End If
-        
+
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
-        
+
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
         flg = False
@@ -359,7 +359,7 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
             Exit Function
         End If
     End If
-    
+
     Call Err.Raise(51)
 End Function
 

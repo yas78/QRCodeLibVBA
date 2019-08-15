@@ -55,7 +55,7 @@ Public Function GetNumberDataCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
     Dim ret As Long
     Dim numPreBlocks As Long
     Dim numFolBlocks As Long
-    
+
     If preceding Then
         ret = numPreBlockCodewords
 

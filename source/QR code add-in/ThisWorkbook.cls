@@ -30,11 +30,11 @@ End Sub
 
 Private Sub CreateMenu()
     If MenuExists() Then Exit Sub
-    
+
     Dim cmdBar      As CommandBar
     Dim cmdBarCtrl  As CommandBarControl
     Dim menuBtn     As CommandBarButton
-    
+
     For Each cmdBar In Application.CommandBars
         If cmdBar.Name = "Cell" Then
             Set menuBtn = cmdBar.Controls.Add(Type:=msoControlButton)
@@ -49,7 +49,7 @@ End Sub
 Private Sub DeleteMenu()
     Dim cmdBarCtrl  As CommandBarControl
     Dim cmdBar      As CommandBar
-    
+
     For Each cmdBar In Application.CommandBars
         If cmdBar.Name = "Cell" Then
             For Each cmdBarCtrl In cmdBar.Controls
@@ -64,9 +64,9 @@ End Sub
 Private Function MenuExists() As Boolean
     Dim cmdBar      As CommandBar
     Dim cmdBarCtrl  As CommandBarControl
-    
+
     MenuExists = False
-    
+
     For Each cmdBar In Application.CommandBars
         If cmdBar.Name = "Cell" Then
             For Each cmdBarCtrl In cmdBar.Controls

@@ -236,7 +236,7 @@ Private Function ConvertCharCode(ByVal c As String) As Long
         ' A - Z
         Case 65 To 90
             ConvertCharCode = code - 55
-            
+
         Case Else
             ConvertCharCode = -1
     End Select
