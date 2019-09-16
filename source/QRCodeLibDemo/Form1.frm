@@ -48,16 +48,17 @@ On Error GoTo Catch
     For idx = 0 To sbls.Count - 1
         Set sbl = sbls(idx)
         Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
-
-        ctl.Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod 4) + IMAGE_MARGIN
-        ctl.Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ 4) + IMAGE_MARGIN
-        ctl.Width = IMAGE_WIDTH
-        ctl.Height = IMAGE_HEIGHT
+        With ctl
+            .Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod 4) + IMAGE_MARGIN
+            .Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ 4) + IMAGE_MARGIN
+            .Width = IMAGE_WIDTH
+            .Height = IMAGE_HEIGHT
+        End With
 
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.GetPicture(CLng(txtModuleSize.Text), _
+        img.Picture = sbl.GetPicture(CLng(txtModuleSize.Text), True, _
             "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
 
@@ -117,8 +118,8 @@ On Error GoTo Catch
             Call fs.DeleteFile(filePath)
         End If
 
-        Call sbl.SaveToFile(filePath, CLng(txtModuleSize.Text), _
-            "#" & txtForeColor.Text, "#" & txtBackColor.Text, True)
+        Call sbl.SaveToFile(filePath, CLng(txtModuleSize.Text), True, _
+            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
     Next
 
 Finally:
@@ -257,5 +258,4 @@ Private Sub UserForm_Initialize()
 
     btnSave.Enabled = False
 End Sub
-
 
