@@ -30,9 +30,9 @@ Private m_byteModeEncoding As TextEncoding
 Private m_shiftJISEncoding As TextEncoding
 
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
-                      ByVal maxVer As Long, _
-                      ByVal allowStructuredAppend As Boolean, _
-                      ByVal byteModeCharsetName As String)
+                ByVal maxVer As Long, _
+                ByVal allowStructuredAppend As Boolean, _
+                ByVal byteModeCharsetName As String)
     If Not (MIN_VERSION <= maxVer And maxVer <= MAX_VERSION) Then
         Call Err.Raise(5)
     End If
