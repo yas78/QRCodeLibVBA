@@ -1,28 +1,17 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
 Attribute VB_Name = "GeneratorPolynomials"
-Option Private Module
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 Option Explicit
 
-
 Private m_gp(68) As Variant
-Private m_initialized As Boolean
 
-Public Function Item(ByVal numECCodewords As Long) As Variant
-    Call Init
-
-    If IsEmpty(m_gp(numECCodewords)) Then Call Err.Raise(5)
-
-    Item = m_gp(numECCodewords)
-End Function
-
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
-Private Sub Init()
-    If m_initialized Then Exit Sub
-
-    m_initialized = True
-
+Private Sub Class_Initialize()
     m_gp(7) = Array(21, 102, 238, 149, 146, 229, 87, 0)
     m_gp(10) = Array(45, 32, 94, 64, 70, 118, 61, 46, 67, 251, 0)
     m_gp(13) = Array(78, 140, 206, 218, 130, 104, 106, 100, 86, 100, 176, 152, 74, 0)
@@ -55,3 +44,10 @@ Private Sub Init()
     m_gp(66) = Array(105, 45, 93, 132, 25, 171, 106, 67, 146, 76, 82, 168, 50, 106, 232, 34, 77, 217, 126, 240, 253, 80, 87, 63, 143, 121, 40, 236, 111, 77, 154, 44, 7, 95, 197, 169, 214, 72, 41, 101, 95, 111, 68, 178, 137, 65, 173, 95, 171, 197, 247, 139, 17, 81, 215, 13, 117, 46, 51, 162, 136, 136, 180, 222, 118, 5, 0)
     m_gp(68) = Array(238, 163, 8, 5, 3, 127, 184, 101, 27, 235, 238, 43, 198, 175, 215, 82, 32, 54, 2, 118, 225, 166, 241, 137, 125, 41, 177, 52, 231, 95, 97, 199, 52, 227, 89, 160, 173, 253, 84, 15, 84, 93, 151, 203, 220, 165, 202, 60, 52, 133, 205, 190, 101, 84, 150, 43, 254, 32, 160, 90, 70, 77, 93, 224, 33, 223, 159, 247, 0)
 End Sub
+
+Public Function Item(ByVal numECCodewords As Long) As Variant
+    If IsEmpty(m_gp(numECCodewords)) Then Call Err.Raise(5)
+
+    Item = m_gp(numECCodewords)
+End Function
+

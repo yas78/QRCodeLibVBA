@@ -202,11 +202,11 @@ Private Sub txtModuleSize_KeyDown( _
 
     Select Case KeyCode
         Case 38
-            If sz >= 1 And sz < 20 Then
+            If 1 <= sz And sz < 20 Then
                 txtModuleSize.Text = CStr(sz + 1)
             End If
         Case 40
-            If sz > 1 And sz <= 20 Then
+            If 1 < sz And sz <= 20 Then
                 txtModuleSize.Text = CStr(sz - 1)
             End If
     End Select
@@ -243,7 +243,6 @@ Private Sub UserForm_Initialize()
     cmbEncoding.ListIndex = 0
 
     Dim i As Long
-
     For i = 1 To 40
         Call cmbMaxVersion.AddItem(i)
     Next

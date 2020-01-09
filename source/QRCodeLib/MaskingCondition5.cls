@@ -8,8 +8,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-
-
 Implements IMaskingCondition
 
 Private Function IMaskingCondition_Evaluate(ByVal r As Long, ByVal c As Long) As Boolean

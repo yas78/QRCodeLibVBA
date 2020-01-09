@@ -2,7 +2,6 @@ Attribute VB_Name = "DIB"
 Option Private Module
 Option Explicit
 
-
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
 #Else
@@ -34,8 +33,8 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .biBitCount = 1
         .biCompression = 0
         .biSizeImage = 0
-        .biXPelsPerMeter = 3780 ' 96dpi
-        .biYPelsPerMeter = 3780 ' 96dpi
+        .biXPelsPerMeter = 3780
+        .biYPelsPerMeter = 3780
         .biClrUsed = 0
         .biClrImportant = 0
     End With
@@ -120,8 +119,8 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
         .biBitCount = 24
         .biCompression = 0
         .biSizeImage = 0
-        .biXPelsPerMeter = 3780 ' 96dpi
-        .biYPelsPerMeter = 3780 ' 96dpi
+        .biXPelsPerMeter = 3780
+        .biYPelsPerMeter = 3780
         .biClrUsed = 0
         .biClrImportant = 0
     End With

@@ -1,31 +1,18 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
 Attribute VB_Name = "GaloisField256"
-Option Private Module
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 Option Explicit
-
 
 Private m_intToExpTable  As Variant
 Private m_expToIntTable  As Variant
-Private m_initialized As Boolean
 
-Public Function ToExp(ByVal arg As Long) As Long
-    Call Init
-    ToExp = m_intToExpTable(arg)
-End Function
-
-Public Function ToInt(ByVal arg As Long) As Long
-    Call Init
-    ToInt = m_expToIntTable(arg)
-End Function
-
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
-Private Sub Init()
-    If m_initialized Then Exit Sub
-
-    m_initialized = True
-
+Private Sub Class_Initialize()
     m_intToExpTable = Array( _
         -1, 0, 1, 25, 2, 50, 26, 198, 3, 223, 51, 238, 27, 104, 199, 75, 4, 100, 224, 14, 52, 141, _
         239, 129, 28, 193, 105, 248, 200, 8, 76, 113, 5, 138, 101, 47, 225, 36, 15, 33, 53, _
@@ -56,3 +43,12 @@ Private Sub Init()
         61, 122, 244, 245, 247, 243, 251, 235, 203, 139, 11, 22, 44, 88, 176, 125, 250, 233, 207, 131, 27, _
         54, 108, 216, 173, 71, 142, 1)
 End Sub
+
+Public Function ToExp(ByVal arg As Long) As Long
+    ToExp = m_intToExpTable(arg)
+End Function
+
+Public Function ToInt(ByVal arg As Long) As Long
+    ToInt = m_expToIntTable(arg)
+End Function
+

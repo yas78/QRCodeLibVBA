@@ -2,7 +2,6 @@ Attribute VB_Name = "Encoder"
 Option Private Module
 Option Explicit
 
-
 Public Function Create(ByVal encMode As EncodingMode, _
                        ByVal byteModeEncoding As String) As IQRCodeEncoder
     Dim ret As IQRCodeEncoder

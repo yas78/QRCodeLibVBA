@@ -1,33 +1,17 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
 Attribute VB_Name = "DataCodeword"
-'------------------------------------------------------------------------------
-' データコード語
-'------------------------------------------------------------------------------
-Option Private Module
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 Option Explicit
 
-
 Private m_totalNumbers() As Variant
-Private m_initialized As Boolean
 
-'------------------------------------------------------------------------------
-' (概要)
-'  データコード語数を返します。
-'------------------------------------------------------------------------------
-Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
-    Call Init
-
-    GetTotalNumber = m_totalNumbers(ecLevel)(ver)
-End Function
-
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
-Private Sub Init()
-    If m_initialized Then Exit Sub
-
-    m_initialized = True
-
+Private Sub Class_Initialize()
     Dim ecLevelL() As Variant
     ecLevelL = Array( _
            0, _
@@ -66,3 +50,8 @@ Private Sub Init()
 
     m_totalNumbers = Array(ecLevelL, ecLevelM, ecLevelQ, ecLevelH)
 End Sub
+
+Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
+    GetTotalNumber = m_totalNumbers(ecLevel)(ver)
+End Function
+

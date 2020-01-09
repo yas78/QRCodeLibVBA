@@ -1,7 +1,6 @@
 Attribute VB_Name = "ColorCode"
 Option Explicit
 
-
 Public Const WHITE As String = "#FFFFFF"
 Public Const BLACK As String = "#000000"
 

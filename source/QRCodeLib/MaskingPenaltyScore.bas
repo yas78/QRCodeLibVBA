@@ -1,15 +1,7 @@
 Attribute VB_Name = "MaskingPenaltyScore"
-'------------------------------------------------------------------------------
-' マスクされたシンボルの失点評価
-'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
 
-
-'------------------------------------------------------------------------------
-' (概要)
-'  マスクパターン失点の合計を返します。
-'------------------------------------------------------------------------------
 Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
     Dim total   As Long
     Dim penalty As Long
@@ -29,10 +21,6 @@ Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
     CalcTotal = total
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  行／列の同色隣接モジュールパターンの失点を計算します。
-'------------------------------------------------------------------------------
 Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
     Dim penalty As Long
     penalty = 0
@@ -43,10 +31,6 @@ Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant)
     CalcAdjacentModulesInSameColor = penalty
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  行の同色隣接モジュールパターンの失点を計算します。
-'------------------------------------------------------------------------------
 Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Variant) As Long
     Dim penalty As Long
     penalty = 0
@@ -78,10 +62,6 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
     CalcAdjacentModulesInRowInSameColor = penalty
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  2x2の同色モジュールパターンの失点を計算します。
-'------------------------------------------------------------------------------
 Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
     Dim penalty     As Long
     Dim isSameColor As Boolean
@@ -105,10 +85,6 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
     CalcBlockOfModulesInSameColor = penalty
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  行／列における1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
-'------------------------------------------------------------------------------
 Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     Dim moduleMatrixTemp() As Variant
     moduleMatrixTemp = QuietZone.Place(moduleMatrix)
@@ -122,10 +98,6 @@ Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     CalcModuleRatio = penalty
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  行の1 : 1 : 3 : 1 : 1 比率のパターンを評価し、失点を返します。
-'------------------------------------------------------------------------------
 Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
     Dim penalty As Long
 
@@ -272,10 +244,6 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Set GetRatio3Ranges = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  全体に対する暗モジュールの占める割合について失点を計算します。
-'------------------------------------------------------------------------------
 Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As Long
     Dim darkCount As Long
 

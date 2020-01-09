@@ -9,7 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
 #Else
@@ -30,14 +29,10 @@ Private m_dataBitCapacity   As Long
 Private m_dataBitCounter    As Long
 
 Private m_segments          As Collection ' Item : IQRCodeEncoder
-Private m_segmentCounter    As Object ' Is Dictionary Key : EncodingMode, Item : Long
+Private m_segmentCounter    As Object ' Is Scripting.Dictionary Key : EncodingMode, Item : Long
 
 Private m_Index As Long
 
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
 Friend Sub Init(ByVal parentObj As Symbols)
     Set m_parent = parentObj
     m_Index = parentObj.Count
@@ -66,10 +61,6 @@ Friend Sub Init(ByVal parentObj As Symbols)
     End If
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  親オブジェクトを取得します。
-'------------------------------------------------------------------------------
 Friend Property Get Parent() As Symbols
     Set Parent = m_parent
 End Property
@@ -78,29 +69,14 @@ Friend Property Get Index() As Long
     Index = m_Index
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  型番を取得します。
-'------------------------------------------------------------------------------
 Friend Property Get Version() As Long
     Version = m_currVersion
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化モードを取得します。
-'------------------------------------------------------------------------------
 Friend Property Get CurrentEncodingMode() As EncodingMode
     CurrentEncodingMode = m_currEncodingMode
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボルに文字を追加します。
-'
-' (戻り値)
-'  正常終了時は True を返します。シンボル容量が不足している場合は False を返します。
-'------------------------------------------------------------------------------
 Friend Function TryAppend(ByVal c As String) As Boolean
     Dim bitLength  As Long
     bitLength = m_currEncoder.GetCodewordBitLength(c)
@@ -121,13 +97,6 @@ Friend Function TryAppend(ByVal c As String) As Boolean
     TryAppend = True
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化モードを設定します。
-'
-' (戻り値)
-'  正常終了は True、シンボル容量が不足している場合は False を返します。
-'------------------------------------------------------------------------------
 Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
                                    ByVal c As String) As Boolean
     Dim enc As IQRCodeEncoder
@@ -161,10 +130,6 @@ Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
     TrySetEncodingMode = True
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  型番を決定します。
-'------------------------------------------------------------------------------
 Private Sub SelectVersion()
     Dim encMode As Variant ' Subtype : EncodingMode
 
@@ -189,10 +154,6 @@ Private Sub SelectVersion()
     End If
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  データ領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
-'------------------------------------------------------------------------------
 Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
     Dim dataBytes() As Byte
     dataBytes = GetMessageBytes()
@@ -248,10 +209,6 @@ Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
     BuildDataBlock = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  誤り訂正領域ブロックを、内部形式 Byte型配列のVariant型配列として返します。
-'------------------------------------------------------------------------------
 Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
     Dim i As Long
     Dim j As Long
@@ -319,10 +276,6 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
     BuildErrorCorrectionBlock = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化領域のバイトデータを返します。
-'------------------------------------------------------------------------------
 Private Function GetEncodingRegionBytes() As Byte()
     Dim dataBlock() As Variant ' Subtype : Byte()
     dataBlock = BuildDataBlock()
@@ -378,10 +331,6 @@ Private Function GetEncodingRegionBytes() As Byte()
     GetEncodingRegionBytes = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  コード語に変換するメッセージビット列を返します。
-'------------------------------------------------------------------------------
 Private Function GetMessageBytes() As Byte()
     Dim bs As BitSequence
     Set bs = New BitSequence
@@ -470,10 +419,6 @@ Private Sub WritePadCodewords(ByVal bs As BitSequence)
     Loop
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボルの明暗パターンを返します。
-'------------------------------------------------------------------------------
 Private Function GetModuleMatrix() As Variant()
     Dim numModulesPerSide As Long
     numModulesPerSide = Module.GetNumModulesPerSide(m_currVersion)
@@ -511,10 +456,6 @@ Private Function GetModuleMatrix() As Variant()
     GetModuleMatrix = moduleMatrix
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-' シンボルキャラクタを配置します。
-'------------------------------------------------------------------------------
 Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     Dim data() As Byte
     data = GetEncodingRegionBytes()
@@ -575,10 +516,6 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     Next
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  色深度1bppビットマップファイルのバイトデータを返します。
-'------------------------------------------------------------------------------
 Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                                Optional ByVal foreRGB As String = ColorCode.BLACK, _
                                Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
@@ -656,10 +593,6 @@ Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODUL
     GetBitmap1bpp = DIB.Build1bppDIB(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  色深度24bppビットマップファイルのバイトデータを返します。
-'------------------------------------------------------------------------------
 Private Function GetBitmap24bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                                 Optional ByVal foreRGB As String = ColorCode.BLACK, _
                                 Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
@@ -741,14 +674,10 @@ Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
     End If
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボルのイメージを返します。
-'------------------------------------------------------------------------------
 Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                            Optional ByVal monochrome As Boolean = False, _
                            Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                           Optional ByVal backRGB As String = ColorCode.WHITE)
+                           Optional ByVal backRGB As String = ColorCode.WHITE) As stdole.IPictureDisp
     If moduleSize < 1 Then Call Err.Raise(5)
 
     Dim dibData() As Byte
@@ -762,10 +691,6 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     Set GetPicture = ImageConverter.ConvertFrom(dibData)
 End Function
 
-'----------------------------------------------------------------------------------------
-' (概要)
-'  シンボルをビットマップ形式で保存します。
-'----------------------------------------------------------------------------------------
 Public Sub SaveToFile(ByVal filePath As String, _
                       Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                       Optional ByVal monochrome As Boolean = False, _
@@ -791,10 +716,6 @@ Public Sub SaveToFile(ByVal filePath As String, _
     Close #fNum
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボルをクリップボードに保存します。
-'------------------------------------------------------------------------------
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
                           Optional ByVal backRGB As String = ColorCode.WHITE)
@@ -803,5 +724,4 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
 End Sub
-
 

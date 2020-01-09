@@ -1,23 +1,7 @@
 Attribute VB_Name = "Masking"
-'------------------------------------------------------------------------------
-' マスク
-'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
 
-
-'------------------------------------------------------------------------------
-' (概要)
-'  マスクを適用します。
-'
-' (パラメータ)
-'  moduleMatrix : シンボルの明暗パターン
-'  ver          : 型番
-'  ecLevel      : 誤り訂正レベル
-'
-' (戻り値)
-'  適用されたマスクパターン参照子
-'------------------------------------------------------------------------------
 Public Function Apply(ByVal ver As Long, _
                       ByVal ecLevel As ErrorCorrectionLevel, _
                       ByRef moduleMatrix() As Variant) As Long
@@ -54,14 +38,6 @@ Public Function Apply(ByVal ver As Long, _
     Apply = maskPatternReference
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  マスクパターンを適用したシンボルデータを返します。
-'
-' (パラメータ)
-'  moduleMatrix()       : シンボルの明暗パターン
-'  maskPatternReference : マスクパターン参照子を表す0から7までの値
-'------------------------------------------------------------------------------
 Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Variant)
     Dim condition As IMaskingCondition
     Set condition = GetCondition(maskPatternReference)
@@ -80,10 +56,6 @@ Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Var
     Next
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  マスク条件を返します。
-'------------------------------------------------------------------------------
 Private Function GetCondition(ByVal maskPatternReference As Long) As IMaskingCondition
     Dim ret As IMaskingCondition
 

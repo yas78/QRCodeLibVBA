@@ -7,11 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'------------------------------------------------------------------------------
-' ビット列の生成機能を提供します。
-'------------------------------------------------------------------------------
 Option Explicit
-
 
 Private m_buffer As Object ' Is Dictionary
 Private m_bitCounter As Long
@@ -21,10 +17,6 @@ Private Sub Class_Initialize()
     Call Clear
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  ビット数を取得します。
-'------------------------------------------------------------------------------
 Public Property Get Length() As Long
     Length = m_bitCounter
 End Property
@@ -35,14 +27,6 @@ Public Sub Clear()
     m_space = 0
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定のビット数でデータを追加します。
-'
-' (パラメータ)
-'  data      : 追加するデータ
-'  bitLength : データのビット数
-'------------------------------------------------------------------------------
 Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
     Dim remainingLength As Long
     remainingLength = bitLength
@@ -80,10 +64,6 @@ Public Sub Append(ByVal data As Long, ByVal bitLength As Long)
     Loop
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  データのバイト配列を返します。
-'------------------------------------------------------------------------------
 Public Function GetBytes() As Byte()
     Dim ret() As Byte
     ReDim ret(m_buffer.Count - 1)

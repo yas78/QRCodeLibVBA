@@ -7,54 +7,29 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'------------------------------------------------------------------------------
-' 数字モードエンコーダー
-'------------------------------------------------------------------------------
 Option Explicit
-
-
 Implements IQRCodeEncoder
 
 Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
-'------------------------------------------------------------------------------
-' (概要)
-'  ビット数を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_BitCount() As Long
     IQRCodeEncoder_BitCount = m_bitCounter
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  文字数を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_CharCount() As Long
     IQRCodeEncoder_CharCount = m_charCounter
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化モードを表す EncodingMode 列挙体の値を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
     IQRCodeEncoder_EncodingMode = EncodingMode.NUMERIC
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  モード指示子を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_ModeIndicator() As Long
     IQRCodeEncoder_ModeIndicator = ModeIndicator.NUMERIC_VALUE
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  現在のモードシーケンスに文字を追加し、追加に要したビット数を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim ret As Long
 
@@ -80,10 +55,6 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     IQRCodeEncoder_Append = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字をエンコードしたコード語のビット数を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     If m_charCounter Mod 3 = 0 Then
         IQRCodeEncoder_GetCodewordBitLength = 4
@@ -92,10 +63,6 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     End If
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  エンコードされたデータのバイト配列を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetBytes() As Byte()
     Dim bs As BitSequence
     Set bs = New BitSequence
@@ -118,18 +85,10 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     IQRCodeEncoder_GetBytes = bs.GetBytes()
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字が符号化モードに適合する場合は True を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
     IQRCodeEncoder_InSubset = c Like "[0-9]"
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
 End Function

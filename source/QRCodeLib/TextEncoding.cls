@@ -9,7 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-
 Private Const adTypeBinary      As Long = 1
 Private Const adTypeText        As Long = 2
 

@@ -2,11 +2,6 @@ Attribute VB_Name = "CharCountIndicator"
 Option Private Module
 Option Explicit
 
-
-'---------------------------------------------------------------------------
-' (概要)
-'  文字数指示子のビット数を返します。
-'---------------------------------------------------------------------------
 Public Function GetLength( _
     ByVal ver As Long, ByVal encMode As EncodingMode) As Long
 

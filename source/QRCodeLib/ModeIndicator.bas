@@ -1,10 +1,6 @@
 Attribute VB_Name = "ModeIndicator"
-'------------------------------------------------------------------------------
-' モード指示子
-'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
-
 
 Public Const Length As Long = 4
 

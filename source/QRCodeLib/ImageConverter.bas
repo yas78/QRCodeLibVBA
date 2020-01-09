@@ -2,7 +2,6 @@ Attribute VB_Name = "ImageConverter"
 Option Private Module
 Option Explicit
 
-
 #If VBA7 Then
     Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
     Private Declare PtrSafe Function IIDFromString Lib "ole32" (ByVal lpsz As LongPtr, ByRef lpiid As UUID) As Long
@@ -28,7 +27,7 @@ Option Explicit
     Private Declare Function OleLoadPicture Lib "olepro32" (ByVal pStream As IUnknown, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As UUID, ByRef ppvObj As Any) As Long
 #End If
 
-Private Const IID_IPicture As String = "{7BF80980-BF32-101A-8BBB-00AA00300CAB}"
+Private Const IID_IPictureDisp As String = "{7BF80980-BF32-101A-8BBB-00AA00300CAB}"
 
 Private Const S_OK As Long = 0
 
@@ -46,7 +45,7 @@ Private Type UUID
     Data4(7) As Byte
 End Type
 
-Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPicture
+Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPictureDisp
     Dim sz As Long
     sz = UBound(dibData) + 1
 
@@ -77,9 +76,9 @@ Public Function ConvertFrom(ByRef dibData() As Byte) As stdole.IPicture
     If lRet <> S_OK Then Exit Function
 
     Dim iid As UUID
-    Call IIDFromString(StrPtr(IID_IPicture), iid)
+    Call IIDFromString(StrPtr(IID_IPictureDisp), iid)
 
-    Dim ret As stdole.IPicture
+    Dim ret As stdole.IPictureDisp
     Call OleLoadPicture(stm, sz, WIN32_FALSE, iid, ret)
     Call GlobalFree(hMem)
 

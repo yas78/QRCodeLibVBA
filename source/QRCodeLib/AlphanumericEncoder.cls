@@ -7,56 +7,29 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'------------------------------------------------------------------------------
-' 英数字モードエンコーダー
-'------------------------------------------------------------------------------
 Option Explicit
-
-
 Implements IQRCodeEncoder
 
 Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
-'------------------------------------------------------------------------------
-' (概要)
-'  ビット数を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_BitCount() As Long
     IQRCodeEncoder_BitCount = m_bitCounter
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  文字数を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_CharCount() As Long
     IQRCodeEncoder_CharCount = m_charCounter
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  符号化モードを表す EncodingMode 列挙体の値を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_EncodingMode() As EncodingMode
     IQRCodeEncoder_EncodingMode = EncodingMode.ALPHA_NUMERIC
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  モード指示子を取得します。
-'------------------------------------------------------------------------------
 Private Property Get IQRCodeEncoder_ModeIndicator() As Long
-
     IQRCodeEncoder_ModeIndicator = ModeIndicator.ALPAHNUMERIC_VALUE
-
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  現在のモードシーケンスに文字を追加し、追加に要したビット数を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim wd As Long
     wd = ConvertCharCode(c)
@@ -84,10 +57,6 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     IQRCodeEncoder_Append = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字をエンコードしたコード語のビット数を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     If m_charCounter Mod 2 = 0 Then
         IQRCodeEncoder_GetCodewordBitLength = 6
@@ -96,10 +65,6 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     End If
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  エンコードされたバイトデータを返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_GetBytes() As Byte()
     Dim bs As BitSequence
     Set bs = New BitSequence
@@ -124,10 +89,6 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     IQRCodeEncoder_GetBytes = bs.GetBytes()
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字が符号化モードに適合する場合は True を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
     Dim ret As Boolean
 
@@ -164,10 +125,6 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
     IQRCodeEncoder_InSubset = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定の文字が符号化モードの排他的部分集合の場合は True を返します。
-'------------------------------------------------------------------------------
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
     Dim ret As Boolean
 
@@ -202,11 +159,6 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
     IQRCodeEncoder_InExclusiveSubset = ret
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定した文字の英数字モードにおける文字コードを返します。該当する文字コードが存在しない
-'  場合は -1 を返します。
-'------------------------------------------------------------------------------
 Private Function ConvertCharCode(ByVal c As String) As Long
     Dim code As Long
     code = Asc(c)

@@ -1,29 +1,31 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
 Attribute VB_Name = "FormatInfo"
-'---------------------------------------------------------------------------
-' 形式情報
-'---------------------------------------------------------------------------
-Option Private Module
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
 Option Explicit
-
 
 Private m_formatInfoValues()     As Variant
 Private m_formatInfoMaskArray()  As Variant
-Private m_initialized As Boolean
 
-'------------------------------------------------------------------------------
-' (概要)
-'  形式情報を配置します｡
-'
-' (パラメータ)
-'  moduleMatrix         : シンボルの明暗パターン
-'  ecLevel              : 誤り訂正レベル
-'  maskPatternReference : マスクパターン参照子
-'------------------------------------------------------------------------------
+Private Sub Class_Initialize()
+    m_formatInfoValues = Array( _
+        &H0&, &H537&, &HA6E&, &HF59&, &H11EB&, &H14DC&, &H1B85&, &H1EB2&, &H23D6&, &H26E1&, _
+        &H29B8&, &H2C8F&, &H323D&, &H370A&, &H3853&, &H3D64&, &H429B&, &H47AC&, &H48F5&, &H4DC2&, _
+        &H5370&, &H5647&, &H591E&, &H5C29&, &H614D&, &H647A&, &H6B23&, &H6E14&, &H70A6&, &H7591&, _
+        &H7AC8&, &H7FFF& _
+    )
+
+    m_formatInfoMaskArray = Array(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
+End Sub
+
 Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
                  ByVal maskPatternReference As Long, _
                  ByRef moduleMatrix() As Variant)
-    Call Init
-
     Dim formatInfoValue As Long
     formatInfoValue = GetFormatInfoValue(ecLevel, maskPatternReference)
 
@@ -77,10 +79,6 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
     Next
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  形式情報の予約領域を配置します｡
-'------------------------------------------------------------------------------
 Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
     Dim numModulesPerSide As Long
     numModulesPerSide = UBound(moduleMatrix) + 1
@@ -88,7 +86,6 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
     Dim i As Long
 
     For i = 0 To 8
-        ' タイミグパターンの領域ではない場合
         If i <> 6 Then
             moduleMatrix(8)(i) = -3
             moduleMatrix(i)(8) = -3
@@ -100,21 +97,11 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
         moduleMatrix(i)(8) = -3
     Next
 
-    ' 固定暗モジュールを配置(マスクの適用前に配置する)
     moduleMatrix(numModulesPerSide - 8)(8) = 2
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'
-' (パラメータ)
-'  ecLevel              : 誤り訂正レベル
-'  maskPatternReference : マスクパターン参照子
-'------------------------------------------------------------------------------
 Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
                                     ByVal maskPatternReference As Long) As Long
-    Call Init
-
     Dim indicator As Long
 
     Select Case ecLevel
@@ -133,23 +120,3 @@ Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
     GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPatternReference)
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
-Private Sub Init()
-    If m_initialized Then Exit Sub
-
-    m_initialized = True
-
-    ' 形式情報
-    m_formatInfoValues = Array( _
-        &H0&, &H537&, &HA6E&, &HF59&, &H11EB&, &H14DC&, &H1B85&, &H1EB2&, &H23D6&, &H26E1&, _
-        &H29B8&, &H2C8F&, &H323D&, &H370A&, &H3853&, &H3D64&, &H429B&, &H47AC&, &H48F5&, &H4DC2&, _
-        &H5370&, &H5647&, &H591E&, &H5C29&, &H614D&, &H647A&, &H6B23&, &H6E14&, &H70A6&, &H7591&, _
-        &H7AC8&, &H7FFF& _
-    )
-
-    ' 形式情報のマスクパターン
-    m_formatInfoMaskArray = Array(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
-End Sub

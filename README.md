@@ -6,7 +6,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 - 数字・英数字・8ビットバイト・漢字モードに対応しています
 - 分割QRコードを作成可能です
 - 1bppまたは24bpp BMPファイル(DIB)へ保存可能です
-- 1bppまたは24bpp IPictureオブジェクトとして取得可能です  
+- 1bppまたは24bpp IPictureDispオブジェクトとして取得可能です  
 - 画像の配色(前景色・背景色)を指定可能です
 - 8ビットバイトモードでの文字コードを指定可能です
 - QRコード画像をクリップボードに保存可能です。
@@ -26,7 +26,7 @@ Public Sub Example1()
     Set sbls = CreateSymbols()
     sbls.AppendText "012345abcdefg"
 
-    Dim pict As stdole.IPicture
+    Dim pict As stdole.IPictureDisp
     Set pict = sbls(0).GetPicture()
 End Sub
 ```
@@ -42,7 +42,7 @@ End Sub
 ```
 
 ### 例３．型番の上限を指定する
-CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。
+CreateSymbols関数の maxVer 引数を設定してSymbolsオブジェクトを生成します。
 
 ```vbnet
 Public Sub Example3()
@@ -52,7 +52,7 @@ End Sub
 ```
 
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
-CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。
+CreateSymbols関数の byteModeCharsetName 引数を設定してSymbolsオブジェクトを生成します。
 
 ```vbnet
 Public Sub Example4()
@@ -72,7 +72,7 @@ Public Sub Example5()
     Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
     sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
     
-    Dim pict As stdole.IPicture
+    Dim pict As stdole.IPictureDisp
     Dim sbl As Symbol
     
     For Each sbl In sbls

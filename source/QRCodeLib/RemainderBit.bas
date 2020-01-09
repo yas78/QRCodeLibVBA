@@ -1,10 +1,6 @@
 Attribute VB_Name = "RemainderBit"
-'------------------------------------------------------------------------------
-' 残余ビット
-'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
-
 
 Public Sub Place(ByRef moduleMatrix() As Variant)
     Dim r As Long

@@ -1,10 +1,6 @@
 Attribute VB_Name = "QuietZone"
-'------------------------------------------------------------------------------
-' クワイエットゾーン
-'------------------------------------------------------------------------------
 Option Private Module
 Option Explicit
-
 
 Public Const QUIET_ZONE_WIDTH As Long = 4
 

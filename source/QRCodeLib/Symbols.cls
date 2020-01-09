@@ -9,7 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-
 Private m_items  As Collection
 
 Private m_minVersion              As Long
@@ -30,10 +29,6 @@ Private m_encKanji  As IQRCodeEncoder
 Private m_byteModeEncoding As TextEncoding
 Private m_shiftJISEncoding As TextEncoding
 
-'------------------------------------------------------------------------------
-' (概要)
-'  オブジェクトを初期化します。
-'------------------------------------------------------------------------------
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                       ByVal maxVer As Long, _
                       ByVal allowStructuredAppend As Boolean, _
@@ -67,44 +62,24 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     Call m_items.Add(m_currSymbol)
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  指定したインデックス番号のシンボルを返します。
-'  既定メンバとして [Attribute Item.VB_UserMemId = 0] が指定されています。
-'------------------------------------------------------------------------------
 Public Property Get Item(ByVal idx As Long) As Symbol
 Attribute Item.VB_UserMemId = 0
+' Default Member [Attribute Item.VB_UserMemId = 0]
     Set Item = m_items(idx + 1)
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボル数を取得します。
-'------------------------------------------------------------------------------
 Public Property Get Count() As Long
     Count = m_items.Count
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  構造的連接モードの使用可否を表すブール値を取得します。
-'------------------------------------------------------------------------------
 Friend Property Get StructuredAppendAllowed() As Boolean
     StructuredAppendAllowed = m_structuredAppendAllowed
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  構造的連接のパリティを取得します。
-'------------------------------------------------------------------------------
 Friend Property Get StructuredAppendParity() As Long
     StructuredAppendParity = m_structuredAppendParity
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  型番の下限を取得または設定します。
-'------------------------------------------------------------------------------
 Friend Property Get MinVersion() As Long
     MinVersion = m_minVersion
 End Property
@@ -112,47 +87,24 @@ Friend Property Let MinVersion(ByVal Value As Long)
     m_minVersion = Value
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  型番の上限を取得します。
-'------------------------------------------------------------------------------
 Friend Property Get MaxVersion() As Long
     MaxVersion = m_maxVersion
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  誤り訂正レベルを取得します。
-'------------------------------------------------------------------------------
 Friend Property Get ErrorCorrectionLevel() As ErrorCorrectionLevel
     ErrorCorrectionLevel = m_errorCorrectionLevel
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  バイトモードの文字コードを取得します。
-'------------------------------------------------------------------------------
 Friend Property Get ByteModeCharset() As String
     ByteModeCharset = m_byteModeCharsetName
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  Collectionとして扱うために必要なコードです。
-'  [Attribute NewEnum.VB_UserMemId = -4] が指定されています。
-'------------------------------------------------------------------------------
 Public Property Get NewEnum() As IUnknown
 Attribute NewEnum.VB_UserMemId = -4
+' [Attribute NewEnum.VB_UserMemId = -4]
     Set NewEnum = m_items.[_NewEnum]
 End Property
 
-'------------------------------------------------------------------------------
-' (概要)
-'  シンボルを追加します。
-'
-' (戻り値)
-'  追加したシンボルを表すオブジェクト
-'------------------------------------------------------------------------------
 Private Function Add() As Symbol
     Set m_currSymbol = New Symbol
     Call m_currSymbol.Init(Me)
@@ -161,10 +113,6 @@ Private Function Add() As Symbol
     Set Add = m_currSymbol
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  文字列を追加します。
-'------------------------------------------------------------------------------
 Public Sub AppendText(ByVal s As String)
     If Len(s) = 0 Then Call Err.Raise(5)
 
@@ -219,10 +167,6 @@ Public Sub AppendText(ByVal s As String)
     Next
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  構造的連接のパリティを更新します。
-'------------------------------------------------------------------------------
 Friend Sub UpdateParity(ByVal c As String)
     Dim charBytes() As Byte
     If m_encKanji.InSubset(c) Then
@@ -238,14 +182,6 @@ Friend Sub UpdateParity(ByVal c As String)
     Next
 End Sub
 
-'------------------------------------------------------------------------------
-' (概要)
-'  初期モードを決定します。
-'
-' (パラメータ)
-'  s          : 対象文字列
-'  startIndex : 評価を開始する位置
-'------------------------------------------------------------------------------
 Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) As EncodingMode
     Dim cnt     As Long
     Dim flg     As Boolean
@@ -363,14 +299,6 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
     Call Err.Raise(51)
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  数字モードから切り替えるモードを決定します。
-'
-' (パラメータ)
-'  s          : 対象文字列
-'  startIndex : 評価を開始する位置
-'------------------------------------------------------------------------------
 Private Function SelectModeWhileInNumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
@@ -391,14 +319,6 @@ Private Function SelectModeWhileInNumericMode( _
     SelectModeWhileInNumericMode = EncodingMode.NUMERIC
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  英数字モードから切り替えるモードを決定します。
-'
-' (パラメータ)
-'  s          : 対象文字列
-'  startIndex : 評価を開始する位置
-'------------------------------------------------------------------------------
 Private Function SelectModeWhileInAlphanumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
@@ -457,14 +377,6 @@ Private Function SelectModeWhileInAlphanumericMode( _
     SelectModeWhileInAlphanumericMode = EncodingMode.ALPHA_NUMERIC
 End Function
 
-'------------------------------------------------------------------------------
-' (概要)
-'  バイトモードから切り替えるモードを決定します。
-'
-' (パラメータ)
-'  s          : 対象文字列
-'  startIndex : 評価を開始する位置
-'------------------------------------------------------------------------------
 Private Function SelectModeWhileInByteMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
