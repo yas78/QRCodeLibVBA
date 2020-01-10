@@ -20,7 +20,7 @@ QRCodeLib.xlam を参照設定してください。
 ## 使用方法
 ### 例１．単一シンボルで構成される(分割QRコードではない)QRコードの、最小限のコードを示します。
 
-```vbnet
+```VBA
 Public Sub Example1()
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
@@ -34,7 +34,7 @@ End Sub
 ### 例２．誤り訂正レベルを指定する
 CreateSymbols関数の引数に、ErrorCorrectionLevel列挙型の値を設定してSymbolsオブジェクトを生成します。
 
-```vbnet
+```VBA
 Public Sub Example2()
     Dim sbls As Symbols
     Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
@@ -44,7 +44,7 @@ End Sub
 ### 例３．型番の上限を指定する
 CreateSymbols関数の maxVer 引数を設定してSymbolsオブジェクトを生成します。
 
-```vbnet
+```VBA
 Public Sub Example3()
     Dim sbls As Symbols
     Set sbls = CreateSymbols(maxVer:=10)
@@ -54,7 +54,7 @@ End Sub
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
 CreateSymbols関数の byteModeCharsetName 引数を設定してSymbolsオブジェクトを生成します。
 
-```vbnet
+```VBA
 Public Sub Example4()
     Dim sbls As Symbols
     Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
@@ -64,9 +64,9 @@ End Sub
 ### 例５．分割QRコードを作成する
 CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成します。型番の上限を指定しない場合は、型番40を上限として分割されます。  
 
-型番1を超える場合に分割し、各QRコードのIPictureオブジェクトを取得する例を示します。
+型番1を超える場合に分割し、各QRコードのIPictureDispオブジェクトを取得する例を示します。
 
-```vbnet
+```VBA
 Public Sub Example5()
     Dim sbls As Symbols
     Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
@@ -84,7 +84,7 @@ End Sub
 ### 例６．BMPファイルへ保存する
 SymbolクラスのSaveToFileメソッドを使用します。
 
-```vbnet
+```VBA
 Public Sub Example6()
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
@@ -107,7 +107,7 @@ End Sub
 ### 例７．クリップボードへ保存する
 SymbolクラスのSetToClipboardメソッドを使用します。
 
-```vbnet
+```VBA
 Public Sub Example7()
     Dim sbls As Symbols
     Set sbls = CreateSymbols()
