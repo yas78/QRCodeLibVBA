@@ -39,10 +39,10 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
 
     Set m_items = New Collection
 
-    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, byteModeCharsetName)
-    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, byteModeCharsetName)
+    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC)
+    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC)
     Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, byteModeCharsetName)
-    Set m_encKanji = Encoder.Create(EncodingMode.KANJI, byteModeCharsetName)
+    Set m_encKanji = Encoder.Create(EncodingMode.KANJI)
 
     m_minVersion = 1
     m_maxVersion = maxVer
@@ -183,12 +183,6 @@ Friend Sub UpdateParity(ByVal c As String)
 End Sub
 
 Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    Dim cnt     As Long
-    Dim flg     As Boolean
-    Dim flg1    As Boolean
-    Dim flg2    As Boolean
-    Dim i       As Long
-
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectInitialMode = EncodingMode.KANJI
         Exit Function
@@ -198,6 +192,10 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
         SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
+
+    Dim cnt     As Long
+    Dim flg     As Boolean
+    Dim i       As Long
 
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
@@ -240,6 +238,9 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
             Exit Function
         End If
     End If
+
+    Dim flg1    As Boolean
+    Dim flg2    As Boolean
 
     If m_encNum.InSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
@@ -305,15 +306,12 @@ Private Function SelectModeWhileInNumericMode( _
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.KANJI
         Exit Function
-
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-
     ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.ALPHA_NUMERIC
         Exit Function
-
     End If
 
     SelectModeWhileInNumericMode = EncodingMode.NUMERIC
@@ -322,22 +320,21 @@ End Function
 Private Function SelectModeWhileInAlphanumericMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
-    Dim cnt As Long
-    Dim flg As Boolean
-    Dim i   As Long
-
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.KANJI
         Exit Function
-
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-
     End If
 
+    Dim cnt As Long
     cnt = 0
+    
+    Dim flg As Boolean
     flg = False
+    
+    Dim i As Long
 
     For i = startIndex To Len(s)
         If Not m_encAlpha.InSubset(Mid$(s, i, 1)) Then
@@ -356,16 +353,12 @@ Private Function SelectModeWhileInAlphanumericMode( _
         Select Case m_currSymbol.Version
             Case 1 To 9
                 flg = cnt >= 13
-
             Case 10 To 26
                 flg = cnt >= 15
-
             Case 27 To 40
                 flg = cnt >= 17
-
             Case Else
                 Call Err.Raise(51)
-
         End Select
 
         If flg Then
@@ -380,14 +373,14 @@ End Function
 Private Function SelectModeWhileInByteMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
-    Dim cnt     As Long
-    Dim flg     As Boolean
-    Dim i       As Long
-
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInByteMode = EncodingMode.KANJI
         Exit Function
     End If
+
+    Dim cnt As Long
+    Dim flg As Boolean
+    Dim i   As Long
 
     For i = startIndex To Len(s)
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then

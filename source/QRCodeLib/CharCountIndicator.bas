@@ -47,7 +47,7 @@ Public Function GetLength( _
                 Case Else
                     Call Err.Raise(5)
             End Select
-    Case Else
-        Call Err.Raise(5)
+        Case Else
+            Call Err.Raise(5)
     End Select
 End Function

@@ -224,7 +224,6 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Set ret = New Collection
 
     Dim s As Long
-    Dim e As Long
     Dim i As Long
 
     For i = QuietZone.QUIET_ZONE_WIDTH To UBound(arg) - QuietZone.QUIET_ZONE_WIDTH
@@ -233,10 +232,8 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
         End If
 
         If arg(i) > 0 And arg(i + 1) <= 0 Then
-            e = i
-
-            If (e + 1 - s) Mod 3 = 0 Then
-                Call ret.Add(Array(s, e))
+            If (i + 1 - s) Mod 3 = 0 Then
+                Call ret.Add(Array(s, i))
             End If
         End If
     Next

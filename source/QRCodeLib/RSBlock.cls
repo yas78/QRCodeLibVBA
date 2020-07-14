@@ -98,7 +98,6 @@ Public Function GetNumberDataCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
     End If
 
     GetNumberDataCodewords = ret
-
 End Function
 
 Public Function GetNumberECCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
