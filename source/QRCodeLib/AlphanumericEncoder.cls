@@ -153,7 +153,6 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
         Case Else
             ret = False
-
     End Select
 
     IQRCodeEncoder_InExclusiveSubset = ret
