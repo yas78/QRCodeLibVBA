@@ -22,6 +22,7 @@ Private Const IMAGE_WIDTH         As Long = 122
 Private Const IMAGE_HEIGHT        As Long = 122
 Private Const IMAGE_MARGIN        As Long = 2
 
+
 Private Sub Update_fraQRCodeImage()
     btnSave.Enabled = False
     Call fraQRCodeImage.Controls.Clear
