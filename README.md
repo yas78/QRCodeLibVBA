@@ -119,7 +119,7 @@ End Sub
 ```
 
 ### 例８．SVGデータを取得する
-SymbolクラスのSaveSvgメソッドを使用します。
+SymbolクラスのGetSvgメソッドを使用します。
 
 ```VBA
 Public Sub Example6()
@@ -127,7 +127,8 @@ Public Sub Example6()
     Set sbls = CreateSymbols()
     sbls.AppendText "012345abcdefg"
     
-    sbls(0).GetSvg "D:\QRcode.svg"    
+    Dim svg As String
+    svg = sbls(0).GetSvg("D:\QRcode.svg")
 End Sub
 ```
 
