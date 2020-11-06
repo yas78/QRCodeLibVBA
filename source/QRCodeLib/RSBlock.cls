@@ -85,7 +85,6 @@ Public Function GetNumberDataCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
 
     If preceding Then
         ret = numPreBlockCodewords
-
     Else
         numPreBlocks = GetTotalNumber(ecLevel, ver, True)
         numFolBlocks = GetTotalNumber(ecLevel, ver, False)

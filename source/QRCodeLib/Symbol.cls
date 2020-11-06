@@ -31,11 +31,18 @@ Private m_dataBitCounter    As Long
 Private m_segments          As Collection ' Item : IQRCodeEncoder
 Private m_segmentCounter    As Object ' Is Scripting.Dictionary Key : EncodingMode, Item : Long
 
-Private m_Index As Long
+Private m_index As Long
+
+Private Enum Direction
+    UP
+    DOWN
+    Left
+    Right
+End Enum
 
 Friend Sub Init(ByVal parentObj As Symbols)
     Set m_parent = parentObj
-    m_Index = parentObj.Count
+    m_index = parentObj.Count
 
     m_position = parentObj.Count
 
@@ -66,7 +73,7 @@ Friend Property Get Parent() As Symbols
 End Property
 
 Friend Property Get Index() As Long
-    Index = m_Index
+    Index = m_index
 End Property
 
 Friend Property Get Version() As Long
@@ -691,7 +698,7 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     Set GetPicture = ImageConverter.ConvertFrom(dibData)
 End Function
 
-Public Sub SaveToFile(ByVal filePath As String, _
+Public Sub SaveBitmap(ByVal filePath As String, _
                       Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                       Optional ByVal monochrome As Boolean = False, _
                       Optional ByVal foreRGB As String = ColorCode.BLACK, _
@@ -724,4 +731,242 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
 End Sub
+
+Public Sub SaveSvg(ByVal fileName As String, _
+                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                   Optional ByVal foreRGB As String = BLACK)
+    If moduleSize < 2 Then Call Err.Raise(5)
+    
+    Dim svg As String
+    svg = GetSvg(moduleSize, foreRGB)
+    Dim svgFile As String
+    svgFile = _
+        "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" & vbNewLine & _
+        "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'" & vbNewLine & _
+        "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>" & vbNewLine & _
+        svg
+
+    Dim fNum As Integer
+    fNum = FreeFile()
+    Open fileName For Output As #fNum Len = &H7FFF
+    Print #fNum, svgFile
+    Close #fNum
+
+End Sub
+
+Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                       Optional ByVal foreRGB As String = BLACK) As String
+    If moduleSize < 2 Then Call Err.Raise(5)
+    If Not ColorCode.IsWebColor(foreRGB) Then Call Err.Raise(5)
+
+    Dim moduleMatrix() As Variant
+    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+
+    Dim imageWidth As Long
+    imageWidth = (UBound(moduleMatrix) + 1) * moduleSize
+
+    Dim imageHeight As Long
+    imageHeight = imageWidth
+    
+    Dim img() As Variant
+    ReDim img(imageHeight - 1)
+    
+    Dim imgRow() As Long
+    ReDim imgRow(imageWidth - 1)
+    
+    Dim r As Long
+    Dim c As Long
+    Dim i As Long
+    Dim j As Long
+    Dim v As Variant
+    
+    Dim rowArray As Variant
+    For Each rowArray In moduleMatrix
+        For i = 1 To moduleSize
+            img(r) = imgRow
+            c = 0
+            
+            For Each v In rowArray
+                For j = 1 To moduleSize
+                    img(r)(c) = v
+                    c = c + 1
+                Next
+            Next
+            r = r + 1
+        Next
+    Next
+    
+    Dim paths() As Variant
+    paths = FindContours(img)
+    
+    Dim buf As List
+    Set buf = New List
+    
+    Dim indent As String
+    indent = String(11, " ")
+
+    Dim pth As Variant
+    Dim k As Long
+    
+    For Each pth In paths
+        Call buf.Add(indent & "M ")
+
+        For k = 0 To UBound(pth)
+            Call buf.Add(CStr(pth(k).x) & "," & CStr(pth(k).y) & " ")
+        Next
+        Call buf.Add("Z" & vbNewLine)
+    Next
+
+    Dim data As String
+    data = Trim$(Join(buf.Items(), ""))
+    data = Strings.Left$(data, Len(data) - Len(vbNewLine))
+    Dim svg As String
+    svg = _
+        "<svg xmlns='http://www.w3.org/2000/svg'" & vbNewLine & _
+        "    width='" & CStr(imageWidth) & "' height='" & CStr(imageHeight) & "' viewBox='0 0 " & CStr(imageWidth) & " " & CStr(imageHeight) & "'>" & vbNewLine & _
+        "    <path fill='" & foreRGB & "' stroke='" & foreRGB & "' stroke-width='1'" & vbNewLine & _
+        "        d='" & data & "'" & vbNewLine & _
+        "    />" & vbNewLine & _
+        "</svg>"
+
+    GetSvg = svg
+End Function
+
+Private Function FindContours(ByRef img() As Variant) As Variant()
+    Const MAX_VALUE As Long = &H7FFFFFFF
+
+    Dim pths As List
+    Set pths = New List
+    Dim pth As List
+    
+    Dim st As Point
+    Dim dr As Direction
+    
+    Dim x As Long
+    Dim y As Long
+    Dim p As Point
+
+    For y = 0 To UBound(img) - 1
+        For x = 0 To UBound(img(y)) - 1
+            If img(y)(x) = MAX_VALUE Then GoTo Continue
+            If Not (img(y)(x) > 0 And img(y)(x + 1) <= 0) Then GoTo Continue
+
+            img(y)(x) = MAX_VALUE
+            Set st = New Point
+            Call st.Init(x, y)
+            Set pth = New List
+            Call pth.Add(st)
+
+            dr = Direction.UP
+            Set p = st.Clone()
+            p.y = p.y - 1
+            
+            Do
+                Select Case dr
+                    Case Direction.UP
+                        If img(p.y)(p.x) > 0 Then
+                            img(p.y)(p.x) = MAX_VALUE
+
+                            If img(p.y)(p.x + 1) <= 0 Then
+                                Set p = p.Clone()
+                                p.y = p.y - 1
+                            Else
+                                Call pth.Add(p)
+                                dr = Direction.Right
+                                Set p = p.Clone()
+                                p.x = p.x + 1
+                            End If
+                        Else
+                            Set p = p.Clone()
+                            p.y = p.y + 1
+                            Call pth.Add(p)
+                            
+                            dr = Direction.Left
+                            Set p = p.Clone()
+                            p.x = p.x - 1
+                        End If
+
+                    Case Direction.DOWN
+                        If img(p.y)(p.x) > 0 Then
+                            img(p.y)(p.x) = MAX_VALUE
+
+                            If img(p.y)(p.x - 1) <= 0 Then
+                                Set p = p.Clone()
+                                p.y = p.y + 1
+                            Else
+                                Call pth.Add(p)
+                                
+                                dr = Direction.Left
+                                Set p = p.Clone()
+                                p.x = p.x - 1
+                            End If
+                        Else
+                            Set p = p.Clone()
+                            p.y = p.y - 1
+                            Call pth.Add(p)
+                            
+                            dr = Direction.Right
+                            Set p = p.Clone()
+                            p.x = p.x + 1
+                        End If
+
+                    Case Direction.Left
+                        If img(p.y)(p.x) > 0 Then
+                            img(p.y)(p.x) = MAX_VALUE
+
+                            If img(p.y - 1)(p.x) <= 0 Then
+                                Set p = p.Clone()
+                                p.x = p.x - 1
+                            Else
+                                Call pth.Add(p)
+                                
+                                dr = Direction.UP
+                                Set p = p.Clone()
+                                p.y = p.y - 1
+                            End If
+                        Else
+                            Set p = p.Clone()
+                            p.x = p.x + 1
+                            Call pth.Add(p)
+                            
+                            dr = Direction.DOWN
+                            Set p = p.Clone()
+                            p.y = p.y + 1
+                        End If
+
+                    Case Direction.Right
+                        If img(p.y)(p.x) > 0 Then
+                            img(p.y)(p.x) = MAX_VALUE
+
+                            If img(p.y + 1)(p.x) <= 0 Then
+                                Set p = p.Clone()
+                                p.x = p.x + 1
+                            Else
+                                Call pth.Add(p)
+                                
+                                dr = Direction.DOWN
+                                Set p = p.Clone()
+                                p.y = p.y + 1
+                            End If
+                        Else
+                            Set p = p.Clone()
+                            p.x = p.x - 1
+                            Call pth.Add(p)
+                            
+                            dr = Direction.UP
+                            Set p = p.Clone()
+                            p.y = p.y - 1
+                        End If
+                Case Else
+                    Call Err.Raise(51)
+                End Select
+            Loop While Not p.Equals(st)
+
+            Call pths.Add(pth.Items())
+Continue:
+        Next
+    Next
+
+    FindContours = pths.Items()
+End Function
 

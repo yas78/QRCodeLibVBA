@@ -6,6 +6,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 - 数字・英数字・8ビットバイト・漢字モードに対応しています
 - 分割QRコードを作成可能です
 - 1bppまたは24bpp BMPファイル(DIB)へ保存可能です
+- SVG形式で保存可能です
 - 1bppまたは24bpp IPictureDispオブジェクトとして取得可能です  
 - 画像の配色(前景色・背景色)を指定可能です
 - 8ビットバイトモードでの文字コードを指定可能です
@@ -82,7 +83,7 @@ End Sub
 ```
 
 ### 例６．BMPファイルへ保存する
-SymbolクラスのSaveToFileメソッドを使用します。
+SymbolクラスのSaveBitmapメソッドを使用します。
 
 ```VBA
 Public Sub Example6()
@@ -91,20 +92,46 @@ Public Sub Example6()
     sbls.AppendText "012345abcdefg"
     
     ' 24bpp DIB
-    sbls(0).SaveToFile "D:\QRcode_24bpp(1).bmp"
+    sbls(0).SaveBitmap "D:\QRcode.bmp"
     
     ' 10 pixels per module
-    sbls(0).SaveToFile "D:\QRcode_24bpp(2).bmp", moduleSize:=10
+    sbls(0).SaveBitmap "D:\QRcode.bmp", moduleSize:=10
     
     ' Specify foreground and background colors.
-    sbls(0).SaveToFile "D:\QRcode_24bpp(3).bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
+    sbls(0).SaveBitmap "D:\QRcode.bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
     
     ' 1bpp DIB
-    sbls(0).SaveToFile "D:\QRcode_1bpp(1).bmp", monochrome:=True
+    sbls(0).SaveBitmap "D:\QRcode.bmp", monochrome:=True
 End Sub
 ```
 
-### 例７．クリップボードへ保存する
+### 例７．SVGファイルへ保存する
+SymbolクラスのSaveSvgメソッドを使用します。
+
+```VBA
+Public Sub Example6()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols()
+    sbls.AppendText "012345abcdefg"
+    
+    sbls(0).SaveBitmap "D:\QRcode.svg"    
+End Sub
+```
+
+### 例８．SVGデータを取得する
+SymbolクラスのSaveSvgメソッドを使用します。
+
+```VBA
+Public Sub Example6()
+    Dim sbls As Symbols
+    Set sbls = CreateSymbols()
+    sbls.AppendText "012345abcdefg"
+    
+    sbls(0).GetSvg "D:\QRcode.svg"    
+End Sub
+```
+
+### 例９．クリップボードへ格納する
 SymbolクラスのSetToClipboardメソッドを使用します。
 
 ```VBA

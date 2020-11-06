@@ -2,11 +2,24 @@ Attribute VB_Name = "QuietZone"
 Option Private Module
 Option Explicit
 
-Public Const QUIET_ZONE_WIDTH As Long = 4
+Public Const MIN_WIDTH As Long = 4
+
+Private m_width As Integer
+
+Public Property Get Width() As Integer
+    If m_width = 0 Then
+        m_width = MIN_WIDTH
+    End If
+    Width = m_width
+End Property
+
+Public Property Let Width(ByVal Value As Integer)
+    m_width = Value
+End Property
 
 Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
     Dim sz As Long
-    sz = UBound(moduleMatrix) + QUIET_ZONE_WIDTH * 2
+    sz = UBound(moduleMatrix) + Width * 2
 
     Dim ret() As Variant
     ReDim ret(sz)
@@ -24,7 +37,7 @@ Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
 
     For r = 0 To UBound(moduleMatrix)
         For c = 0 To UBound(moduleMatrix(r))
-            ret(r + QUIET_ZONE_WIDTH)(c + QUIET_ZONE_WIDTH) = moduleMatrix(r)(c)
+            ret(r + Width)(c + Width) = moduleMatrix(r)(c)
         Next
     Next
 

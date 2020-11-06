@@ -33,8 +33,8 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .biBitCount = 1
         .biCompression = 0
         .biSizeImage = 0
-        .biXPelsPerMeter = 3780
-        .biYPelsPerMeter = 3780
+        .biXPelsPerMeter = 0
+        .biYPelsPerMeter = 0
         .biClrUsed = 0
         .biClrImportant = 0
     End With
@@ -119,8 +119,8 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
         .biBitCount = 24
         .biCompression = 0
         .biSizeImage = 0
-        .biXPelsPerMeter = 3780
-        .biYPelsPerMeter = 3780
+        .biXPelsPerMeter = 0
+        .biYPelsPerMeter = 0
         .biClrUsed = 0
         .biClrImportant = 0
     End With

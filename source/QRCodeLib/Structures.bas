@@ -30,3 +30,4 @@ Public Type RGBQUAD
     rgbRed      As Byte
     rgbReserved As Byte
 End Type
+

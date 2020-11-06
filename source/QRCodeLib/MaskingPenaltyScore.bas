@@ -78,7 +78,6 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
                (moduleMatrix(r + 1)(c + 1) > 0 = temp) Then
                 penalty = penalty + 3
             End If
-
         Next
     Next
 
@@ -128,12 +127,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' light ratio 1
             cnt = 0
             Do While i >= 0
-                If rowArray(i) <= 0 Then
-                    cnt = cnt + 1
-                    i = i - 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) > 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i - 1
             Loop
 
             If cnt <> ratio1 Then GoTo Continue
@@ -141,12 +138,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' dark ratio 1
             cnt = 0
             Do While i >= 0
-                If rowArray(i) > 0 Then
-                    cnt = cnt + 1
-                    i = i - 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) <= 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i - 1
             Loop
 
             If cnt <> ratio1 Then GoTo Continue
@@ -154,12 +149,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' light ratio 4
             cnt = 0
             Do While i >= 0
-                If rowArray(i) <= 0 Then
-                    cnt = cnt + 1
-                    i = i - 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) > 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i - 1
             Loop
 
             If cnt >= ratio4 Then
@@ -171,12 +164,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' light ratio 1
             cnt = 0
             Do While i <= UBound(rowArray)
-                If rowArray(i) <= 0 Then
-                    cnt = cnt + 1
-                    i = i + 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) > 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i + 1
             Loop
 
             If cnt <> ratio1 Then GoTo Continue
@@ -184,12 +175,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' dark ratio 1
             cnt = 0
             Do While i <= UBound(rowArray)
-                If rowArray(i) > 0 Then
-                    cnt = cnt + 1
-                    i = i + 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) <= 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i + 1
             Loop
 
             If cnt <> ratio1 Then GoTo Continue
@@ -197,12 +186,10 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             ' light ratio 4
             cnt = 0
             Do While i <= UBound(rowArray)
-                If rowArray(i) <= 0 Then
-                    cnt = cnt + 1
-                    i = i + 1
-                Else
-                    Exit Do
-                End If
+                If rowArray(i) > 0 Then Exit Do
+                
+                cnt = cnt + 1
+                i = i + 1
             Loop
 
             If cnt >= ratio4 Then
@@ -226,14 +213,16 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Dim s As Long
     Dim i As Long
 
-    For i = QuietZone.QUIET_ZONE_WIDTH To UBound(arg) - QuietZone.QUIET_ZONE_WIDTH
-        If arg(i) > 0 And arg(i - 1) <= 0 Then
-            s = i
-        End If
-
-        If arg(i) > 0 And arg(i + 1) <= 0 Then
-            If (i + 1 - s) Mod 3 = 0 Then
-                Call ret.Add(Array(s, i))
+    For i = 1 To UBound(arg) - 1
+        If arg(i) > 0 Then
+            If arg(i - 1) <= 0 Then
+                s = i
+            End If
+            
+            If arg(i + 1) <= 0 Then
+                If (i + 1 - s) Mod 3 = 0 Then
+                    Call ret.Add(Array(s, i))
+                End If
             End If
         End If
     Next

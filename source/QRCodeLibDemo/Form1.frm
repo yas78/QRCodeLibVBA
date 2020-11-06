@@ -32,13 +32,28 @@ Private Sub Update_fraQRCodeImage()
 
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
+    
+    Dim sz As Long
+    sz = CLng(txtModuleSize.Text)
+    
+    Dim foreRGB As String
+    foreRGB = "#" & txtForeColor.Text
+    
+    Dim backRGB As String
+    backRGB = "#" & txtBackColor.Text
+    
+    Dim maxVer As Long
+    maxVer = CLng(cmbMaxVersion.Text)
+    
+    Dim structAppend As Boolean
+    structAppend = chkStructuredAppend.Value
+    
+    Dim encMode As String
+    encMode = cmbEncoding.Value
 
 On Error GoTo Catch
     Dim sbls As QRCodeLib.Symbols
-    Set sbls = CreateSymbols(ecLevel, _
-                             CLng(cmbMaxVersion.Text), _
-                             chkStructuredAppend.Value, _
-                             cmbEncoding.Value)
+    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, encMode)
     Call sbls.AppendText(txtData.Text)
 
     Dim sbl As Symbol
@@ -59,13 +74,11 @@ On Error GoTo Catch
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.GetPicture(CLng(txtModuleSize.Text), True, _
-            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
+        img.Picture = sbl.GetPicture(sz, True, foreRGB, backRGB)
     Next
 
     fraQRCodeImage.ScrollHeight = _
-        CLng((sbls.Count + 3) \ 4) * (IMAGE_HEIGHT + IMAGE_MARGIN) + _
-        IMAGE_MARGIN
+        CLng((sbls.Count + 3) \ 4) * (IMAGE_HEIGHT + IMAGE_MARGIN) + IMAGE_MARGIN
     btnSave.Enabled = txtData.TextLength > 0
 
 Finally:
@@ -83,23 +96,45 @@ Private Sub Set_txtModuleSize(ByVal moduleSize As Long)
 End Sub
 
 Private Sub btnSave_Click()
-    Dim fs As New FileSystemObject
-    Dim fBaseName As Variant
-    fBaseName = Application.GetSaveAsFilename("", "Monochrome Bitmap, *.bmp")
-
-    If VarType(fBaseName) = vbBoolean Then Exit Sub
-
-    fBaseName = fs.GetParentFolderName(fBaseName) & "\" & fs.GetBaseName(fBaseName)
-
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
+    
+    Dim sz As Long
+    sz = CLng(txtModuleSize.Text)
+    
+    Dim foreRGB As String
+    foreRGB = "#" & txtForeColor.Text
+    
+    Dim backRGB As String
+    backRGB = "#" & txtBackColor.Text
+    
+    Dim maxVer As Long
+    maxVer = CLng(cmbMaxVersion.Text)
+    
+    Dim structAppend As Boolean
+    structAppend = chkStructuredAppend.Value
+    
+    Dim encMode As String
+    encMode = cmbEncoding.Value
+
+    Dim fs As New FileSystemObject
+
+    Dim fileFilters As String
+    fileFilters = "Monochrome Bitmap (*.bmp), *.bmp, SVG (*.svg), *svg"
+
+    Dim fBaseName As Variant
+    fBaseName = Application.GetSaveAsFilename("", fileFilters)
+
+    If VarType(fBaseName) = vbBoolean Then Exit Sub
+    
+    Dim ext As String
+    ext = "." & fs.GetExtensionName(fBaseName)
+    
+    fBaseName = fs.GetParentFolderName(fBaseName) & "\" & fs.GetBaseName(fBaseName)
 
 On Error GoTo Catch
     Dim sbls As Symbols
-    Set sbls = CreateSymbols(ecLevel, _
-                             CLng(cmbMaxVersion.Text), _
-                             chkStructuredAppend.Value, _
-                             cmbEncoding.Value)
+    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, encMode)
     Call sbls.AppendText(txtData.Text)
 
     Dim filePath As String
@@ -110,17 +145,23 @@ On Error GoTo Catch
         Set sbl = sbls(i)
 
         If sbls.Count = 1 Then
-            filePath = fBaseName & ".bmp"
+            filePath = fBaseName & ext
         Else
-            filePath = fBaseName & "_" & CStr(i + 1) & ".bmp"
+            filePath = fBaseName & "_" & CStr(i + 1) & ext
         End If
 
         If fs.FileExists(filePath) Then
             Call fs.DeleteFile(filePath)
         End If
-
-        Call sbl.SaveToFile(filePath, CLng(txtModuleSize.Text), True, _
-            "#" & txtForeColor.Text, "#" & txtBackColor.Text)
+        
+        Select Case LCase(ext)
+            Case ".bmp"
+                Call sbl.SaveBitmap(filePath, sz, True, foreRGB, backRGB)
+            Case ".svg"
+                Call sbl.SaveSvg(filePath, sz, foreRGB)
+            Case Else
+                Call Err.Raise(51)
+        End Select
     Next
 
 Finally:
