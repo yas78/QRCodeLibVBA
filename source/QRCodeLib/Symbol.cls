@@ -672,8 +672,12 @@ Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal monochrome As Boolean = False, _
                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
                           Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+    
     If moduleSize < 1 Then Call Err.Raise(5)
-
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    
     If monochrome Then
         GetBitmap = GetBitmap1bpp(moduleSize, foreRGB, backRGB)
     Else
@@ -685,8 +689,12 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
                            Optional ByVal monochrome As Boolean = False, _
                            Optional ByVal foreRGB As String = ColorCode.BLACK, _
                            Optional ByVal backRGB As String = ColorCode.WHITE) As stdole.IPictureDisp
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+    
     If moduleSize < 1 Then Call Err.Raise(5)
-
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    
     Dim dibData() As Byte
 
     If monochrome Then
@@ -703,10 +711,13 @@ Public Sub SaveBitmap(ByVal filePath As String, _
                       Optional ByVal monochrome As Boolean = False, _
                       Optional ByVal foreRGB As String = ColorCode.BLACK, _
                       Optional ByVal backRGB As String = ColorCode.WHITE)
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+                      
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
-    If m_dataBitCounter = 0 Then Call Err.Raise(51)
-
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    
     Dim bitmapBytes() As Byte
 
     If monochrome Then
@@ -726,16 +737,26 @@ End Sub
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
                           Optional ByVal backRGB As String = ColorCode.WHITE)
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+    
+    If moduleSize < 1 Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    
     Dim bitmapBytes() As Byte
     bitmapBytes = GetBitmap24bpp(moduleSize, foreRGB, backRGB)
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
 End Sub
 
-Public Sub SaveSvg(ByVal fileName As String, _
+Public Sub SaveSvg(ByVal filePath As String, _
                    Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                    Optional ByVal foreRGB As String = BLACK)
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+    
+    If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 2 Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
     
     Dim svg As String
     svg = GetSvg(moduleSize, foreRGB)
@@ -748,7 +769,7 @@ Public Sub SaveSvg(ByVal fileName As String, _
 
     Dim fNum As Integer
     fNum = FreeFile()
-    Open fileName For Output As #fNum Len = &H7FFF
+    Open filePath For Output As #fNum Len = &H7FFF
     Print #fNum, svgFile
     Close #fNum
 
@@ -756,9 +777,11 @@ End Sub
 
 Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                        Optional ByVal foreRGB As String = BLACK) As String
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+    
     If moduleSize < 2 Then Call Err.Raise(5)
-    If Not ColorCode.IsWebColor(foreRGB) Then Call Err.Raise(5)
-
+    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
 
