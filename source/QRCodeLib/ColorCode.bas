@@ -1,8 +1,9 @@
 Attribute VB_Name = "ColorCode"
+Option Private Module
 Option Explicit
 
-Public Const WHITE As String = "#FFFFFF"
 Public Const BLACK As String = "#000000"
+Public Const WHITE As String = "#FFFFFF"
 
 Public Function ToRGB(ByVal arg As String) As Long
     If Not IsWebColor(arg) Then Call Err.Raise(5)
