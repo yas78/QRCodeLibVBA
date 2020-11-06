@@ -114,7 +114,7 @@ Public Sub Example6()
     Set sbls = CreateSymbols()
     sbls.AppendText "012345abcdefg"
     
-    sbls(0).SaveBitmap "D:\QRcode.svg"    
+    sbls(0).SaveSvg "D:\QRcode.svg"    
 End Sub
 ```
 
