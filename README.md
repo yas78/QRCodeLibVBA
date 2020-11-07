@@ -87,7 +87,7 @@ sbls(0).SaveBitmap "D:\QRcode.bmp"
 sbls(0).SaveBitmap "D:\QRcode.bmp", moduleSize:=10
     
 ' Specify foreground and background colors.
-sbls(0).SaveBitmap "D:\QRcode.bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
+sbls(0).SaveBitmap "D:\QRcode.bmp", foreRgb:="#0000FF", backRgb:="#FFFF00"
     
 ' 1bpp DIB
 sbls(0).SaveBitmap "D:\QRcode.bmp", monochrome:=True
@@ -126,6 +126,6 @@ sbls.AppendText "012345abcdefg"
     
 sbls(0).SetToClipBoard
 sbls(0).SetToClipBoard moduleSize:=10
-sbls(0).SetToClipBoard foreRGB:="#0000FF", backRGB:="#FFFF00"
+sbls(0).SetToClipBoard foreRgb:="#0000FF", backRgb:="#FFFF00"
 ```
 

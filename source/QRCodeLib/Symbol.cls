@@ -524,12 +524,12 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
 End Sub
 
 Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                               Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                               Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+                               Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                               Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRGB)
+    foreColorRGB = ColorCode.ToRGB(foreRgb)
     Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRGB)
+    backColorRGB = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -601,12 +601,12 @@ Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODUL
 End Function
 
 Private Function GetBitmap24bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                                Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                                Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+                                Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                                Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRGB)
+    foreColorRGB = ColorCode.ToRGB(foreRgb)
     Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRGB)
+    backColorRGB = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -670,37 +670,37 @@ End Function
 
 Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                           Optional ByVal monochrome As Boolean = False, _
-                          Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                          Optional ByVal backRGB As String = ColorCode.WHITE) As Byte()
+                          Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                          Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If moduleSize < 1 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
     If monochrome Then
-        GetBitmap = GetBitmap1bpp(moduleSize, foreRGB, backRGB)
+        GetBitmap = GetBitmap1bpp(moduleSize, foreRgb, backRgb)
     Else
-        GetBitmap = GetBitmap24bpp(moduleSize, foreRGB, backRGB)
+        GetBitmap = GetBitmap24bpp(moduleSize, foreRgb, backRgb)
     End If
 End Function
 
 Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                            Optional ByVal monochrome As Boolean = False, _
-                           Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                           Optional ByVal backRGB As String = ColorCode.WHITE) As stdole.IPictureDisp
+                           Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                           Optional ByVal backRgb As String = ColorCode.WHITE) As stdole.IPictureDisp
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If moduleSize < 1 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
     Dim dibData() As Byte
 
     If monochrome Then
-        dibData = GetBitmap1bpp(moduleSize, foreRGB, backRGB)
+        dibData = GetBitmap1bpp(moduleSize, foreRgb, backRgb)
     Else
-        dibData = GetBitmap24bpp(moduleSize, foreRGB, backRGB)
+        dibData = GetBitmap24bpp(moduleSize, foreRgb, backRgb)
     End If
 
     Set GetPicture = ImageConverter.ConvertFrom(dibData)
@@ -709,21 +709,21 @@ End Function
 Public Sub SaveBitmap(ByVal filePath As String, _
                       Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                       Optional ByVal monochrome As Boolean = False, _
-                      Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                      Optional ByVal backRGB As String = ColorCode.WHITE)
+                      Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                      Optional ByVal backRgb As String = ColorCode.WHITE)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
                       
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 1 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
     Dim bitmapBytes() As Byte
 
     If monochrome Then
-        bitmapBytes = GetBitmap1bpp(moduleSize, foreRGB, backRGB)
+        bitmapBytes = GetBitmap1bpp(moduleSize, foreRgb, backRgb)
     Else
-        bitmapBytes = GetBitmap24bpp(moduleSize, foreRGB, backRGB)
+        bitmapBytes = GetBitmap24bpp(moduleSize, foreRgb, backRgb)
     End If
 
     Dim fNum As Integer
@@ -735,31 +735,31 @@ Public Sub SaveBitmap(ByVal filePath As String, _
 End Sub
 
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                          Optional ByVal foreRGB As String = ColorCode.BLACK, _
-                          Optional ByVal backRGB As String = ColorCode.WHITE)
+                          Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                          Optional ByVal backRgb As String = ColorCode.WHITE)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If moduleSize < 1 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(backRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
     Dim bitmapBytes() As Byte
-    bitmapBytes = GetBitmap24bpp(moduleSize, foreRGB, backRGB)
+    bitmapBytes = GetBitmap24bpp(moduleSize, foreRgb, backRgb)
 
     Call ClipboardUtil.SetDIB(bitmapBytes)
 End Sub
 
 Public Sub SaveSvg(ByVal filePath As String, _
                    Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                   Optional ByVal foreRGB As String = BLACK)
+                   Optional ByVal foreRgb As String = BLACK)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < 2 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     
     Dim svg As String
-    svg = GetSvg(moduleSize, foreRGB)
+    svg = GetSvg(moduleSize, foreRgb)
     Dim svgFile As String
     svgFile = _
         "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" & vbNewLine & _
@@ -776,11 +776,11 @@ Public Sub SaveSvg(ByVal filePath As String, _
 End Sub
 
 Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                       Optional ByVal foreRGB As String = BLACK) As String
+                       Optional ByVal foreRgb As String = BLACK) As String
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If moduleSize < 2 Then Call Err.Raise(5)
-    If ColorCode.IsWebColor(foreRGB) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -847,7 +847,7 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     svg = _
         "<svg xmlns='http://www.w3.org/2000/svg'" & vbNewLine & _
         "    width='" & CStr(imageWidth) & "' height='" & CStr(imageHeight) & "' viewBox='0 0 " & CStr(imageWidth) & " " & CStr(imageHeight) & "'>" & vbNewLine & _
-        "    <path fill='" & foreRGB & "' stroke='" & foreRGB & "' stroke-width='1'" & vbNewLine & _
+        "    <path fill='" & foreRgb & "' stroke='" & foreRgb & "' stroke-width='1'" & vbNewLine & _
         "        d='" & data & "'" & vbNewLine & _
         "    />" & vbNewLine & _
         "</svg>"
