@@ -22,44 +22,36 @@ QRCodeLib.xlam を参照設定してください。
 ### 例１．単一シンボルで構成される(分割QRコードではない)QRコードの、最小限のコードを示します。
 
 ```VBA
-Public Sub Example1()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols()
-    sbls.AppendText "012345abcdefg"
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
 
-    Dim pict As stdole.IPictureDisp
-    Set pict = sbls(0).GetPicture()
-End Sub
+Dim pict As stdole.IPictureDisp
+Set pict = sbls(0).GetPicture()
 ```
 
 ### 例２．誤り訂正レベルを指定する
 CreateSymbols関数の引数に、ErrorCorrectionLevel列挙型の値を設定してSymbolsオブジェクトを生成します。
 
 ```VBA
-Public Sub Example2()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
-End Sub
+Dim sbls As Symbols
+Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
 ```
 
 ### 例３．型番の上限を指定する
 CreateSymbols関数の maxVer 引数を設定してSymbolsオブジェクトを生成します。
 
 ```VBA
-Public Sub Example3()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols(maxVer:=10)
-End Sub
+Dim sbls As Symbols
+Set sbls = CreateSymbols(maxVer:=10)
 ```
 
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
 CreateSymbols関数の byteModeCharsetName 引数を設定してSymbolsオブジェクトを生成します。
 
 ```VBA
-Public Sub Example4()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
-End Sub
+Dim sbls As Symbols
+Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
 ```
 
 ### 例５．分割QRコードを作成する
@@ -68,82 +60,72 @@ CreateSymbols関数の引数を設定してSymbolsオブジェクトを生成し
 型番1を超える場合に分割し、各QRコードのIPictureDispオブジェクトを取得する例を示します。
 
 ```VBA
-Public Sub Example5()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
-    sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
+Dim sbls As Symbols
+Set sbls = CreateSymbols(maxVer:=1, allowStructuredAppend:=True)
+sbls.AppendText "abcdefghijklmnopqrstuvwxyz"
     
-    Dim pict As stdole.IPictureDisp
-    Dim sbl As Symbol
+Dim pict As stdole.IPictureDisp
+Dim sbl As Symbol
     
-    For Each sbl In sbls
-        Set pict = sbl.GetPicture()
-    Next
-End Sub
+For Each sbl In sbls
+    Set pict = sbl.GetPicture()
+Next
 ```
 
 ### 例６．BMPファイルへ保存する
 SymbolクラスのSaveBitmapメソッドを使用します。
 
 ```VBA
-Public Sub Example6()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols()
-    sbls.AppendText "012345abcdefg"
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
     
-    ' 24bpp DIB
-    sbls(0).SaveBitmap "D:\QRcode.bmp"
+' 24bpp DIB
+sbls(0).SaveBitmap "D:\QRcode.bmp"
     
-    ' 10 pixels per module
-    sbls(0).SaveBitmap "D:\QRcode.bmp", moduleSize:=10
+' 10 pixels per module
+sbls(0).SaveBitmap "D:\QRcode.bmp", moduleSize:=10
     
-    ' Specify foreground and background colors.
-    sbls(0).SaveBitmap "D:\QRcode.bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
+' Specify foreground and background colors.
+sbls(0).SaveBitmap "D:\QRcode.bmp", foreRGB:="#0000FF", backRGB:="#FFFF00"
     
-    ' 1bpp DIB
-    sbls(0).SaveBitmap "D:\QRcode.bmp", monochrome:=True
-End Sub
+' 1bpp DIB
+sbls(0).SaveBitmap "D:\QRcode.bmp", monochrome:=True
 ```
 
 ### 例７．SVGファイルへ保存する
 SymbolクラスのSaveSvgメソッドを使用します。
 
 ```VBA
-Public Sub Example6()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols()
-    sbls.AppendText "012345abcdefg"
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
     
-    sbls(0).SaveSvg "D:\QRcode.svg"    
-End Sub
+sbls(0).SaveSvg "D:\QRcode.svg"    
 ```
 
 ### 例８．SVGデータを取得する
 SymbolクラスのGetSvgメソッドを使用します。
 
 ```VBA
-Public Sub Example6()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols()
-    sbls.AppendText "012345abcdefg"
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
     
-    Dim svg As String
-    svg = sbls(0).GetSvg("D:\QRcode.svg")
-End Sub
+Dim svg As String
+svg = sbls(0).GetSvg("D:\QRcode.svg")
 ```
 
 ### 例９．クリップボードへ格納する
 SymbolクラスのSetToClipboardメソッドを使用します。
 
 ```VBA
-Public Sub Example7()
-    Dim sbls As Symbols
-    Set sbls = CreateSymbols()
-    sbls.AppendText "012345abcdefg"
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
     
-    sbls(0).SetToClipBoard
-    sbls(0).SetToClipBoard moduleSize:=10
-    sbls(0).SetToClipBoard foreRGB:="#0000FF", backRGB:="#FFFF00"
-End Sub
+sbls(0).SetToClipBoard
+sbls(0).SetToClipBoard moduleSize:=10
+sbls(0).SetToClipBoard foreRGB:="#0000FF", backRGB:="#FFFF00"
 ```
 
