@@ -125,7 +125,5 @@ Set sbls = CreateSymbols()
 sbls.AppendText "012345abcdefg"
     
 sbls(0).SetToClipBoard
-sbls(0).SetToClipBoard moduleSize:=10
-sbls(0).SetToClipBoard foreRgb:="#0000FF", backRgb:="#FFFF00"
 ```
 
