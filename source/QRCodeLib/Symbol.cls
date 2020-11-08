@@ -812,8 +812,8 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
     Next
     
-    Dim paths() As Variant
-    paths = Graphics.FindContours(img)
+    Dim gps() As Variant
+    gps = GraphicPath.FindContours(img)
     
     Dim buf As List
     Set buf = New List
@@ -821,14 +821,14 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim indent As String
     indent = String(11, " ")
 
-    Dim pth As Variant
+    Dim gp As Variant
     Dim k As Long
     
-    For Each pth In paths
+    For Each gp In gps
         Call buf.Add(indent & "M ")
 
-        For k = 0 To UBound(pth)
-            Call buf.Add(CStr(pth(k).x) & "," & CStr(pth(k).y) & " ")
+        For k = 0 To UBound(gp)
+            Call buf.Add(CStr(gp(k).x) & "," & CStr(gp(k).y) & " ")
         Next
         Call buf.Add("Z" & vbNewLine)
     Next
