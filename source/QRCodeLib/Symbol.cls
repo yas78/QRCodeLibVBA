@@ -15,7 +15,8 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Private Const DEFAULT_MODULE_SIZE As Long = 4
+Private Const DEFAULT_MODULE_SIZE As Long = 5
+Private Const MIN_MODULE_SIZE As Long = 2
 
 Private m_parent As Symbols
 
@@ -667,7 +668,7 @@ Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
-    If moduleSize < 1 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
@@ -684,7 +685,7 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
                            Optional ByVal backRgb As String = ColorCode.WHITE) As stdole.IPictureDisp
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
-    If moduleSize < 1 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
@@ -707,7 +708,7 @@ Public Sub SaveBitmap(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
                       
     If Len(filePath) = 0 Then Call Err.Raise(5)
-    If moduleSize < 1 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
@@ -732,7 +733,7 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal backRgb As String = ColorCode.WHITE)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
-    If moduleSize < 1 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
     
@@ -748,7 +749,7 @@ Public Sub SaveSvg(ByVal filePath As String, _
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
     If Len(filePath) = 0 Then Call Err.Raise(5)
-    If moduleSize < 2 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     
     Dim svg As String
@@ -772,7 +773,7 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
                        Optional ByVal foreRgb As String = BLACK) As String
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     
-    If moduleSize < 2 Then Call Err.Raise(5)
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     
     Dim moduleMatrix() As Variant
@@ -812,8 +813,8 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
     Next
     
-    Dim gps() As Variant
-    gps = GraphicPath.FindContours(img)
+    Dim paths() As Variant
+    paths = GraphicPath.FindContours(img)
     
     Dim buf As List
     Set buf = New List
@@ -821,14 +822,14 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim indent As String
     indent = String(11, " ")
 
-    Dim gp As Variant
+    Dim pth As Variant
     Dim k As Long
     
-    For Each gp In gps
+    For Each pth In paths
         Call buf.Add(indent & "M ")
 
-        For k = 0 To UBound(gp)
-            Call buf.Add(CStr(gp(k).x) & "," & CStr(gp(k).y) & " ")
+        For k = 0 To UBound(pth)
+            Call buf.Add(CStr(pth(k).x) & "," & CStr(pth(k).y) & " ")
         Next
         Call buf.Add("Z" & vbNewLine)
     Next

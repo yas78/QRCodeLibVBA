@@ -16,12 +16,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 
-Private Const DEFAULT_MODULE_SIZE As Long = 4
+Private Const DEFAULT_MODULE_SIZE As Long = 5
 Private Const DEFAULT_VERSION     As Long = 40
-Private Const IMAGE_WIDTH         As Long = 122
-Private Const IMAGE_HEIGHT        As Long = 122
+Private Const IMAGE_WIDTH         As Long = 166
+Private Const IMAGE_HEIGHT        As Long = 166
 Private Const IMAGE_MARGIN        As Long = 2
-
+Private Const COL_COUNT           As Long = 3
 
 Private Sub Update_fraQRCodeImage()
     btnSave.Enabled = False
@@ -65,8 +65,8 @@ On Error GoTo Catch
         Set sbl = sbls(idx)
         Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
         With ctl
-            .Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod 4) + IMAGE_MARGIN
-            .Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ 4) + IMAGE_MARGIN
+            .Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod COL_COUNT) + IMAGE_MARGIN
+            .Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ COL_COUNT) + IMAGE_MARGIN
             .Width = IMAGE_WIDTH
             .Height = IMAGE_HEIGHT
         End With
@@ -78,7 +78,7 @@ On Error GoTo Catch
     Next
 
     fraQRCodeImage.ScrollHeight = _
-        CLng((sbls.Count + 3) \ 4) * (IMAGE_HEIGHT + IMAGE_MARGIN) + IMAGE_MARGIN
+        CLng((sbls.Count + 3) \ COL_COUNT) * (IMAGE_HEIGHT + IMAGE_MARGIN) + IMAGE_MARGIN
     btnSave.Enabled = txtData.TextLength > 0
 
 Finally:
@@ -218,12 +218,12 @@ Private Sub txtModuleSize_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
         Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
     End If
 
-    If CLng(txtModuleSize.Text) = 0 Then
-        Call Set_txtModuleSize(1)
+    If CLng(txtModuleSize.Text) < 2 Then
+        Call Set_txtModuleSize(2)
     End If
 
-    If CLng(txtModuleSize.Text) > 20 Then
-        Call Set_txtModuleSize(20)
+    If CLng(txtModuleSize.Text) > 100 Then
+        Call Set_txtModuleSize(100)
     End If
 
     spbModuleSize.Value = CLng(txtModuleSize.Text)
@@ -244,11 +244,11 @@ Private Sub txtModuleSize_KeyDown( _
 
     Select Case KeyCode
         Case 38
-            If 1 <= sz And sz < 20 Then
+            If 2 <= sz And sz < 20 Then
                 txtModuleSize.Text = CStr(sz + 1)
             End If
         Case 40
-            If 1 < sz And sz <= 20 Then
+            If 2 < sz And sz <= 20 Then
                 txtModuleSize.Text = CStr(sz - 1)
             End If
     End Select

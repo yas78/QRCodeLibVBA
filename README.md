@@ -113,7 +113,7 @@ Set sbls = CreateSymbols()
 sbls.AppendText "012345abcdefg"
     
 Dim svg As String
-svg = sbls(0).GetSvg("D:\QRcode.svg")
+svg = sbls(0).GetSvg()
 ```
 
 ### 例９．クリップボードへ格納する
