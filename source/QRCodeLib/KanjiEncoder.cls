@@ -14,9 +14,12 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
+Private m_alphaNumericEncoder As IQRCodeEncoder
+
 Private m_textEncoding  As New TextEncoding
 
 Private Sub Class_Initialize()
+    Set m_alphaNumericEncoder = New AlphanumericEncoder
     Call m_textEncoding.Init("Shift_JIS")
 End Sub
 
@@ -60,11 +63,13 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     End If
 
     m_data(UBound(m_data)) = wd
-
+    
+    Dim ret As Long
+    ret = IQRCodeEncoder_GetCodewordBitLength(c)
+    m_bitCounter = m_bitCounter + ret
     m_charCounter = m_charCounter + 1
-    m_bitCounter = m_bitCounter + 13
 
-    IQRCodeEncoder_Append = 13
+    IQRCodeEncoder_Append = ret
 End Function
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
@@ -72,8 +77,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
-    Dim bs As BitSequence
-    Set bs = New BitSequence
+    Dim bs As New BitSequence
 
     Dim v As Variant
 
@@ -103,11 +107,17 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
        &HE040& <= code And code <= &HEBBF& Then
         IQRCodeEncoder_InSubset = &H40& <= lsb And lsb <= &HFC& And _
                                   &H7F& <> lsb
-    Else
-        IQRCodeEncoder_InSubset = False
+        Exit Function
     End If
+    
+    IQRCodeEncoder_InSubset = False
 End Function
 
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
+    If m_alphaNumericEncoder.InSubset(c) Then
+        IQRCodeEncoder_InExclusiveSubset = False
+        Exit Function
+    End If
+
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
 End Function

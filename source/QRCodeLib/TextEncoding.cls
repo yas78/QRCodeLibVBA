@@ -9,13 +9,13 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Const adTypeBinary      As Long = 1
-Private Const adTypeText        As Long = 2
+Private Const adTypeBinary As Long = 1
+Private Const adTypeText   As Long = 2
 
-Private Const adModeReadWrite   As Long = 3
+Private Const adModeReadWrite As Long = 3
 
-Private m_sr        As Object ' Is ADODB.Stream
-Private m_charset   As String
+Private m_sr As Object ' Is ADODB.Stream
+Private m_charset As String
 
 Public Property Get Charset() As String
     Charset = m_charset

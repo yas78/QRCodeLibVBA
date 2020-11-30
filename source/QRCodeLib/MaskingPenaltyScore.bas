@@ -207,8 +207,7 @@ Continue:
 End Function
 
 Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
-    Dim ret As Collection
-    Set ret = New Collection
+    Dim ret As New Collection
 
     Dim s As Long
     Dim i As Long

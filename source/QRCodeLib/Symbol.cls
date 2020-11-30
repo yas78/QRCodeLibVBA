@@ -26,11 +26,11 @@ Private m_currEncoder       As IQRCodeEncoder
 Private m_currEncodingMode  As EncodingMode
 Private m_currVersion       As Long
 
-Private m_dataBitCapacity   As Long
-Private m_dataBitCounter    As Long
+Private m_dataBitCapacity As Long
+Private m_dataBitCounter  As Long
 
-Private m_segments          As Collection ' Item : IQRCodeEncoder
-Private m_segmentCounter    As Object ' Is Scripting.Dictionary Key : EncodingMode, Item : Long
+Private m_segments       As Collection ' Item : IQRCodeEncoder
+Private m_segmentCounter As Object ' Is Scripting.Dictionary Key : EncodingMode, Item : Long
 
 Private m_index As Long
 
@@ -239,10 +239,10 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
     Dim gp() As Variant
     gp = GeneratorPolynomials.Item(numECCodewords)
 
-    Dim eccIdx      As Long
-    Dim blockIdx    As Long
-    Dim data()      As Long
-    Dim exp         As Long
+    Dim eccIdx   As Long
+    Dim blockIdx As Long
+    Dim data()   As Long
+    Dim exp      As Long
 
     For blockIdx = 0 To UBound(dataBlock)
         ReDim data(UBound(dataBlock(blockIdx)) + UBound(ret(blockIdx)) + 1)
@@ -333,8 +333,7 @@ Private Function GetEncodingRegionBytes() As Byte()
 End Function
 
 Private Function GetMessageBytes() As Byte()
-    Dim bs As BitSequence
-    Set bs = New BitSequence
+    Dim bs As New BitSequence
 
     If m_parent.Count > 1 Then
         Call WriteStructuredAppendHeader(bs)
@@ -561,8 +560,7 @@ Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODUL
     Dim offset As Long
     offset = 0
 
-    Dim bs As BitSequence
-    Set bs = New BitSequence
+    Dim bs As New BitSequence
 
     Dim r As Long
     Dim i As Long
@@ -766,7 +764,6 @@ Public Sub SaveSvg(ByVal filePath As String, _
     Open filePath For Output As #fNum Len = &H7FFF
     Print #fNum, svgFile
     Close #fNum
-
 End Sub
 
 Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
@@ -813,11 +810,10 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
     Next
     
-    Dim paths() As Variant
-    paths = GraphicPath.FindContours(img)
+    Dim gPaths() As Variant
+    gPaths = GraphicPath.FindContours(img)
     
-    Dim buf As List
-    Set buf = New List
+    Dim buf As New List
     
     Dim indent As String
     indent = String(11, " ")
@@ -825,7 +821,7 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim pth As Variant
     Dim k As Long
     
-    For Each pth In paths
+    For Each pth In gPaths
         Call buf.Add(indent & "M ")
 
         For k = 0 To UBound(pth)
@@ -836,7 +832,7 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
 
     Dim data As String
     data = Trim$(Join(buf.Items(), ""))
-    data = Strings.Left$(data, Len(data) - Len(vbNewLine))
+    data = Left$(data, Len(data) - Len(vbNewLine))
     Dim svg As String
     svg = _
         "<svg xmlns='http://www.w3.org/2000/svg'" & vbNewLine & _

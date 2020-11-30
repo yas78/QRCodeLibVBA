@@ -17,7 +17,7 @@ Private m_errorCorrectionLevel    As ErrorCorrectionLevel
 Private m_structuredAppendAllowed As Boolean
 Private m_byteModeCharsetName     As String
 
-Private m_structuredAppendParity As Long
+Private m_parity As Long
 
 Private m_currSymbol As Symbol
 
@@ -50,7 +50,7 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     m_structuredAppendAllowed = allowStructuredAppend
     m_byteModeCharsetName = byteModeCharsetName
 
-    m_structuredAppendParity = 0
+    m_parity = 0
 
     Set m_byteModeEncoding = New TextEncoding
     Call m_byteModeEncoding.Init(byteModeCharsetName)
@@ -76,8 +76,8 @@ Friend Property Get StructuredAppendAllowed() As Boolean
     StructuredAppendAllowed = m_structuredAppendAllowed
 End Property
 
-Friend Property Get StructuredAppendParity() As Long
-    StructuredAppendParity = m_structuredAppendParity
+Friend Property Get Parity() As Long
+    Parity = m_parity
 End Property
 
 Friend Property Get MinVersion() As Long
@@ -178,7 +178,7 @@ Friend Sub UpdateParity(ByVal c As String)
     Dim i As Long
 
     For i = 0 To UBound(charBytes)
-        m_structuredAppendParity = m_structuredAppendParity Xor charBytes(i)
+        m_parity = m_parity Xor charBytes(i)
     Next
 End Sub
 
@@ -193,9 +193,9 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
         Exit Function
     End If
 
-    Dim cnt     As Long
-    Dim flg     As Boolean
-    Dim i       As Long
+    Dim cnt As Long
+    Dim flg As Boolean
+    Dim i   As Long
 
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
@@ -239,8 +239,8 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
         End If
     End If
 
-    Dim flg1    As Boolean
-    Dim flg2    As Boolean
+    Dim flg1 As Boolean
+    Dim flg2 As Boolean
 
     If m_encNum.InSubset(Mid$(s, startIndex, 1)) Then
         cnt = 0
@@ -306,10 +306,14 @@ Private Function SelectModeWhileInNumericMode( _
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.KANJI
         Exit Function
-    ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    End If
+    
+    If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
-    ElseIf m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    End If
+    
+    If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumericMode = EncodingMode.ALPHA_NUMERIC
         Exit Function
     End If

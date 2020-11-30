@@ -14,6 +14,12 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
+Private m_numericEncoder As New IQRCodeEncoder
+
+Private Sub Class_Initialize()
+    Set m_numericEncoder = New NumericEncoder
+End Sub
+
 Private Property Get IQRCodeEncoder_BitCount() As Long
     IQRCodeEncoder_BitCount = m_bitCounter
 End Property
@@ -34,8 +40,6 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim wd As Long
     wd = ConvertCharCode(c)
 
-    Dim ret As Long
-
     If m_charCounter Mod 2 = 0 Then
         If m_charCounter = 0 Then
             ReDim m_data(0)
@@ -44,16 +48,16 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         End If
 
         m_data(UBound(m_data)) = wd
-        ret = 6
     Else
         m_data(UBound(m_data)) = m_data(UBound(m_data)) * 45
         m_data(UBound(m_data)) = m_data(UBound(m_data)) + wd
-        ret = 5
     End If
-
-    m_charCounter = m_charCounter + 1
+    
+    Dim ret As Long
+    ret = IQRCodeEncoder_GetCodewordBitLength(c)
     m_bitCounter = m_bitCounter + ret
-
+    m_charCounter = m_charCounter + 1
+    
     IQRCodeEncoder_Append = ret
 End Function
 
@@ -66,8 +70,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
-    Dim bs As BitSequence
-    Set bs = New BitSequence
+    Dim bs As New BitSequence
 
     Dim bitLength As Long
     bitLength = 11
@@ -87,75 +90,6 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     Call bs.Append(m_data(UBound(m_data)), bitLength)
 
     IQRCodeEncoder_GetBytes = bs.GetBytes()
-End Function
-
-Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
-    Dim ret As Boolean
-
-    Select Case Asc(c)
-        ' (Space)
-        Case 32
-            ret = True
-        ' $ %
-        Case 36, 37
-            ret = True
-        ' * +
-        Case 42, 43
-            ret = True
-        ' - .
-        Case 45, 46
-            ret = True
-        ' /
-        Case 47
-            ret = True
-        ' 0 - 9
-        Case 48 To 57
-            ret = True
-        ' :
-        Case 58
-            ret = True
-        ' A - Z
-        Case 65 To 90
-            ret = True
-
-        Case Else
-            ret = False
-    End Select
-
-    IQRCodeEncoder_InSubset = ret
-End Function
-
-Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
-    Dim ret As Boolean
-
-    Select Case Asc(c)
-        ' (Space)
-        Case 32
-            ret = True
-        ' $ %
-        Case 36, 37
-            ret = True
-        ' * +
-        Case 42, 43
-            ret = True
-        ' - .
-        Case 45, 46
-            ret = True
-        ' /
-        Case 47
-            ret = True
-        ' :
-        Case 58
-            ret = True
-        ' A - Z
-        Case 65 To 90
-            ret = True
-
-        Case Else
-            ret = False
-    End Select
-
-    IQRCodeEncoder_InExclusiveSubset = ret
 End Function
 
 Private Function ConvertCharCode(ByVal c As String) As Long
@@ -192,3 +126,48 @@ Private Function ConvertCharCode(ByVal c As String) As Long
             ConvertCharCode = -1
     End Select
 End Function
+
+Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
+    Dim ret As Boolean
+
+    Select Case Asc(c)
+        ' (Space)
+        Case 32
+            ret = True
+        ' $ %
+        Case 36, 37
+            ret = True
+        ' * +
+        Case 42, 43
+            ret = True
+        ' - .
+        Case 45, 46
+            ret = True
+        ' /
+        Case 47
+            ret = True
+        ' 0 - 9
+        Case 48 To 57
+            ret = True
+        ' :
+        Case 58
+            ret = True
+        ' A - Z
+        Case 65 To 90
+            ret = True
+        Case Else
+            ret = False
+    End Select
+
+    IQRCodeEncoder_InSubset = ret
+End Function
+
+Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
+    If m_numericEncoder.InSubset(c) Then
+        IQRCodeEncoder_InExclusiveSubset = False
+        Exit Function
+    End If
+    
+    IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
+End Function
+

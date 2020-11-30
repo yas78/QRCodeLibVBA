@@ -81,16 +81,16 @@ Set sbls = CreateSymbols()
 sbls.AppendText "012345abcdefg"
     
 ' 24bpp DIB
-sbls(0).SaveBitmap "D:\QRcode.bmp"
+sbls(0).SaveBitmap "QRcode.bmp"
     
 ' 10 pixels per module
-sbls(0).SaveBitmap "D:\QRcode.bmp", moduleSize:=10
+sbls(0).SaveBitmap "QRcode.bmp", moduleSize:=10
     
 ' Specify foreground and background colors.
-sbls(0).SaveBitmap "D:\QRcode.bmp", foreRgb:="#0000FF", backRgb:="#FFFF00"
+sbls(0).SaveBitmap "QRcode.bmp", foreRgb:="#0000FF", backRgb:="#FFFF00"
     
 ' 1bpp DIB
-sbls(0).SaveBitmap "D:\QRcode.bmp", monochrome:=True
+sbls(0).SaveBitmap "QRcode.bmp", monochrome:=True
 ```
 
 ### 例７．SVGファイルへ保存する
@@ -101,7 +101,7 @@ Dim sbls As Symbols
 Set sbls = CreateSymbols()
 sbls.AppendText "012345abcdefg"
     
-sbls(0).SaveSvg "D:\QRcode.svg"    
+sbls(0).SaveSvg "QRcode.svg"    
 ```
 
 ### 例８．SVGデータを取得する

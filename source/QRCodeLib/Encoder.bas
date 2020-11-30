@@ -3,7 +3,7 @@ Option Private Module
 Option Explicit
 
 Public Function Create(ByVal encMode As EncodingMode, _
-                       ByVal byteModeEncoding As String) As IQRCodeEncoder
+                       Optional ByVal byteModeEncoding As String = "Shift_JIS") As IQRCodeEncoder
     Dim ret As IQRCodeEncoder
     Dim enc As ByteEncoder
 
@@ -13,6 +13,7 @@ Public Function Create(ByVal encMode As EncodingMode, _
         Case EncodingMode.ALPHA_NUMERIC
             Set ret = New AlphanumericEncoder
         Case EncodingMode.EIGHT_BIT_BYTE
+            If Len(byteModeEncoding) = 0 Then Call Err.Raise(5)
             Set ret = New ByteEncoder
             Set enc = ret
             Call enc.Init(byteModeEncoding)

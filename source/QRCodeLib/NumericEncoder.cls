@@ -31,8 +31,6 @@ Private Property Get IQRCodeEncoder_ModeIndicator() As Long
 End Property
 
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
-    Dim ret As Long
-
     If m_charCounter Mod 3 = 0 Then
         If m_charCounter = 0 Then
             ReDim m_data(0)
@@ -41,17 +39,16 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         End If
 
         m_data(UBound(m_data)) = CLng(c)
-        ret = 4
 
     Else
         m_data(UBound(m_data)) = m_data(UBound(m_data)) * 10 + CLng(c)
-        ret = 3
-
     End If
-
-    m_charCounter = m_charCounter + 1
+    
+    Dim ret As Long
+    ret = IQRCodeEncoder_GetCodewordBitLength(c)
     m_bitCounter = m_bitCounter + ret
-
+    m_charCounter = m_charCounter + 1
+    
     IQRCodeEncoder_Append = ret
 End Function
 
@@ -64,8 +61,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
-    Dim bs As BitSequence
-    Set bs = New BitSequence
+    Dim bs As New BitSequence
 
     Dim i As Long
 
