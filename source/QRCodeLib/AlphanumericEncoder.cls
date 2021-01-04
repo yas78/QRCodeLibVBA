@@ -128,38 +128,7 @@ Private Function ConvertCharCode(ByVal c As String) As Long
 End Function
 
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
-    Dim ret As Boolean
-
-    Select Case Asc(c)
-        ' (Space)
-        Case 32
-            ret = True
-        ' $ %
-        Case 36, 37
-            ret = True
-        ' * +
-        Case 42, 43
-            ret = True
-        ' - .
-        Case 45, 46
-            ret = True
-        ' /
-        Case 47
-            ret = True
-        ' 0 - 9
-        Case 48 To 57
-            ret = True
-        ' :
-        Case 58
-            ret = True
-        ' A - Z
-        Case 65 To 90
-            ret = True
-        Case Else
-            ret = False
-    End Select
-
-    IQRCodeEncoder_InSubset = ret
+    IQRCodeEncoder_InSubset = ConvertCharCode(c) > -1
 End Function
 
 Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean

@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Const VAL As Long = Values.FORMAT_INFO
+
 Private m_formatInfoValues()     As Variant
 Private m_formatInfoMaskArray()  As Variant
 
@@ -42,9 +44,7 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
 
     For i = 0 To 7
         temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
-
-        v = IIf(temp > 0, 3, -3)
-
+        v = IIf(temp > 0, VAL, -VAL)
         moduleMatrix(r1)(8) = v
         moduleMatrix(8)(c1) = v
 
@@ -64,9 +64,7 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
 
     For i = 8 To 14
         temp = IIf((formatInfoValue And (2 ^ i)) > 0, 1, 0) Xor m_formatInfoMaskArray(i)
-
-        v = IIf(temp > 0, 3, -3)
-
+        v = IIf(temp > 0, VAL, -VAL)
         moduleMatrix(r2)(8) = v
         moduleMatrix(8)(c2) = v
 
@@ -77,27 +75,26 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
             c2 = c2 - 1
         End If
     Next
+    
+    moduleMatrix(UBound(moduleMatrix) - 7)(8) = VAL
 End Sub
 
 Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
-    Dim numModulesPerSide As Long
-    numModulesPerSide = UBound(moduleMatrix) + 1
-
     Dim i As Long
 
     For i = 0 To 8
         If i <> 6 Then
-            moduleMatrix(8)(i) = -3
-            moduleMatrix(i)(8) = -3
+            moduleMatrix(8)(i) = -VAL
+            moduleMatrix(i)(8) = -VAL
         End If
     Next
 
-    For i = numModulesPerSide - 8 To numModulesPerSide - 1
-        moduleMatrix(8)(i) = -3
-        moduleMatrix(i)(8) = -3
+    For i = UBound(moduleMatrix) - 7 To UBound(moduleMatrix)
+        moduleMatrix(8)(i) = -VAL
+        moduleMatrix(i)(8) = -VAL
     Next
-
-    moduleMatrix(numModulesPerSide - 8)(8) = 2
+    
+    moduleMatrix(UBound(moduleMatrix) - 7)(8) = -VAL
 End Sub
 
 Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _

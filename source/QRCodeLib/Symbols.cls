@@ -33,7 +33,7 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                 ByVal maxVer As Long, _
                 ByVal allowStructuredAppend As Boolean, _
                 ByVal byteModeCharsetName As String)
-    If Not (MIN_VERSION <= maxVer And maxVer <= MAX_VERSION) Then
+    If Not (Constants.MIN_VERSION <= maxVer And maxVer <= Constants.MAX_VERSION) Then
         Call Err.Raise(5)
     End If
 
@@ -44,7 +44,7 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, byteModeCharsetName)
     Set m_encKanji = Encoder.Create(EncodingMode.KANJI)
 
-    m_minVersion = 1
+    m_minVersion = Constants.MIN_VERSION
     m_maxVersion = maxVer
     m_errorCorrectionLevel = ecLevel
     m_structuredAppendAllowed = allowStructuredAppend
@@ -129,11 +129,11 @@ Public Sub AppendText(ByVal s As String)
             Case EncodingMode.UNKNOWN
                 newMode = SelectInitialMode(s, i)
             Case EncodingMode.NUMERIC
-                newMode = SelectModeWhileInNumericMode(s, i)
+                newMode = SelectModeWhileInNumeric(s, i)
             Case EncodingMode.ALPHA_NUMERIC
-                newMode = SelectModeWhileInAlphanumericMode(s, i)
+                newMode = SelectModeWhileInAlphanumeric(s, i)
             Case EncodingMode.EIGHT_BIT_BYTE
-                newMode = SelectModeWhileInByteMode(s, i)
+                newMode = SelectModeWhileInByte(s, i)
             Case EncodingMode.KANJI
                 newMode = SelectInitialMode(s, i)
             Case Else
@@ -193,150 +193,163 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
         Exit Function
     End If
 
-    Dim cnt As Long
-    Dim flg As Boolean
-    Dim i   As Long
-
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
-        cnt = 0
-        flg = False
-
-        For i = startIndex To Len(s)
-            If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
-                cnt = cnt + 1
-            Else
-                Exit For
-            End If
-        Next
-
-        Select Case m_currSymbol.Version
-            Case 1 To 9
-                flg = cnt < 6
-            Case 10 To 26
-                flg = cnt < 7
-            Case 27 To 40
-                flg = cnt < 8
-            Case Else
-                Call Err.Raise(51)
-        End Select
-
-        If flg Then
-            If (startIndex + cnt) <= Len(s) Then
-                If m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
-                    SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
-                    Exit Function
-                Else
-                    SelectInitialMode = EncodingMode.ALPHA_NUMERIC
-                    Exit Function
-                End If
-            Else
-                SelectInitialMode = EncodingMode.ALPHA_NUMERIC
-                Exit Function
-            End If
-        Else
-            SelectInitialMode = EncodingMode.ALPHA_NUMERIC
-            Exit Function
-        End If
+        SelectInitialMode = SelectModeWhenInitialDataAlphaNumeric(s, startIndex)
+        Exit Function
     End If
 
-    Dim flg1 As Boolean
-    Dim flg2 As Boolean
-
     If m_encNum.InSubset(Mid$(s, startIndex, 1)) Then
-        cnt = 0
-        flg1 = False
-        flg2 = False
-
-        For i = startIndex To Len(s)
-            If m_encNum.InSubset(Mid$(s, i, 1)) Then
-                cnt = cnt + 1
-            Else
-                Exit For
-            End If
-        Next
-
-        Select Case m_currSymbol.Version
-            Case 1 To 9
-                flg1 = cnt < 4
-                flg2 = cnt < 7
-            Case 10 To 26
-                flg1 = cnt < 4
-                flg2 = cnt < 8
-            Case 27 To 40
-                flg1 = cnt < 5
-                flg2 = cnt < 9
-            Case Else
-                Call Err.Raise(51)
-        End Select
-
-        If flg1 Then
-            If (startIndex + cnt) <= Len(s) Then
-                flg1 = m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1))
-            Else
-                flg1 = False
-            End If
-        End If
-
-        If flg2 Then
-            If (startIndex + cnt) <= Len(s) Then
-                flg2 = m_encAlpha.InExclusiveSubset(Mid$(s, startIndex + cnt, 1))
-            Else
-                flg2 = False
-            End If
-        End If
-
-        If flg1 Then
-            SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
-            Exit Function
-        ElseIf flg2 Then
-            SelectInitialMode = EncodingMode.ALPHA_NUMERIC
-            Exit Function
-        Else
-            SelectInitialMode = EncodingMode.NUMERIC
-            Exit Function
-        End If
+        SelectInitialMode = SelectModeWhenInitialDataNumeric(s, startIndex)
+        Exit Function
     End If
 
     Call Err.Raise(51)
 End Function
 
-Private Function SelectModeWhileInNumericMode( _
+Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal startIndex As Integer) As EncodingMode
+    Dim cnt As Long
+    cnt = 0
+    
+    Dim i As Long
+    
+    For i = startIndex To Len(s)
+        If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
+            cnt = cnt + 1
+        Else
+            Exit For
+        End If
+    Next
+
+    Dim flg As Boolean
+    
+    Select Case m_currSymbol.Version
+        Case 1 To 9
+            flg = cnt < 6
+        Case 10 To 26
+            flg = cnt < 7
+        Case 27 To 40
+            flg = cnt < 8
+        Case Else
+            Call Err.Raise(51)
+    End Select
+
+    If flg Then
+        If (startIndex + cnt) <= Len(s) Then
+            If m_encByte.InSubset(Mid$(s, startIndex + cnt, 1)) Then
+                SelectModeWhenInitialDataAlphaNumeric = EncodingMode.EIGHT_BIT_BYTE
+                Exit Function
+            End If
+        End If
+    End If
+    
+    SelectModeWhenInitialDataAlphaNumeric = EncodingMode.ALPHA_NUMERIC
+End Function
+
+Private Function SelectModeWhenInitialDataNumeric(ByRef s As String, ByVal startIndex As Long) As EncodingMode
+    Dim cnt As Long
+    cnt = 0
+    
+    Dim i As Long
+
+    For i = startIndex To Len(s)
+        If m_encNum.InSubset(Mid$(s, i, 1)) Then
+            cnt = cnt + 1
+        Else
+            Exit For
+        End If
+    Next
+
+    Dim flg As Boolean
+
+    Select Case m_currSymbol.Version
+        Case 1 To 9
+            flg = cnt < 4
+        Case 10 To 26
+            flg = cnt < 4
+        Case 27 To 40
+            flg = cnt < 5
+        Case Else
+            Call Err.Raise(51)
+    End Select
+
+    If flg Then
+        If (startIndex + cnt) <= Len(s) Then
+            If m_encByte.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
+                SelectModeWhenInitialDataNumeric = EncodingMode.EIGHT_BIT_BYTE
+                Exit Function
+            End If
+        End If
+    End If
+
+    Select Case m_currSymbol.Version
+        Case 1 To 9
+            flg = cnt < 7
+        Case 10 To 26
+            flg = cnt < 8
+        Case 27 To 40
+            flg = cnt < 9
+        Case Else
+            Call Err.Raise(51)
+    End Select
+    
+    If flg Then
+        If (startIndex + cnt) <= Len(s) Then
+            If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
+                SelectModeWhenInitialDataNumeric = EncodingMode.ALPHA_NUMERIC
+                Exit Function
+            End If
+        End If
+    End If
+
+    SelectModeWhenInitialDataNumeric = EncodingMode.NUMERIC
+End Function
+
+Private Function SelectModeWhileInNumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInNumericMode = EncodingMode.KANJI
+        SelectModeWhileInNumeric = EncodingMode.KANJI
         Exit Function
     End If
     
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInNumericMode = EncodingMode.EIGHT_BIT_BYTE
+        SelectModeWhileInNumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
     
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInNumericMode = EncodingMode.ALPHA_NUMERIC
+        SelectModeWhileInNumeric = EncodingMode.ALPHA_NUMERIC
         Exit Function
     End If
 
-    SelectModeWhileInNumericMode = EncodingMode.NUMERIC
+    SelectModeWhileInNumeric = EncodingMode.NUMERIC
 End Function
 
-Private Function SelectModeWhileInAlphanumericMode( _
+Private Function SelectModeWhileInAlphanumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInAlphanumericMode = EncodingMode.KANJI
+        SelectModeWhileInAlphanumeric = EncodingMode.KANJI
         Exit Function
     ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInAlphanumericMode = EncodingMode.EIGHT_BIT_BYTE
+        SelectModeWhileInAlphanumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
 
+    If MustChangeAlphanumericToNumeric(s, startIndex) Then
+        SelectModeWhileInAlphanumeric = EncodingMode.NUMERIC
+        Exit Function
+    End If
+
+    SelectModeWhileInAlphanumeric = EncodingMode.ALPHA_NUMERIC
+End Function
+
+Private Function MustChangeAlphanumericToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
     Dim cnt As Long
     cnt = 0
     
-    Dim flg As Boolean
-    flg = False
+    Dim ret As Boolean
+    ret = False
     
     Dim i As Long
 
@@ -348,43 +361,56 @@ Private Function SelectModeWhileInAlphanumericMode( _
         If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
         Else
-            flg = True
+            ret = True
             Exit For
         End If
     Next
 
-    If flg Then
+    If ret Then
         Select Case m_currSymbol.Version
             Case 1 To 9
-                flg = cnt >= 13
+                ret = cnt >= 13
             Case 10 To 26
-                flg = cnt >= 15
+                ret = cnt >= 15
             Case 27 To 40
-                flg = cnt >= 17
+                ret = cnt >= 17
             Case Else
                 Call Err.Raise(51)
         End Select
-
-        If flg Then
-            SelectModeWhileInAlphanumericMode = EncodingMode.NUMERIC
-            Exit Function
-        End If
     End If
-
-    SelectModeWhileInAlphanumericMode = EncodingMode.ALPHA_NUMERIC
+    
+    MustChangeAlphanumericToNumeric = ret
 End Function
 
-Private Function SelectModeWhileInByteMode( _
+Private Function SelectModeWhileInByte( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
     If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInByteMode = EncodingMode.KANJI
+        SelectModeWhileInByte = EncodingMode.KANJI
         Exit Function
     End If
 
+    If MustChangeByteToNumeric(s, startIndex) Then
+        SelectModeWhileInByte = EncodingMode.NUMERIC
+        Exit Function
+    End If
+
+    If MustChangeByteToAlphanumeric(s, startIndex) Then
+        SelectModeWhileInByte = EncodingMode.ALPHA_NUMERIC
+        Exit Function
+    End If
+
+    SelectModeWhileInByte = EncodingMode.EIGHT_BIT_BYTE
+End Function
+
+Private Function MustChangeByteToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
     Dim cnt As Long
-    Dim flg As Boolean
-    Dim i   As Long
+    cnt = 0
+    
+    Dim ret As Boolean
+    ret = False
+    
+    Dim i As Long
 
     For i = startIndex To Len(s)
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
@@ -394,33 +420,37 @@ Private Function SelectModeWhileInByteMode( _
         If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
         ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
-            flg = True
+            ret = True
             Exit For
         Else
             Exit For
         End If
     Next
 
-    If flg Then
+    If ret Then
         Select Case m_currSymbol.Version
             Case 1 To 9
-                flg = cnt >= 6
+                ret = cnt >= 6
             Case 10 To 26
-                flg = cnt >= 8
+                ret = cnt >= 8
             Case 27 To 40
-                flg = cnt >= 9
+                ret = cnt >= 9
             Case Else
                 Call Err.Raise(51)
         End Select
-
-        If flg Then
-            SelectModeWhileInByteMode = EncodingMode.NUMERIC
-            Exit Function
-        End If
     End If
+    
+    MustChangeByteToNumeric = ret
+End Function
 
+Private Function MustChangeByteToAlphanumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
+    Dim ret As Boolean
+    ret = False
+    
+    Dim cnt As Long
     cnt = 0
-    flg = False
+    
+    Dim i As Long
 
     For i = startIndex To Len(s)
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
@@ -430,32 +460,25 @@ Private Function SelectModeWhileInByteMode( _
         If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
         ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
-            flg = True
+            ret = True
             Exit For
         Else
             Exit For
         End If
-
-        i = i + 1
     Next
 
-    If flg Then
+    If ret Then
         Select Case m_currSymbol.Version
             Case 1 To 9
-                flg = cnt >= 11
+                ret = cnt >= 11
             Case 10 To 26
-                flg = cnt >= 15
+                ret = cnt >= 15
             Case 27 To 40
-                flg = cnt >= 16
+                ret = cnt >= 16
             Case Else
                 Call Err.Raise(51)
         End Select
-
-        If flg Then
-            SelectModeWhileInByteMode = EncodingMode.ALPHA_NUMERIC
-            Exit Function
-        End If
     End If
-
-    SelectModeWhileInByteMode = EncodingMode.EIGHT_BIT_BYTE
+    
+    MustChangeByteToAlphanumeric = ret
 End Function

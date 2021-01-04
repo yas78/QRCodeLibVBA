@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Const VAL As Long = Values.VERSION_INFO
+
 Private m_versionInfoValues() As Variant
 
 Private Sub Class_Initialize()
@@ -39,7 +41,7 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
     Dim v   As Long
 
     For i = 0 To 17
-        v = IIf((versionInfoValue And 2 ^ i) > 0, 3, -3)
+        v = IIf((versionInfoValue And 2 ^ i) > 0, VAL, -VAL)
 
         moduleMatrix(p1)(p2) = v
         moduleMatrix(p2)(p1) = v
@@ -62,8 +64,8 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 
     For i = 0 To 5
         For j = numModulesPerSide - 11 To numModulesPerSide - 9
-            moduleMatrix(i)(j) = -3
-            moduleMatrix(j)(i) = -3
+            moduleMatrix(i)(j) = -VAL
+            moduleMatrix(j)(i) = -VAL
         Next
     Next
 End Sub

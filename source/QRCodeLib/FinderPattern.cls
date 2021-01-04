@@ -9,17 +9,19 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Const VAL As Long = Values.FINDER_PTN
+
 Private m_finderPattern() As Variant
 
 Private Sub Class_Initialize()
     m_finderPattern = Array( _
-        Array(2, 2, 2, 2, 2, 2, 2), _
-        Array(2, -2, -2, -2, -2, -2, 2), _
-        Array(2, -2, 2, 2, 2, -2, 2), _
-        Array(2, -2, 2, 2, 2, -2, 2), _
-        Array(2, -2, 2, 2, 2, -2, 2), _
-        Array(2, -2, -2, -2, -2, -2, 2), _
-        Array(2, 2, 2, 2, 2, 2, 2) _
+        Array(VAL, VAL, VAL, VAL, VAL, VAL, VAL), _
+        Array(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
+        Array(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        Array(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        Array(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        Array(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
+        Array(VAL, VAL, VAL, VAL, VAL, VAL, VAL) _
     )
 End Sub
 

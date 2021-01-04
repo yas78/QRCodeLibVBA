@@ -8,8 +8,8 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
 
     For r = 0 To UBound(moduleMatrix)
         For c = 0 To UBound(moduleMatrix(r))
-            If moduleMatrix(r)(c) = 0 Then
-                moduleMatrix(r)(c) = -1
+            If moduleMatrix(r)(c) = Values.BLANK Then
+                moduleMatrix(r)(c) = -Values.WORD
             End If
         Next
     Next

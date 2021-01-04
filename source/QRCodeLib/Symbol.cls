@@ -354,7 +354,7 @@ Private Sub WriteStructuredAppendHeader(ByVal bs As BitSequence)
                    SymbolSequenceIndicator.POSITION_LENGTH)
     Call bs.Append(m_parent.Count - 1, _
                    SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH)
-    Call bs.Append(m_parent.StructuredAppendParity, _
+    Call bs.Append(m_parent.Parity, _
                    StructuredAppend.PARITY_DATA_LENGTH)
 End Sub
 
@@ -457,6 +457,8 @@ Private Function GetModuleMatrix() As Variant()
 End Function
 
 Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
+    Const VAL As Long = Values.WORD
+    
     Dim data() As Byte
     data = GetEncodingRegionBytes()
 
@@ -479,8 +481,8 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
         bitPos = 7
 
         Do While bitPos >= 0
-            If moduleMatrix(r)(c) = 0 Then
-                moduleMatrix(r)(c) = IIf((v And 2 ^ bitPos) > 0, 1, -1)
+            If moduleMatrix(r)(c) = Values.BLANK Then
+                moduleMatrix(r)(c) = IIf((v And 2 ^ bitPos) > 0, VAL, -VAL)
                 bitPos = bitPos - 1
             End If
 
@@ -571,7 +573,7 @@ Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODUL
         Call bs.Clear
 
         For Each v In moduleMatrix(r)
-            pixelColor = IIf(v > 0, 0, 1)
+            pixelColor = IIf(Values.IsDark(v), 0, 1)
 
             For i = 1 To moduleSize
                 Call bs.Append(pixelColor, 1)
@@ -641,7 +643,7 @@ Private Function GetBitmap24bpp(Optional ByVal moduleSize As Long = DEFAULT_MODU
         idx = 0
 
         For Each v In moduleMatrix(r)
-            colorRGB = IIf(v > 0, foreColorRGB, backColorRGB)
+            colorRGB = IIf(Values.IsDark(v), foreColorRGB, backColorRGB)
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
@@ -799,7 +801,7 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         c = 0
         For Each v In rowArray
             For j = 1 To moduleSize
-                imgRow(c) = v
+                imgRow(c) = IIf(Values.IsDark(v), 1, 0)
                 c = c + 1
             Next
         Next
@@ -810,22 +812,22 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
     Next
     
-    Dim gPaths() As Variant
-    gPaths = GraphicPath.FindContours(img)
+    Dim gpPaths() As Variant
+    gpPaths = GraphicPath.FindContours(img)
     
     Dim buf As New List
     
     Dim indent As String
     indent = String(11, " ")
 
-    Dim pth As Variant
+    Dim gpPath As Variant
     Dim k As Long
     
-    For Each pth In gPaths
+    For Each gpPath In gpPaths
         Call buf.Add(indent & "M ")
 
-        For k = 0 To UBound(pth)
-            Call buf.Add(CStr(pth(k).x) & "," & CStr(pth(k).y) & " ")
+        For k = 0 To UBound(gpPath)
+            Call buf.Add(CStr(gpPath(k).x) & "," & CStr(gpPath(k).y) & " ")
         Next
         Call buf.Add("Z" & vbNewLine)
     Next

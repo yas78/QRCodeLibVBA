@@ -9,6 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
  
+Const VAL As Long = Values.ALIGNMENT_PTN
+ 
 Private m_centerPosArrays(40) As Variant
 
 Private Sub Class_Initialize()
@@ -79,35 +81,35 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
                 GoTo Continue
             End If
 
-            moduleMatrix(r - 2)(c - 2) = 2
-            moduleMatrix(r - 2)(c - 1) = 2
-            moduleMatrix(r - 2)(c + 0) = 2
-            moduleMatrix(r - 2)(c + 1) = 2
-            moduleMatrix(r - 2)(c + 2) = 2
+            moduleMatrix(r - 2)(c - 2) = VAL
+            moduleMatrix(r - 2)(c - 1) = VAL
+            moduleMatrix(r - 2)(c + 0) = VAL
+            moduleMatrix(r - 2)(c + 1) = VAL
+            moduleMatrix(r - 2)(c + 2) = VAL
 
-            moduleMatrix(r - 1)(c - 2) = 2
-            moduleMatrix(r - 1)(c - 1) = -2
-            moduleMatrix(r - 1)(c + 0) = -2
-            moduleMatrix(r - 1)(c + 1) = -2
-            moduleMatrix(r - 1)(c + 2) = 2
+            moduleMatrix(r - 1)(c - 2) = VAL
+            moduleMatrix(r - 1)(c - 1) = -VAL
+            moduleMatrix(r - 1)(c + 0) = -VAL
+            moduleMatrix(r - 1)(c + 1) = -VAL
+            moduleMatrix(r - 1)(c + 2) = VAL
 
-            moduleMatrix(r + 0)(c - 2) = 2
-            moduleMatrix(r + 0)(c - 1) = -2
-            moduleMatrix(r + 0)(c + 0) = 2
-            moduleMatrix(r + 0)(c + 1) = -2
-            moduleMatrix(r + 0)(c + 2) = 2
+            moduleMatrix(r + 0)(c - 2) = VAL
+            moduleMatrix(r + 0)(c - 1) = -VAL
+            moduleMatrix(r + 0)(c + 0) = VAL
+            moduleMatrix(r + 0)(c + 1) = -VAL
+            moduleMatrix(r + 0)(c + 2) = VAL
 
-            moduleMatrix(r + 1)(c - 2) = 2
-            moduleMatrix(r + 1)(c - 1) = -2
-            moduleMatrix(r + 1)(c + 0) = -2
-            moduleMatrix(r + 1)(c + 1) = -2
-            moduleMatrix(r + 1)(c + 2) = 2
+            moduleMatrix(r + 1)(c - 2) = VAL
+            moduleMatrix(r + 1)(c - 1) = -VAL
+            moduleMatrix(r + 1)(c + 0) = -VAL
+            moduleMatrix(r + 1)(c + 1) = -VAL
+            moduleMatrix(r + 1)(c + 2) = VAL
 
-            moduleMatrix(r + 2)(c - 2) = 2
-            moduleMatrix(r + 2)(c - 1) = 2
-            moduleMatrix(r + 2)(c + 0) = 2
-            moduleMatrix(r + 2)(c + 1) = 2
-            moduleMatrix(r + 2)(c + 2) = 2
+            moduleMatrix(r + 2)(c - 2) = VAL
+            moduleMatrix(r + 2)(c - 1) = VAL
+            moduleMatrix(r + 2)(c + 0) = VAL
+            moduleMatrix(r + 2)(c + 1) = VAL
+            moduleMatrix(r + 2)(c + 2) = VAL
 
 Continue:
         Next

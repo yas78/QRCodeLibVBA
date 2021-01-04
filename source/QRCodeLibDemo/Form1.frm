@@ -285,7 +285,7 @@ Private Sub UserForm_Initialize()
     cmbEncoding.ListIndex = 0
 
     Dim i As Long
-    For i = 1 To 40
+    For i = QRCodeLib.Constants.MIN_VERSION To QRCodeLib.Constants.MAX_VERSION
         Call cmbMaxVersion.AddItem(i)
     Next
 
