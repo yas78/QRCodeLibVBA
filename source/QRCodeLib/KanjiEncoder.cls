@@ -16,11 +16,15 @@ Private m_bitCounter    As Long
 
 Private m_alphaNumericEncoder As IQRCodeEncoder
 
-Private m_textEncoding  As New TextEncoding
+Private m_textEncoding  As TextEncoding
 
-Private Sub Class_Initialize()
+Public Sub Init(ByVal charsetName As String)
+    Call IQRCodeEncoder_Init(charsetName)
+End Sub
+
+Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
     Set m_alphaNumericEncoder = New AlphanumericEncoder
-    Call m_textEncoding.Init("Shift_JIS")
+    Set m_textEncoding = NewTextEncoding(charsetName)
 End Sub
 
 Private Property Get IQRCodeEncoder_BitCount() As Long

@@ -13,7 +13,7 @@ Const ADDR_DATA As String = "I4"
 Const MODULE_SIZE As Long = 12
 
 
-Private Sub btnOpenForm_Click()
+Private Sub btnForm_Click()
     Dim frm As Form1
     Set frm = New Form1
 
@@ -30,7 +30,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     If Len(s) = 0 Then Exit Sub
 
 On Error GoTo Catch
-    Dim sbls As symbols
+    Dim sbls As Symbols
     Set sbls = CreateSymbols()
     Call sbls.AppendText(s)
     

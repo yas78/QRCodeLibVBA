@@ -47,11 +47,11 @@ Set sbls = CreateSymbols(maxVer:=10)
 ```
 
 ### 例４．8ビットバイトモードで使用する文字コードを指定する
-CreateSymbols関数の byteModeCharsetName 引数を設定してSymbolsオブジェクトを生成します。
+CreateSymbols関数の charsetName 引数を設定してSymbolsオブジェクトを生成します。
 
 ```VBA
 Dim sbls As Symbols
-Set sbls = CreateSymbols(byteModeCharsetName:="utf-8")
+Set sbls = CreateSymbols(charsetName:="utf-8")
 ```
 
 ### 例５．分割QRコードを作成する

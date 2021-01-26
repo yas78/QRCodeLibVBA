@@ -14,6 +14,10 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
+Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+    ' NOP
+End Sub
+
 Private Property Get IQRCodeEncoder_BitCount() As Long
     IQRCodeEncoder_BitCount = m_bitCounter
 End Property

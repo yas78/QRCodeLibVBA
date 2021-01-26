@@ -5,7 +5,7 @@ Public Function CreateSymbols( _
     Optional ByVal ecLevel As ErrorCorrectionLevel = ErrorCorrectionLevel.M, _
     Optional ByVal maxVer As Long = MAX_VERSION, _
     Optional ByVal allowStructuredAppend As Boolean = False, _
-    Optional ByVal byteModeCharsetName As String = "Shift_JIS") As Symbols
+    Optional ByVal charsetName As String = "shift_jis") As Symbols
 
     Select Case ecLevel
         Case ErrorCorrectionLevel.L To ErrorCorrectionLevel.H
@@ -16,8 +16,8 @@ Public Function CreateSymbols( _
 
     If Not (1 <= maxVer And maxVer <= 40) Then Call Err.Raise(5)
 
-    Dim sbls As New Symbols
-    Call sbls.Init(ecLevel, maxVer, allowStructuredAppend, byteModeCharsetName)
+    Dim sbls As Symbols
+    Set sbls = NewSymbols(ecLevel, maxVer, allowStructuredAppend, charsetName)
     
     Set CreateSymbols = sbls
 End Function

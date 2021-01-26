@@ -57,7 +57,7 @@ Friend Sub Init(ByVal parentObj As Symbols)
     Call m_segmentCounter.Add(EncodingMode.EIGHT_BIT_BYTE, 0)
     Call m_segmentCounter.Add(EncodingMode.KANJI, 0)
 
-    If parentObj.StructuredAppendAllowed Then
+    If parentObj.StructuredAppend Then
         m_dataBitCapacity = m_dataBitCapacity - StructuredAppend.HEADER_LENGTH
     End If
 End Sub
@@ -101,7 +101,7 @@ End Function
 Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
                                    ByVal c As String) As Boolean
     Dim enc As IQRCodeEncoder
-    Set enc = Encoder.Create(encMode, m_parent.ByteModeCharset)
+    Set enc = Encoder.Create(encMode, m_parent.Charset)
 
     Dim bitLength As Long
     bitLength = enc.GetCodewordBitLength(c)
@@ -150,7 +150,7 @@ Private Sub SelectVersion()
         m_parent.ErrorCorrectionLevel, m_currVersion)
     m_parent.MinVersion = m_currVersion
 
-    If m_parent.StructuredAppendAllowed Then
+    If m_parent.StructuredAppend Then
         m_dataBitCapacity = m_dataBitCapacity - StructuredAppend.HEADER_LENGTH
     End If
 End Sub

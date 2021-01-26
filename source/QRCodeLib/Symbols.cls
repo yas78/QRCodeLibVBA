@@ -11,11 +11,11 @@ Option Explicit
 
 Private m_items  As Collection
 
-Private m_minVersion              As Long
-Private m_maxVersion              As Long
-Private m_errorCorrectionLevel    As ErrorCorrectionLevel
-Private m_structuredAppendAllowed As Boolean
-Private m_byteModeCharsetName     As String
+Private m_minVersion            As Long
+Private m_maxVersion            As Long
+Private m_errorCorrectionLevel  As ErrorCorrectionLevel
+Private m_structuredAppend      As Boolean
+Private m_charsetName           As String
 
 Private m_parity As Long
 
@@ -27,38 +27,38 @@ Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
 Private m_byteModeEncoding As TextEncoding
-Private m_shiftJISEncoding As TextEncoding
 
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                 ByVal maxVer As Long, _
                 ByVal allowStructuredAppend As Boolean, _
-                ByVal byteModeCharsetName As String)
+                ByVal charsetName As String)
     If Not (Constants.MIN_VERSION <= maxVer And maxVer <= Constants.MAX_VERSION) Then
         Call Err.Raise(5)
     End If
 
     Set m_items = New Collection
 
-    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC)
-    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC)
-    Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, byteModeCharsetName)
-    Set m_encKanji = Encoder.Create(EncodingMode.KANJI)
-
     m_minVersion = Constants.MIN_VERSION
     m_maxVersion = maxVer
     m_errorCorrectionLevel = ecLevel
-    m_structuredAppendAllowed = allowStructuredAppend
-    m_byteModeCharsetName = byteModeCharsetName
+    m_structuredAppend = allowStructuredAppend
+    m_charsetName = charsetName
 
     m_parity = 0
 
-    Set m_byteModeEncoding = New TextEncoding
-    Call m_byteModeEncoding.Init(byteModeCharsetName)
-    Set m_shiftJISEncoding = New TextEncoding
-    Call m_shiftJISEncoding.Init("Shift_JIS")
+    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charsetName)
+    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charsetName)
+    
+    If CJKCharset.IsCJK(charsetName) Then
+        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charsetName)
+    Else
+        ' NOP
+    End If
+        
+    Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, charsetName)
+    Set m_byteModeEncoding = NewTextEncoding(charsetName)
 
-    Set m_currSymbol = New Symbol
-    Call m_currSymbol.Init(Me)
+    Set m_currSymbol = NewSymbol(Me)
     Call m_items.Add(m_currSymbol)
 End Sub
 
@@ -72,8 +72,8 @@ Public Property Get Count() As Long
     Count = m_items.Count
 End Property
 
-Friend Property Get StructuredAppendAllowed() As Boolean
-    StructuredAppendAllowed = m_structuredAppendAllowed
+Friend Property Get StructuredAppend() As Boolean
+    StructuredAppend = m_structuredAppend
 End Property
 
 Friend Property Get Parity() As Long
@@ -95,8 +95,8 @@ Friend Property Get ErrorCorrectionLevel() As ErrorCorrectionLevel
     ErrorCorrectionLevel = m_errorCorrectionLevel
 End Property
 
-Friend Property Get ByteModeCharset() As String
-    ByteModeCharset = m_byteModeCharsetName
+Friend Property Get Charset() As String
+    Charset = m_charsetName
 End Property
 
 Public Property Get NewEnum() As IUnknown
@@ -106,8 +106,7 @@ Attribute NewEnum.VB_UserMemId = -4
 End Property
 
 Private Function Add() As Symbol
-    Set m_currSymbol = New Symbol
-    Call m_currSymbol.Init(Me)
+    Set m_currSymbol = NewSymbol(Me)
     Call m_items.Add(m_currSymbol)
 
     Set Add = m_currSymbol
@@ -144,7 +143,7 @@ Public Sub AppendText(ByVal s As String)
 
         If newMode <> oldMode Then
             If Not m_currSymbol.TrySetEncodingMode(newMode, c) Then
-                If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
+                If Not m_structuredAppend Or m_items.Count = 16 Then
                     Call Err.Raise(6, Description:="String too long")
                 End If
 
@@ -155,7 +154,7 @@ Public Sub AppendText(ByVal s As String)
         End If
 
         If Not m_currSymbol.TryAppend(c) Then
-            If Not m_structuredAppendAllowed Or m_items.Count = 16 Then
+            If Not m_structuredAppend Or m_items.Count = 16 Then
                 Call Err.Raise(6, Description:="String too long")
             End If
 
@@ -169,12 +168,8 @@ End Sub
 
 Friend Sub UpdateParity(ByVal c As String)
     Dim charBytes() As Byte
-    If m_encKanji.InSubset(c) Then
-        charBytes = m_shiftJISEncoding.GetBytes(c)
-    Else
-        charBytes = m_byteModeEncoding.GetBytes(c)
-    End If
-
+    charBytes = m_byteModeEncoding.GetBytes(c)
+    
     Dim i As Long
 
     For i = 0 To UBound(charBytes)
@@ -183,9 +178,11 @@ Friend Sub UpdateParity(ByVal c As String)
 End Sub
 
 Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) As EncodingMode
-    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectInitialMode = EncodingMode.KANJI
-        Exit Function
+    If Not (m_encKanji Is Nothing) Then
+        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+            SelectInitialMode = EncodingMode.KANJI
+            Exit Function
+        End If
     End If
 
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
@@ -307,9 +304,11 @@ End Function
 Private Function SelectModeWhileInNumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
-    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInNumeric = EncodingMode.KANJI
-        Exit Function
+    If Not (m_encKanji Is Nothing) Then
+        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+            SelectModeWhileInNumeric = EncodingMode.KANJI
+            Exit Function
+        End If
     End If
     
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
@@ -328,14 +327,18 @@ End Function
 Private Function SelectModeWhileInAlphanumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
-    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInAlphanumeric = EncodingMode.KANJI
-        Exit Function
-    ElseIf m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If Not (m_encKanji Is Nothing) Then
+        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+            SelectModeWhileInAlphanumeric = EncodingMode.KANJI
+            Exit Function
+        End If
+    End If
+    
+    If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
-
+    
     If MustChangeAlphanumericToNumeric(s, startIndex) Then
         SelectModeWhileInAlphanumeric = EncodingMode.NUMERIC
         Exit Function
@@ -385,11 +388,13 @@ End Function
 Private Function SelectModeWhileInByte( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
-    If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
-        SelectModeWhileInByte = EncodingMode.KANJI
-        Exit Function
+    If Not (m_encKanji Is Nothing) Then
+        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+            SelectModeWhileInByte = EncodingMode.KANJI
+            Exit Function
+        End If
     End If
-
+    
     If MustChangeByteToNumeric(s, startIndex) Then
         SelectModeWhileInByte = EncodingMode.NUMERIC
         Exit Function

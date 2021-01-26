@@ -16,8 +16,8 @@ Private m_bitCounter    As Long
 
 Private m_numericEncoder As New IQRCodeEncoder
 
-Private Sub Class_Initialize()
-    Set m_numericEncoder = New NumericEncoder
+Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+    ' NOP
 End Sub
 
 Private Property Get IQRCodeEncoder_BitCount() As Long

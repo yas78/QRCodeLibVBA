@@ -19,14 +19,20 @@ Private m_encKanji  As IQRCodeEncoder
 
 Private m_textEncoding  As TextEncoding
 
-Private Sub Class_Initialize()
-    Set m_encAlpha = New AlphanumericEncoder
-    Set m_encKanji = New KanjiEncoder
-    Set m_textEncoding = New TextEncoding
+Public Sub Init(ByVal charsetName As String)
+    Call IQRCodeEncoder_Init(charsetName)
 End Sub
 
-Public Sub Init(ByVal charsetName As String)
-    Call m_textEncoding.Init(charsetName)
+Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+    Set m_textEncoding = NewTextEncoding(charsetName)
+    
+    Set m_encAlpha = New AlphanumericEncoder
+    
+    If CJKCharset.IsCJK(charsetName) Then
+        Set m_encKanji = NewKanjiEncoder(charsetName)
+    Else
+        ' NOP
+    End If
 End Sub
 
 Private Property Get IQRCodeEncoder_BitCount() As Long
@@ -90,11 +96,13 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
         Exit Function
     End If
 
-    If m_encKanji.InSubset(c) Then
-        IQRCodeEncoder_InExclusiveSubset = False
-        Exit Function
+    If Not (m_encKanji Is Nothing) Then
+        If m_encKanji.InSubset(c) Then
+            IQRCodeEncoder_InExclusiveSubset = False
+            Exit Function
+        End If
     End If
-
+    
     If IQRCodeEncoder_InSubset(c) Then
         IQRCodeEncoder_InExclusiveSubset = True
         Exit Function

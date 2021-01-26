@@ -32,9 +32,8 @@ Public Property Let y(ByVal Value As Long)
 End Property
 
 Public Function Clone() As Point
-    Dim ret As New Point
-    Call ret.Init(x, y)
-    
+    Dim ret As Point
+    Set ret = NewPoint(x, y)
     Set Clone = ret
 End Function
 

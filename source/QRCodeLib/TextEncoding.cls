@@ -17,13 +17,9 @@ Private Const adModeReadWrite As Long = 3
 Private m_sr As Object ' Is ADODB.Stream
 Private m_charset As String
 
-Public Property Get Charset() As String
-    Charset = m_charset
-End Property
-
 Public Sub Init(ByVal charsetName As String)
     m_charset = charsetName
-
+    
     Set m_sr = CreateObject("ADODB.Stream")
 
     m_sr.Mode = adModeReadWrite

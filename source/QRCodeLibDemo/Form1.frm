@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form1 
    Caption         =   "QR Code"
-   ClientHeight    =   8910
+   ClientHeight    =   9225
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   10590
@@ -49,7 +49,7 @@ Private Sub Update_fraQRCodeImage()
     structAppend = chkStructuredAppend.Value
     
     Dim encMode As String
-    encMode = cmbEncoding.Value
+    encMode = cmbCharset.Value
 
 On Error GoTo Catch
     Dim sbls As QRCodeLib.Symbols
@@ -115,7 +115,7 @@ Private Sub btnSave_Click()
     structAppend = chkStructuredAppend.Value
     
     Dim encMode As String
-    encMode = cmbEncoding.Value
+    encMode = cmbCharset.Value
 
     Dim fs As New FileSystemObject
 
@@ -177,7 +177,7 @@ Private Sub chkStructuredAppend_Change()
     Call Update_fraQRCodeImage
 End Sub
 
-Private Sub cmbEncoding_Change()
+Private Sub cmbCharset_Change()
     Call Update_fraQRCodeImage
 End Sub
 
@@ -280,9 +280,11 @@ Private Sub UserForm_Initialize()
         .ListIndex = 1
     End With
 
-    Call cmbEncoding.AddItem("Shift_JIS")
-    Call cmbEncoding.AddItem("UTF-8")
-    cmbEncoding.ListIndex = 0
+    Call cmbCharset.AddItem("SHIFT_JIS")
+    Call cmbCharset.AddItem("GB2312")
+    Call cmbCharset.AddItem("EUC-KR")
+    Call cmbCharset.AddItem("UTF-8")
+    cmbCharset.ListIndex = 0
 
     Dim i As Long
     For i = QRCodeLib.Constants.MIN_VERSION To QRCodeLib.Constants.MAX_VERSION
