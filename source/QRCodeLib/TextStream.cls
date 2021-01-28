@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "TextEncoding"
+Attribute VB_Name = "TextStream"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -21,7 +21,6 @@ Public Sub Init(ByVal charsetName As String)
     m_charset = charsetName
     
     Set m_sr = CreateObject("ADODB.Stream")
-
     m_sr.Mode = adModeReadWrite
     m_sr.Charset = charsetName
 End Sub

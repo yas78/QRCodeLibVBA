@@ -26,7 +26,7 @@ Private m_encAlpha  As IQRCodeEncoder
 Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
-Private m_byteModeEncoding As TextEncoding
+Private m_byteModeStream As QRCodeLib.TextStream
 
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                 ByVal maxVer As Long, _
@@ -49,14 +49,14 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charsetName)
     Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charsetName)
     
-    If CJKCharset.IsCJK(charsetName) Then
+    If Encoding.IsJP(charsetName) Then
         Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charsetName)
     Else
         ' NOP
     End If
         
     Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, charsetName)
-    Set m_byteModeEncoding = NewTextEncoding(charsetName)
+    Set m_byteModeStream = NewTextStream(charsetName)
 
     Set m_currSymbol = NewSymbol(Me)
     Call m_items.Add(m_currSymbol)
@@ -168,7 +168,7 @@ End Sub
 
 Friend Sub UpdateParity(ByVal c As String)
     Dim charBytes() As Byte
-    charBytes = m_byteModeEncoding.GetBytes(c)
+    charBytes = m_byteModeStream.GetBytes(c)
     
     Dim i As Long
 
