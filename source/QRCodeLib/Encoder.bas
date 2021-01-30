@@ -15,7 +15,7 @@ Public Function Create(ByVal encMode As EncodingMode, _
             If Len(charsetName) = 0 Then Call Err.Raise(5)
             Set ret = NewByteEncoder(charsetName)
         Case EncodingMode.KANJI
-            If Encoding.IsJP(charsetName) Then
+            If Encoding.IsCJK(charsetName) Then
                 Set ret = NewKanjiEncoder(charsetName)
             Else
                 Call Err.Raise(5)

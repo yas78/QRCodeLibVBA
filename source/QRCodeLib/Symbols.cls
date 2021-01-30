@@ -49,7 +49,7 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charsetName)
     Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charsetName)
     
-    If Encoding.IsJP(charsetName) Then
+    If Encoding.IsCJK(charsetName) Then
         Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charsetName)
     Else
         ' NOP
