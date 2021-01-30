@@ -1,10 +1,10 @@
-Attribute VB_Name = "Encoding"
+Attribute VB_Name = "Charsets"
 Option Private Module
 Option Explicit
 
-Private Const SHIFT_JIS As String = "shift_jis"
-Private Const GB2312 As String = "gb2312"
-Private Const EUC_KR As String = "euc-kr"
+Public Const SHIFT_JIS As String = "shift_jis"
+Public Const GB2312 As String = "gb2312"
+Public Const EUC_KR As String = "euc-kr"
 
 Public Function IsCJK(ByVal charsetName As String) As Boolean
     Dim v As Variant

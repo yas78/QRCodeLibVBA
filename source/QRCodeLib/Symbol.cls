@@ -101,7 +101,7 @@ End Function
 Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
                                    ByVal c As String) As Boolean
     Dim enc As IQRCodeEncoder
-    Set enc = Encoder.Create(encMode, m_parent.Charset)
+    Set enc = Encoder.Create(encMode, m_parent.Encoding)
 
     Dim bitLength As Long
     bitLength = enc.GetCodewordBitLength(c)

@@ -16,7 +16,7 @@ Private m_bitCounter    As Long
 
 Private m_numericEncoder As New IQRCodeEncoder
 
-Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     ' NOP
 End Sub
 

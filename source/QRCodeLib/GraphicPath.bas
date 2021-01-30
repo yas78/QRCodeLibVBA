@@ -28,7 +28,8 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
             If Not (img(y)(x) > 0 And img(y)(x + 1) <= 0) Then GoTo Continue
 
             img(y)(x) = MAX_VALUE
-            Set st = NewPoint(x, y)
+            Set st = New Point
+            Call st.Init(x, y)
             Set gpPath = New List
             Call gpPath.Add(st)
 

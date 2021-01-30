@@ -17,20 +17,14 @@ Private m_bitCounter    As Long
 Private m_encAlpha  As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
-Private m_charsetName As String
-Private m_textStream  As QRCodeLib.TextStream
+Private m_encoding  As Encoding
 
-Public Sub Init(ByVal charsetName As String)
-    Call IQRCodeEncoder_Init(charsetName)
-End Sub
-
-Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
-    m_charsetName = charsetName
-    Set m_textStream = NewTextStream(charsetName)
-    Set m_encAlpha = New AlphanumericEncoder
+Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
+    Set m_encoding = charEncoding
+    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
     
-    If Encoding.IsCJK(charsetName) Then
-        Set m_encKanji = NewKanjiEncoder(charsetName)
+    If Charsets.IsCJK(charEncoding.Charset) Then
+        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charEncoding)
     Else
         ' NOP
     End If
@@ -54,7 +48,7 @@ End Property
 
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim charBytes() As Byte
-    charBytes = m_textStream.GetBytes(c)
+    charBytes = m_encoding.GetBytes(c)
     
     Dim ret As Long
     Dim v As Variant
@@ -77,7 +71,7 @@ End Function
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     Dim charBytes() As Byte
-    charBytes = m_textStream.GetBytes(c)
+    charBytes = m_encoding.GetBytes(c)
 
     IQRCodeEncoder_GetCodewordBitLength = (UBound(charBytes) + 1) * 8
 End Function

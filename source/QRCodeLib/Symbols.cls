@@ -15,7 +15,7 @@ Private m_minVersion            As Long
 Private m_maxVersion            As Long
 Private m_errorCorrectionLevel  As ErrorCorrectionLevel
 Private m_structuredAppend      As Boolean
-Private m_charsetName           As String
+Private m_encoding              As Encoding
 
 Private m_parity As Long
 
@@ -26,12 +26,10 @@ Private m_encAlpha  As IQRCodeEncoder
 Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
-Private m_byteModeStream As QRCodeLib.TextStream
-
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                 ByVal maxVer As Long, _
                 ByVal allowStructuredAppend As Boolean, _
-                ByVal charsetName As String)
+                ByVal charEncoding As Encoding)
     If Not (Constants.MIN_VERSION <= maxVer And maxVer <= Constants.MAX_VERSION) Then
         Call Err.Raise(5)
     End If
@@ -42,23 +40,23 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     m_maxVersion = maxVer
     m_errorCorrectionLevel = ecLevel
     m_structuredAppend = allowStructuredAppend
-    m_charsetName = charsetName
-
+    Set m_encoding = charEncoding
+    
     m_parity = 0
 
-    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charsetName)
-    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charsetName)
+    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charEncoding)
+    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
     
-    If Encoding.IsCJK(charsetName) Then
-        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charsetName)
+    If Charsets.IsCJK(charEncoding.Charset) Then
+        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charEncoding)
     Else
         ' NOP
     End If
         
-    Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, charsetName)
-    Set m_byteModeStream = NewTextStream(charsetName)
+    Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, charEncoding)
 
-    Set m_currSymbol = NewSymbol(Me)
+    Set m_currSymbol = New Symbol
+    Call m_currSymbol.Init(Me)
     Call m_items.Add(m_currSymbol)
 End Sub
 
@@ -95,8 +93,8 @@ Friend Property Get ErrorCorrectionLevel() As ErrorCorrectionLevel
     ErrorCorrectionLevel = m_errorCorrectionLevel
 End Property
 
-Friend Property Get Charset() As String
-    Charset = m_charsetName
+Friend Property Get Encoding() As Encoding
+    Set Encoding = m_encoding
 End Property
 
 Public Property Get NewEnum() As IUnknown
@@ -106,7 +104,8 @@ Attribute NewEnum.VB_UserMemId = -4
 End Property
 
 Private Function Add() As Symbol
-    Set m_currSymbol = NewSymbol(Me)
+    Set m_currSymbol = New Symbol
+    Call m_currSymbol.Init(Me)
     Call m_items.Add(m_currSymbol)
 
     Set Add = m_currSymbol
@@ -168,7 +167,7 @@ End Sub
 
 Friend Sub UpdateParity(ByVal c As String)
     Dim charBytes() As Byte
-    charBytes = m_byteModeStream.GetBytes(c)
+    charBytes = m_encoding.GetBytes(c)
     
     Dim i As Long
 

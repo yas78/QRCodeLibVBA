@@ -16,15 +16,11 @@ Private m_bitCounter    As Long
 
 Private m_alphaNumericEncoder As IQRCodeEncoder
 
-Private m_textStream  As QRCodeLib.TextStream
+Private m_encoding  As Encoding
 
-Public Sub Init(ByVal charsetName As String)
-    Call IQRCodeEncoder_Init(charsetName)
-End Sub
-
-Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
-    Set m_alphaNumericEncoder = New AlphanumericEncoder
-    Set m_textStream = NewTextStream(charsetName)
+Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
+    Set m_alphaNumericEncoder = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
+    Set m_encoding = charEncoding
 End Sub
 
 Private Property Get IQRCodeEncoder_BitCount() As Long
@@ -45,7 +41,7 @@ End Property
 
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim charBytes() As Byte
-    charBytes = m_textStream.GetBytes(c)
+    charBytes = m_encoding.GetBytes(c)
 
     Dim wd As Long
     wd = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
@@ -94,7 +90,7 @@ End Function
 
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
     Dim charBytes() As Byte
-    charBytes = m_textStream.GetBytes(c)
+    charBytes = m_encoding.GetBytes(c)
 
     If UBound(charBytes) <> 1 Then
         IQRCodeEncoder_InSubset = False

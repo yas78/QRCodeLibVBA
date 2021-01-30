@@ -14,7 +14,7 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
-Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     ' NOP
 End Sub
 
