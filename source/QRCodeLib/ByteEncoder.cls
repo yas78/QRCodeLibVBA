@@ -17,6 +17,7 @@ Private m_bitCounter    As Long
 Private m_encAlpha  As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
+Private m_charsetName As String
 Private m_textStream  As QRCodeLib.TextStream
 
 Public Sub Init(ByVal charsetName As String)
@@ -24,10 +25,11 @@ Public Sub Init(ByVal charsetName As String)
 End Sub
 
 Private Sub IQRCodeEncoder_Init(ByVal charsetName As String)
+    m_charsetName = charsetName
     Set m_textStream = NewTextStream(charsetName)
     Set m_encAlpha = New AlphanumericEncoder
     
-    If Encoding.IsJP(charsetName) Then
+    If Encoding.IsCJK(charsetName) Then
         Set m_encKanji = NewKanjiEncoder(charsetName)
     Else
         ' NOP
@@ -53,8 +55,9 @@ End Property
 Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Dim charBytes() As Byte
     charBytes = m_textStream.GetBytes(c)
-
-    Dim v   As Variant
+    
+    Dim ret As Long
+    Dim v As Variant
 
     For Each v In charBytes
         If m_charCounter = 0 Then
@@ -64,12 +67,10 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         End If
 
         m_data(UBound(m_data)) = v
+        m_charCounter = m_charCounter + 1
+        m_bitCounter = m_bitCounter + 8
+        ret = ret + 8
     Next
-    
-    Dim ret As Long
-    ret = 8 * (UBound(charBytes) + 1)
-    m_bitCounter = m_bitCounter + ret
-    m_charCounter = m_charCounter + (UBound(charBytes) + 1)
     
     IQRCodeEncoder_Append = ret
 End Function
