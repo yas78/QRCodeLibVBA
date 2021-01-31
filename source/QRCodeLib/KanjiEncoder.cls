@@ -18,8 +18,11 @@ Private m_alphaNumericEncoder As IQRCodeEncoder
 
 Private m_encoding  As Encoding
 
+Private Sub Class_Initialize()
+    Set m_alphaNumericEncoder = New AlphanumericEncoder
+End Sub
+
 Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
-    Set m_alphaNumericEncoder = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
     Set m_encoding = charEncoding
 End Sub
 

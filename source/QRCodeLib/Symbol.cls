@@ -101,7 +101,25 @@ End Function
 Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
                                    ByVal c As String) As Boolean
     Dim enc As IQRCodeEncoder
-    Set enc = Encoder.Create(encMode, m_parent.Encoding)
+    
+    Select Case encMode
+        Case EncodingMode.NUMERIC
+            Set enc = New NumericEncoder
+        Case EncodingMode.ALPHA_NUMERIC
+            Set enc = New AlphanumericEncoder
+        Case EncodingMode.EIGHT_BIT_BYTE
+            Set enc = New ByteEncoder
+            Call enc.Init(m_parent.Encoding)
+        Case EncodingMode.KANJI
+            If Charsets.IsJP(m_parent.Encoding.Charset) Then
+                Set enc = New KanjiEncoder
+                Call enc.Init(m_parent.Encoding)
+            Else
+                Call Err.Raise(51)
+            End If
+        Case Else
+            Call Err.Raise(5)
+    End Select
 
     Dim bitLength As Long
     bitLength = enc.GetCodewordBitLength(c)

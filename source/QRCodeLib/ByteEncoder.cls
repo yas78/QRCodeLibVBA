@@ -19,12 +19,16 @@ Private m_encKanji  As IQRCodeEncoder
 
 Private m_encoding  As Encoding
 
+Private Sub Class_Initialize()
+    Set m_encAlpha = New AlphanumericEncoder
+End Sub
+
 Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     Set m_encoding = charEncoding
-    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
     
-    If Charsets.IsCJK(charEncoding.Charset) Then
-        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charEncoding)
+    If Charsets.IsJP(charEncoding.Charset) Then
+        Set m_encKanji = New KanjiEncoder
+        Call m_encKanji.Init(charEncoding)
     Else
         ' NOP
     End If

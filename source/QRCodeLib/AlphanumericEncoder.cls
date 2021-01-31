@@ -14,7 +14,11 @@ Private m_data()        As Long
 Private m_charCounter   As Long
 Private m_bitCounter    As Long
 
-Private m_numericEncoder As New IQRCodeEncoder
+Private m_numericEncoder As IQRCodeEncoder
+
+Private Sub Class_Initialize()
+    Set m_numericEncoder = New NumericEncoder
+End Sub
 
 Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     ' NOP

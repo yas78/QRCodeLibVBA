@@ -26,6 +26,11 @@ Private m_encAlpha  As IQRCodeEncoder
 Private m_encByte   As IQRCodeEncoder
 Private m_encKanji  As IQRCodeEncoder
 
+Private Sub Class_Initialize()
+    Set m_encNum = New NumericEncoder
+    Set m_encAlpha = New AlphanumericEncoder
+End Sub
+
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
                 ByVal maxVer As Long, _
                 ByVal allowStructuredAppend As Boolean, _
@@ -43,17 +48,16 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     Set m_encoding = charEncoding
     
     m_parity = 0
-
-    Set m_encNum = Encoder.Create(EncodingMode.NUMERIC, charEncoding)
-    Set m_encAlpha = Encoder.Create(EncodingMode.ALPHA_NUMERIC, charEncoding)
     
-    If Charsets.IsCJK(charEncoding.Charset) Then
-        Set m_encKanji = Encoder.Create(EncodingMode.KANJI, charEncoding)
+    If Charsets.IsJP(charEncoding.Charset) Then
+        Set m_encKanji = New KanjiEncoder
+        Call m_encKanji.Init(charEncoding)
     Else
         ' NOP
     End If
         
-    Set m_encByte = Encoder.Create(EncodingMode.EIGHT_BIT_BYTE, charEncoding)
+    Set m_encByte = New ByteEncoder
+    Call m_encByte.Init(charEncoding)
 
     Set m_currSymbol = New Symbol
     Call m_currSymbol.Init(Me)
@@ -486,3 +490,4 @@ Private Function MustChangeByteToAlphanumeric(ByRef s As String, ByVal startInde
     
     MustChangeByteToAlphanumeric = ret
 End Function
+
