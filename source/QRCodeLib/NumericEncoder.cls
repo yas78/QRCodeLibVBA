@@ -47,12 +47,12 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     Else
         m_data(UBound(m_data)) = m_data(UBound(m_data)) * 10 + CLng(c)
     End If
-    
+
     Dim ret As Long
     ret = IQRCodeEncoder_GetCodewordBitLength(c)
     m_bitCounter = m_bitCounter + ret
     m_charCounter = m_charCounter + 1
-    
+
     IQRCodeEncoder_Append = ret
 End Function
 

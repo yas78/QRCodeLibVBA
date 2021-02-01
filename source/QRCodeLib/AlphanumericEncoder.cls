@@ -56,12 +56,12 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         m_data(UBound(m_data)) = m_data(UBound(m_data)) * 45
         m_data(UBound(m_data)) = m_data(UBound(m_data)) + wd
     End If
-    
+
     Dim ret As Long
     ret = IQRCodeEncoder_GetCodewordBitLength(c)
     m_bitCounter = m_bitCounter + ret
     m_charCounter = m_charCounter + 1
-    
+
     IQRCodeEncoder_Append = ret
 End Function
 
@@ -140,7 +140,7 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
         IQRCodeEncoder_InExclusiveSubset = False
         Exit Function
     End If
-    
+
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
 End Function
 

@@ -8,9 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
- 
+
 Const VAL As Long = Values.ALIGNMENT_PTN
- 
+
 Private m_centerPosArrays(40) As Variant
 
 Private Sub Class_Initialize()
@@ -73,7 +73,7 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
 
         For j = 0 To maxIndex
             c = centerArray(j)
-            
+
             If i = 0 And j = 0 Or _
                i = 0 And j = maxIndex Or _
                i = maxIndex And j = 0 Then

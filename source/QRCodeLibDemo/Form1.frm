@@ -32,22 +32,22 @@ Private Sub Update_fraQRCodeImage()
 
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
-    
+
     Dim sz As Long
     sz = CLng(txtModuleSize.Text)
-    
+
     Dim foreRGB As String
     foreRGB = "#" & txtForeColor.Text
-    
+
     Dim backRGB As String
     backRGB = "#" & txtBackColor.Text
-    
+
     Dim maxVer As Long
     maxVer = CLng(cmbMaxVersion.Text)
-    
+
     Dim structAppend As Boolean
     structAppend = chkStructuredAppend.Value
-    
+
     Dim encMode As String
     encMode = cmbCharset.Value
 
@@ -98,22 +98,22 @@ End Sub
 Private Sub btnSave_Click()
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
-    
+
     Dim sz As Long
     sz = CLng(txtModuleSize.Text)
-    
+
     Dim foreRGB As String
     foreRGB = "#" & txtForeColor.Text
-    
+
     Dim backRGB As String
     backRGB = "#" & txtBackColor.Text
-    
+
     Dim maxVer As Long
     maxVer = CLng(cmbMaxVersion.Text)
-    
+
     Dim structAppend As Boolean
     structAppend = chkStructuredAppend.Value
-    
+
     Dim encMode As String
     encMode = cmbCharset.Value
 
@@ -126,10 +126,10 @@ Private Sub btnSave_Click()
     fBaseName = Application.GetSaveAsFilename("", fileFilters)
 
     If VarType(fBaseName) = vbBoolean Then Exit Sub
-    
+
     Dim ext As String
     ext = "." & fs.GetExtensionName(fBaseName)
-    
+
     fBaseName = fs.GetParentFolderName(fBaseName) & "\" & fs.GetBaseName(fBaseName)
 
 On Error GoTo Catch
@@ -153,7 +153,7 @@ On Error GoTo Catch
         If fs.FileExists(filePath) Then
             Call fs.DeleteFile(filePath)
         End If
-        
+
         Select Case LCase(ext)
             Case ".bmp"
                 Call sbl.SaveBitmap(filePath, sz, True, foreRGB, backRGB)
@@ -281,8 +281,6 @@ Private Sub UserForm_Initialize()
     End With
 
     Call cmbCharset.AddItem("SHIFT_JIS")
-    Call cmbCharset.AddItem("GB2312")
-    Call cmbCharset.AddItem("EUC-KR")
     Call cmbCharset.AddItem("UTF-8")
     cmbCharset.ListIndex = 0
 

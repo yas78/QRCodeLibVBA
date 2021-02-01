@@ -66,7 +66,7 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
     End If
 
     m_data(UBound(m_data)) = wd
-    
+
     Dim ret As Long
     ret = IQRCodeEncoder_GetCodewordBitLength(c)
     m_bitCounter = m_bitCounter + ret
@@ -112,7 +112,7 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
                                   &H7F& <> lsb
         Exit Function
     End If
-    
+
     IQRCodeEncoder_InSubset = False
 End Function
 

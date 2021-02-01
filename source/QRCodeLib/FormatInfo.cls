@@ -75,7 +75,7 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
             c2 = c2 - 1
         End If
     Next
-    
+
     moduleMatrix(UBound(moduleMatrix) - 7)(8) = VAL
 End Sub
 
@@ -93,7 +93,7 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
         moduleMatrix(8)(i) = -VAL
         moduleMatrix(i)(8) = -VAL
     Next
-    
+
     moduleMatrix(UBound(moduleMatrix) - 7)(8) = -VAL
 End Sub
 

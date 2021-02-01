@@ -12,14 +12,14 @@ End Function
 
 Public Function IsCJK(ByVal charsetName As String) As Boolean
     Dim v As Variant
-    
+
     For Each v In CJKCharsetNames()
         If LCase(charsetName) = LCase(v) Then
             IsCJK = True
             Exit Function
         End If
     Next
-    
+
     IsCJK = False
 End Function
 

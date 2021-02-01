@@ -10,4 +10,3 @@ Public Enum ErrorCorrectionLevel
     Q
     H
 End Enum
-

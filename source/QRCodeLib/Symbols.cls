@@ -46,16 +46,16 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
     m_errorCorrectionLevel = ecLevel
     m_structuredAppend = allowStructuredAppend
     Set m_encoding = charEncoding
-    
+
     m_parity = 0
-    
+
     If Charsets.IsJP(charEncoding.Charset) Then
         Set m_encKanji = New KanjiEncoder
         Call m_encKanji.Init(charEncoding)
     Else
         ' NOP
     End If
-        
+
     Set m_encByte = New ByteEncoder
     Call m_encByte.Init(charEncoding)
 
@@ -172,7 +172,7 @@ End Sub
 Friend Sub UpdateParity(ByVal c As String)
     Dim charBytes() As Byte
     charBytes = m_encoding.GetBytes(c)
-    
+
     Dim i As Long
 
     For i = 0 To UBound(charBytes)
@@ -209,9 +209,9 @@ End Function
 Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal startIndex As Integer) As EncodingMode
     Dim cnt As Long
     cnt = 0
-    
+
     Dim i As Long
-    
+
     For i = startIndex To Len(s)
         If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
@@ -221,7 +221,7 @@ Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal 
     Next
 
     Dim flg As Boolean
-    
+
     Select Case m_currSymbol.Version
         Case 1 To 9
             flg = cnt < 6
@@ -241,14 +241,14 @@ Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal 
             End If
         End If
     End If
-    
+
     SelectModeWhenInitialDataAlphaNumeric = EncodingMode.ALPHA_NUMERIC
 End Function
 
 Private Function SelectModeWhenInitialDataNumeric(ByRef s As String, ByVal startIndex As Long) As EncodingMode
     Dim cnt As Long
     cnt = 0
-    
+
     Dim i As Long
 
     For i = startIndex To Len(s)
@@ -291,7 +291,7 @@ Private Function SelectModeWhenInitialDataNumeric(ByRef s As String, ByVal start
         Case Else
             Call Err.Raise(51)
     End Select
-    
+
     If flg Then
         If (startIndex + cnt) <= Len(s) Then
             If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex + cnt, 1)) Then
@@ -313,12 +313,12 @@ Private Function SelectModeWhileInNumeric( _
             Exit Function
         End If
     End If
-    
+
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
-    
+
     If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInNumeric = EncodingMode.ALPHA_NUMERIC
         Exit Function
@@ -336,12 +336,12 @@ Private Function SelectModeWhileInAlphanumeric( _
             Exit Function
         End If
     End If
-    
+
     If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
         SelectModeWhileInAlphanumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
-    
+
     If MustChangeAlphanumericToNumeric(s, startIndex) Then
         SelectModeWhileInAlphanumeric = EncodingMode.NUMERIC
         Exit Function
@@ -353,10 +353,10 @@ End Function
 Private Function MustChangeAlphanumericToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
     Dim cnt As Long
     cnt = 0
-    
+
     Dim ret As Boolean
     ret = False
-    
+
     Dim i As Long
 
     For i = startIndex To Len(s)
@@ -384,7 +384,7 @@ Private Function MustChangeAlphanumericToNumeric(ByRef s As String, ByVal startI
                 Call Err.Raise(51)
         End Select
     End If
-    
+
     MustChangeAlphanumericToNumeric = ret
 End Function
 
@@ -397,7 +397,7 @@ Private Function SelectModeWhileInByte( _
             Exit Function
         End If
     End If
-    
+
     If MustChangeByteToNumeric(s, startIndex) Then
         SelectModeWhileInByte = EncodingMode.NUMERIC
         Exit Function
@@ -414,10 +414,10 @@ End Function
 Private Function MustChangeByteToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
     Dim cnt As Long
     cnt = 0
-    
+
     Dim ret As Boolean
     ret = False
-    
+
     Dim i As Long
 
     For i = startIndex To Len(s)
@@ -447,17 +447,17 @@ Private Function MustChangeByteToNumeric(ByRef s As String, ByVal startIndex As 
                 Call Err.Raise(51)
         End Select
     End If
-    
+
     MustChangeByteToNumeric = ret
 End Function
 
 Private Function MustChangeByteToAlphanumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
     Dim ret As Boolean
     ret = False
-    
+
     Dim cnt As Long
     cnt = 0
-    
+
     Dim i As Long
 
     For i = startIndex To Len(s)
@@ -487,7 +487,6 @@ Private Function MustChangeByteToAlphanumeric(ByRef s As String, ByVal startInde
                 Call Err.Raise(51)
         End Select
     End If
-    
+
     MustChangeByteToAlphanumeric = ret
 End Function
-

@@ -101,7 +101,7 @@ End Function
 Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
                                    ByVal c As String) As Boolean
     Dim enc As IQRCodeEncoder
-    
+
     Select Case encMode
         Case EncodingMode.NUMERIC
             Set enc = New NumericEncoder
@@ -476,7 +476,7 @@ End Function
 
 Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     Const VAL As Long = Values.WORD
-    
+
     Dim data() As Byte
     data = GetEncodingRegionBytes()
 
@@ -685,11 +685,11 @@ Public Function GetBitmap(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal foreRgb As String = ColorCode.BLACK, _
                           Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-    
+
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
-    
+
     If monochrome Then
         GetBitmap = GetBitmap1bpp(moduleSize, foreRgb, backRgb)
     Else
@@ -702,11 +702,11 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
                            Optional ByVal foreRgb As String = ColorCode.BLACK, _
                            Optional ByVal backRgb As String = ColorCode.WHITE) As stdole.IPictureDisp
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-    
+
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
-    
+
     Dim dibData() As Byte
 
     If monochrome Then
@@ -724,12 +724,12 @@ Public Sub SaveBitmap(ByVal filePath As String, _
                       Optional ByVal foreRgb As String = ColorCode.BLACK, _
                       Optional ByVal backRgb As String = ColorCode.WHITE)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-                      
+
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
-    
+
     Dim bitmapBytes() As Byte
 
     If monochrome Then
@@ -750,11 +750,11 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
                           Optional ByVal foreRgb As String = ColorCode.BLACK, _
                           Optional ByVal backRgb As String = ColorCode.WHITE)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-    
+
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
-    
+
     Dim bitmapBytes() As Byte
     bitmapBytes = GetBitmap24bpp(moduleSize, foreRgb, backRgb)
 
@@ -765,11 +765,11 @@ Public Sub SaveSvg(ByVal filePath As String, _
                    Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                    Optional ByVal foreRgb As String = BLACK)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-    
+
     If Len(filePath) = 0 Then Call Err.Raise(5)
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
-    
+
     Dim svg As String
     svg = GetSvg(moduleSize, foreRgb)
     Dim svgFile As String
@@ -789,10 +789,10 @@ End Sub
 Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                        Optional ByVal foreRgb As String = BLACK) As String
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
-    
+
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
-    
+
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
 
@@ -801,18 +801,18 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
 
     Dim imageHeight As Long
     imageHeight = imageWidth
-    
+
     Dim img() As Variant
     ReDim img(imageHeight - 1)
-    
+
     Dim imgRow() As Long
-    
+
     Dim r As Long
     Dim c As Long
     Dim i As Long
     Dim j As Long
     Dim v As Variant
-    
+
     Dim rowArray As Variant
     For Each rowArray In moduleMatrix
         ReDim imgRow(imageWidth - 1)
@@ -823,24 +823,24 @@ Public Function GetSvg(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
                 c = c + 1
             Next
         Next
-        
+
         For i = 1 To moduleSize
             img(r) = imgRow
             r = r + 1
         Next
     Next
-    
+
     Dim gpPaths() As Variant
     gpPaths = GraphicPath.FindContours(img)
-    
+
     Dim buf As New List
-    
+
     Dim indent As String
     indent = String(11, " ")
 
     Dim gpPath As Variant
     Dim k As Long
-    
+
     For Each gpPath In gpPaths
         Call buf.Add(indent & "M ")
 

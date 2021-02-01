@@ -127,7 +127,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i >= 0
                 If Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i - 1
             Loop
@@ -138,7 +138,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i >= 0
                 If Not Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i - 1
             Loop
@@ -149,7 +149,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i >= 0
                 If Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i - 1
             Loop
@@ -164,7 +164,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i <= UBound(rowArray)
                 If Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i + 1
             Loop
@@ -175,7 +175,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i <= UBound(rowArray)
                 If Not Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i + 1
             Loop
@@ -186,7 +186,7 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             cnt = 0
             Do While i <= UBound(rowArray)
                 If Values.IsDark(rowArray(i)) Then Exit Do
-                
+
                 cnt = cnt + 1
                 i = i + 1
             Loop
@@ -216,7 +216,7 @@ Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
             If Not Values.IsDark(arg(i - 1)) Then
                 s = i
             End If
-            
+
             If Not Values.IsDark(arg(i + 1)) Then
                 If (i + 1 - s) Mod 3 = 0 Then
                     Call ret.Add(Array(s, i))

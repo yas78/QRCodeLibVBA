@@ -21,6 +21,6 @@ Public Function CreateSymbols( _
 
     Dim sbls As New Symbols
     Call sbls.Init(ecLevel, maxVer, allowStructuredAppend, charEncoding)
-    
+
     Set CreateSymbols = sbls
 End Function
