@@ -5,7 +5,7 @@ Public Function CreateSymbols( _
     Optional ByVal ecLevel As ErrorCorrectionLevel = ErrorCorrectionLevel.M, _
     Optional ByVal maxVer As Long = MAX_VERSION, _
     Optional ByVal allowStructuredAppend As Boolean = False, _
-    Optional ByVal charsetName As String = Charsets.SHIFT_JIS) As Symbols
+    Optional ByVal charsetName As String = Charset.SHIFT_JIS) As Symbols
 
     Select Case ecLevel
         Case ErrorCorrectionLevel.L To ErrorCorrectionLevel.H

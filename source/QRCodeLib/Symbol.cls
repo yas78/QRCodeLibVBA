@@ -111,7 +111,7 @@ Friend Function TrySetEncodingMode(ByVal encMode As EncodingMode, _
             Set enc = New ByteEncoder
             Call enc.Init(m_parent.Encoding)
         Case EncodingMode.KANJI
-            If Charsets.IsJP(m_parent.Encoding.Charset) Then
+            If Charset.IsJP(m_parent.Encoding.Charset) Then
                 Set enc = New KanjiEncoder
                 Call enc.Init(m_parent.Encoding)
             Else

@@ -49,11 +49,9 @@ Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
 
     m_parity = 0
 
-    If Charsets.IsJP(charEncoding.Charset) Then
+    If Charset.IsJP(charEncoding.Charset) Then
         Set m_encKanji = New KanjiEncoder
         Call m_encKanji.Init(charEncoding)
-    Else
-        ' NOP
     End If
 
     Set m_encByte = New ByteEncoder

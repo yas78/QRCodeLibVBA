@@ -26,11 +26,9 @@ End Sub
 Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     Set m_encoding = charEncoding
 
-    If Charsets.IsJP(charEncoding.Charset) Then
+    If Charset.IsJP(charEncoding.Charset) Then
         Set m_encKanji = New KanjiEncoder
         Call m_encKanji.Init(charEncoding)
-    Else
-        ' NOP
     End If
 End Sub
 
@@ -101,10 +99,5 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
         End If
     End If
 
-    If IQRCodeEncoder_InSubset(c) Then
-        IQRCodeEncoder_InExclusiveSubset = True
-        Exit Function
-    End If
-
-    IQRCodeEncoder_InExclusiveSubset = False
+    IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
 End Function

@@ -1,10 +1,10 @@
-Attribute VB_Name = "Charsets"
+Attribute VB_Name = "Charset"
 Option Private Module
 Option Explicit
 
-Public Const SHIFT_JIS As String = "shift_jis"
-Public Const GB2312 As String = "gb2312"
-Public Const EUC_KR As String = "euc-kr"
+Public Const SHIFT_JIS  As String = "Shift_JIS"
+Public Const GB2312     As String = "GB2312"
+Public Const EUC_KR     As String = "EUC-KR"
 
 Public Function IsJP(ByVal charsetName As String) As Boolean
     IsJP = LCase(charsetName) = LCase(SHIFT_JIS)

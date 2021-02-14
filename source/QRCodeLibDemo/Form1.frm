@@ -280,7 +280,7 @@ Private Sub UserForm_Initialize()
         .ListIndex = 1
     End With
 
-    Call cmbCharset.AddItem("SHIFT_JIS")
+    Call cmbCharset.AddItem("Shift_JIS")
     Call cmbCharset.AddItem("UTF-8")
     cmbCharset.ListIndex = 0
 
