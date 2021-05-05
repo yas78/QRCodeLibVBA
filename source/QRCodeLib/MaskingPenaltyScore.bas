@@ -250,7 +250,7 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
     k = Abs(k - 50)
     k = Int(k / 5)
     Dim penalty As Long
-    penalty = CInt(k) * 10
+    penalty = CLng(k) * 10
 
     CalcProportionOfDarkModules = penalty
 End Function

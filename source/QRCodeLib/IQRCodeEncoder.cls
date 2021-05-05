@@ -15,7 +15,7 @@ Public Property Get CharCount() As Long: End Property
 Public Property Get BitCount() As Long: End Property
 
 Public Sub Init(ByVal charEncoding As Encoding): End Sub
-Public Function Append(ByVal c As String) As Long: End Function
+Public Sub Append(ByVal c As String): End Sub
 Public Function GetCodewordBitLength(ByVal c As String) As Long: End Function
 Public Function GetBytes() As Byte(): End Function
 Public Function InSubset(ByVal c As String) As Boolean: End Function

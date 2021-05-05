@@ -15,8 +15,8 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Private Const DEFAULT_MODULE_SIZE As Long = 5
-Private Const MIN_MODULE_SIZE As Long = 2
+Private Const DEFAULT_MODULE_SIZE   As Long = 5
+Private Const MIN_MODULE_SIZE       As Long = 2
 
 Private m_parent As Symbols
 
@@ -151,9 +151,9 @@ End Function
 
 Private Sub SelectVersion()
     Dim encMode As Variant ' Subtype : EncodingMode
-
+    Dim num As Long
+    
     For Each encMode In m_segmentCounter.Keys()
-        Dim num As Long
         num = m_segmentCounter(encMode)
 
         m_dataBitCounter = m_dataBitCounter + _
@@ -536,9 +536,9 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     Next
 End Sub
 
-Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                               Optional ByVal foreRgb As String = ColorCode.BLACK, _
-                               Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
+Private Function GetBitmap1bpp(ByVal moduleSize As Long, _
+                               ByVal foreRgb As String, _
+                               ByVal backRgb As String) As Byte()
     Dim foreColorRGB As Long
     foreColorRGB = ColorCode.ToRGB(foreRgb)
     Dim backColorRGB As Long
@@ -612,9 +612,9 @@ Private Function GetBitmap1bpp(Optional ByVal moduleSize As Long = DEFAULT_MODUL
     GetBitmap1bpp = DIB.Build1bppDIB(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
 End Function
 
-Private Function GetBitmap24bpp(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                                Optional ByVal foreRgb As String = ColorCode.BLACK, _
-                                Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
+Private Function GetBitmap24bpp(ByVal moduleSize As Long, _
+                                ByVal foreRgb As String, _
+                                ByVal backRgb As String) As Byte()
     Dim foreColorRGB As Long
     foreColorRGB = ColorCode.ToRGB(foreRgb)
     Dim backColorRGB As Long
@@ -631,16 +631,8 @@ Private Function GetBitmap24bpp(Optional ByVal moduleSize As Long = DEFAULT_MODU
     Dim pictHeight As Long
     pictHeight = pictWidth
 
-    Dim rowBytesLen As Long
-    rowBytesLen = 3 * pictWidth
-
-    Dim pack4byte As Long
-    If rowBytesLen Mod 4 > 0 Then
-        pack4byte = 4 - (rowBytesLen Mod 4)
-    End If
-
     Dim rowSize As Long
-    rowSize = rowBytesLen + pack4byte
+    rowSize = ((3 * pictWidth + 3) \ 4) * 4
 
     Dim bitmapData() As Byte
     ReDim bitmapData(rowSize * pictHeight - 1)

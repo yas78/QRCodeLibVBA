@@ -40,7 +40,7 @@ Private Property Get IQRCodeEncoder_ModeIndicator() As Long
     IQRCodeEncoder_ModeIndicator = ModeIndicator.ALPAHNUMERIC_VALUE
 End Property
 
-Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
+Private Sub IQRCodeEncoder_Append(ByVal c As String)
     Dim wd As Long
     wd = ConvertCharCode(c)
 
@@ -57,13 +57,9 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         m_data(UBound(m_data)) = m_data(UBound(m_data)) + wd
     End If
 
-    Dim ret As Long
-    ret = IQRCodeEncoder_GetCodewordBitLength(c)
-    m_bitCounter = m_bitCounter + ret
+    m_bitCounter = m_bitCounter + IQRCodeEncoder_GetCodewordBitLength(c)
     m_charCounter = m_charCounter + 1
-
-    IQRCodeEncoder_Append = ret
-End Function
+End Sub
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     If m_charCounter Mod 2 = 0 Then

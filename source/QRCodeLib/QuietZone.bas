@@ -4,16 +4,16 @@ Option Explicit
 
 Public Const MIN_WIDTH As Long = 4
 
-Private m_width As Integer
+Private m_width As Long
 
-Public Property Get Width() As Integer
+Public Property Get Width() As Long
     If m_width = 0 Then
         m_width = MIN_WIDTH
     End If
     Width = m_width
 End Property
 
-Public Property Let Width(ByVal Value As Integer)
+Public Property Let Width(ByVal Value As Long)
     m_width = Value
 End Property
 

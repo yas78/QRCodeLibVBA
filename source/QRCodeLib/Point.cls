@@ -12,31 +12,31 @@ Option Explicit
 Private m_x As Long
 Private m_y As Long
 
-Public Sub Init(ByVal x As Long, ByVal y As Long)
-    m_x = x
-    m_y = y
+Public Sub Init(ByVal posX As Long, ByVal posY As Long)
+    m_x = posX
+    m_y = posY
 End Sub
 
-Public Property Get x() As Long
-    x = m_x
+Public Property Get X() As Long
+    X = m_x
 End Property
-Public Property Let x(ByVal Value As Long)
+Public Property Let X(ByVal Value As Long)
     m_x = Value
 End Property
 
-Public Property Get y() As Long
-    y = m_y
+Public Property Get Y() As Long
+    Y = m_y
 End Property
-Public Property Let y(ByVal Value As Long)
+Public Property Let Y(ByVal Value As Long)
     m_y = Value
 End Property
 
 Public Function Clone() As Point
     Dim ret As New Point
-    Call ret.Init(x, y)
+    Call ret.Init(m_x, m_y)
     Set Clone = ret
 End Function
 
 Public Function Equals(ByVal obj As Point) As Boolean
-    Equals = (x = obj.x) And (y = obj.y)
+    Equals = (m_x = obj.X) And (m_y = obj.Y)
 End Function

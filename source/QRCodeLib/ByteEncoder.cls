@@ -48,11 +48,10 @@ Private Property Get IQRCodeEncoder_ModeIndicator() As Long
     IQRCodeEncoder_ModeIndicator = ModeIndicator.BYTE_VALUE
 End Property
 
-Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
+Private Sub IQRCodeEncoder_Append(ByVal c As String)
     Dim charBytes() As Byte
     charBytes = m_encoding.GetBytes(c)
 
-    Dim ret As Long
     Dim v As Variant
 
     For Each v In charBytes
@@ -63,13 +62,10 @@ Private Function IQRCodeEncoder_Append(ByVal c As String) As Long
         End If
 
         m_data(UBound(m_data)) = v
-        m_charCounter = m_charCounter + 1
         m_bitCounter = m_bitCounter + 8
-        ret = ret + 8
+        m_charCounter = m_charCounter + 1
     Next
-
-    IQRCodeEncoder_Append = ret
-End Function
+End Sub
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
     Dim charBytes() As Byte

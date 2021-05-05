@@ -178,7 +178,9 @@ Friend Sub UpdateParity(ByVal c As String)
     Next
 End Sub
 
-Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) As EncodingMode
+Private Function SelectInitialMode( _
+    ByRef s As String, ByVal startIndex As Long) As EncodingMode
+
     If Not (m_encKanji Is Nothing) Then
         If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
             SelectInitialMode = EncodingMode.KANJI
@@ -204,7 +206,9 @@ Private Function SelectInitialMode(ByRef s As String, ByVal startIndex As Long) 
     Call Err.Raise(51)
 End Function
 
-Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal startIndex As Integer) As EncodingMode
+Private Function SelectModeWhenInitialDataAlphaNumeric( _
+    ByRef s As String, ByVal startIndex As Long) As EncodingMode
+
     Dim cnt As Long
     cnt = 0
 
@@ -243,7 +247,9 @@ Private Function SelectModeWhenInitialDataAlphaNumeric(ByRef s As String, ByVal 
     SelectModeWhenInitialDataAlphaNumeric = EncodingMode.ALPHA_NUMERIC
 End Function
 
-Private Function SelectModeWhenInitialDataNumeric(ByRef s As String, ByVal startIndex As Long) As EncodingMode
+Private Function SelectModeWhenInitialDataNumeric( _
+    ByRef s As String, ByVal startIndex As Long) As EncodingMode
+
     Dim cnt As Long
     cnt = 0
 
@@ -348,7 +354,9 @@ Private Function SelectModeWhileInAlphanumeric( _
     SelectModeWhileInAlphanumeric = EncodingMode.ALPHA_NUMERIC
 End Function
 
-Private Function MustChangeAlphanumericToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
+Private Function MustChangeAlphanumericToNumeric( _
+    ByRef s As String, ByVal startIndex As Long) As Boolean
+
     Dim cnt As Long
     cnt = 0
 
@@ -409,7 +417,9 @@ Private Function SelectModeWhileInByte( _
     SelectModeWhileInByte = EncodingMode.EIGHT_BIT_BYTE
 End Function
 
-Private Function MustChangeByteToNumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
+Private Function MustChangeByteToNumeric( _
+    ByRef s As String, ByVal startIndex As Long) As Boolean
+
     Dim cnt As Long
     cnt = 0
 
@@ -449,7 +459,9 @@ Private Function MustChangeByteToNumeric(ByRef s As String, ByVal startIndex As 
     MustChangeByteToNumeric = ret
 End Function
 
-Private Function MustChangeByteToAlphanumeric(ByRef s As String, ByVal startIndex As Long) As Boolean
+Private Function MustChangeByteToAlphanumeric( _
+    ByRef s As String, ByVal startIndex As Long) As Boolean
+
     Dim ret As Boolean
     ret = False
 

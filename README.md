@@ -51,7 +51,7 @@ CreateSymbols関数の charsetName 引数を設定してSymbolsオブジェク�
 
 ```VBA
 Dim sbls As Symbols
-Set sbls = CreateSymbols(charsetName:="utf-8")
+Set sbls = CreateSymbols(charsetName:="UTF-8")
 ```
 
 ### 例５．分割QRコードを作成する

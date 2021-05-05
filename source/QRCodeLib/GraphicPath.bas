@@ -18,113 +18,113 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
     Dim st As Point
     Dim dr As Direction
 
-    Dim x As Long
-    Dim y As Long
+    Dim c As Long
+    Dim r As Long
     Dim p As Point
 
-    For y = 0 To UBound(img) - 1
-        For x = 0 To UBound(img(y)) - 1
-            If img(y)(x) = MAX_VALUE Then GoTo Continue
-            If Not (img(y)(x) > 0 And img(y)(x + 1) <= 0) Then GoTo Continue
+    For r = 0 To UBound(img) - 1
+        For c = 0 To UBound(img(r)) - 1
+            If img(r)(c) = MAX_VALUE Then GoTo Continue
+            If Not (img(r)(c) > 0 And img(r)(c + 1) <= 0) Then GoTo Continue
 
-            img(y)(x) = MAX_VALUE
+            img(r)(c) = MAX_VALUE
             Set st = New Point
-            Call st.Init(x, y)
+            Call st.Init(c, r)
             Set gpPath = New List
             Call gpPath.Add(st)
 
             dr = Direction.Up
             Set p = st.Clone()
-            p.y = p.y - 1
+            p.Y = p.Y - 1
 
             Do
                 Select Case dr
                     Case Direction.Up
-                        If img(p.y)(p.x) > 0 Then
-                            img(p.y)(p.x) = MAX_VALUE
+                        If img(p.Y)(p.X) > 0 Then
+                            img(p.Y)(p.X) = MAX_VALUE
 
-                            If img(p.y)(p.x + 1) <= 0 Then
+                            If img(p.Y)(p.X + 1) <= 0 Then
                                 Set p = p.Clone()
-                                p.y = p.y - 1
+                                p.Y = p.Y - 1
                             Else
                                 Call gpPath.Add(p)
                                 dr = Direction.Right
                                 Set p = p.Clone()
-                                p.x = p.x + 1
+                                p.X = p.X + 1
                             End If
                         Else
                             Set p = p.Clone()
-                            p.y = p.y + 1
+                            p.Y = p.Y + 1
                             Call gpPath.Add(p)
                             dr = Direction.Left
                             Set p = p.Clone()
-                            p.x = p.x - 1
+                            p.X = p.X - 1
                         End If
 
                     Case Direction.Down
-                        If img(p.y)(p.x) > 0 Then
-                            img(p.y)(p.x) = MAX_VALUE
+                        If img(p.Y)(p.X) > 0 Then
+                            img(p.Y)(p.X) = MAX_VALUE
 
-                            If img(p.y)(p.x - 1) <= 0 Then
+                            If img(p.Y)(p.X - 1) <= 0 Then
                                 Set p = p.Clone()
-                                p.y = p.y + 1
+                                p.Y = p.Y + 1
                             Else
                                 Call gpPath.Add(p)
                                 dr = Direction.Left
                                 Set p = p.Clone()
-                                p.x = p.x - 1
+                                p.X = p.X - 1
                             End If
                         Else
                             Set p = p.Clone()
-                            p.y = p.y - 1
+                            p.Y = p.Y - 1
                             Call gpPath.Add(p)
                             dr = Direction.Right
                             Set p = p.Clone()
-                            p.x = p.x + 1
+                            p.X = p.X + 1
                         End If
 
                     Case Direction.Left
-                        If img(p.y)(p.x) > 0 Then
-                            img(p.y)(p.x) = MAX_VALUE
+                        If img(p.Y)(p.X) > 0 Then
+                            img(p.Y)(p.X) = MAX_VALUE
 
-                            If img(p.y - 1)(p.x) <= 0 Then
+                            If img(p.Y - 1)(p.X) <= 0 Then
                                 Set p = p.Clone()
-                                p.x = p.x - 1
+                                p.X = p.X - 1
                             Else
                                 Call gpPath.Add(p)
                                 dr = Direction.Up
                                 Set p = p.Clone()
-                                p.y = p.y - 1
+                                p.Y = p.Y - 1
                             End If
                         Else
                             Set p = p.Clone()
-                            p.x = p.x + 1
+                            p.X = p.X + 1
                             Call gpPath.Add(p)
                             dr = Direction.Down
                             Set p = p.Clone()
-                            p.y = p.y + 1
+                            p.Y = p.Y + 1
                         End If
 
                     Case Direction.Right
-                        If img(p.y)(p.x) > 0 Then
-                            img(p.y)(p.x) = MAX_VALUE
+                        If img(p.Y)(p.X) > 0 Then
+                            img(p.Y)(p.X) = MAX_VALUE
 
-                            If img(p.y + 1)(p.x) <= 0 Then
+                            If img(p.Y + 1)(p.X) <= 0 Then
                                 Set p = p.Clone()
-                                p.x = p.x + 1
+                                p.X = p.X + 1
                             Else
                                 Call gpPath.Add(p)
                                 dr = Direction.Down
                                 Set p = p.Clone()
-                                p.y = p.y + 1
+                                p.Y = p.Y + 1
                             End If
                         Else
                             Set p = p.Clone()
-                            p.x = p.x - 1
+                            p.X = p.X - 1
                             Call gpPath.Add(p)
                             dr = Direction.Up
                             Set p = p.Clone()
-                            p.y = p.y - 1
+                            p.Y = p.Y - 1
                         End If
                 Case Else
                     Call Err.Raise(51)
