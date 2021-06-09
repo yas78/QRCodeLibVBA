@@ -55,9 +55,9 @@ Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, _
                                ByVal ver As Long, _
                                ByVal preceding As Boolean) As Long
     Dim dataWordCapacity As Long
-    Dim blockCount       As Variant
-
     dataWordCapacity = DataCodeword.GetTotalNumber(ecLevel, ver)
+
+    Dim blockCount As Variant
     blockCount = m_totalNumbers(ecLevel)
 
     If preceding Then
@@ -79,9 +79,10 @@ Public Function GetNumberDataCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
     Dim numPreBlockCodewords As Long
     numPreBlockCodewords = numDataCodewords \ numBlocks
 
-    Dim ret As Long
     Dim numPreBlocks As Long
     Dim numFolBlocks As Long
+
+    Dim ret As Long
 
     If preceding Then
         ret = numPreBlockCodewords
@@ -111,4 +112,3 @@ Public Function GetNumberECCodewords(ByVal ecLevel As ErrorCorrectionLevel, _
         (Codeword.GetTotalNumber(ver) \ numBlocks) - _
             (numDataCodewords \ numBlocks)
 End Function
-

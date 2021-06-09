@@ -15,7 +15,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-
 Private Const DEFAULT_MODULE_SIZE As Long = 5
 Private Const DEFAULT_VERSION     As Long = 40
 Private Const IMAGE_WIDTH         As Long = 166
@@ -60,7 +59,6 @@ On Error GoTo Catch
     Dim ctl As Control
     Dim img As Image
     Dim idx As Long
-
     For idx = 0 To sbls.Count - 1
         Set sbl = sbls(idx)
         Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
@@ -74,7 +72,7 @@ On Error GoTo Catch
         Set img = ctl
         img.PictureSizeMode = fmPictureSizeModeStretch
         img.BorderStyle = fmBorderStyleNone
-        img.Picture = sbl.GetPicture(sz, True, foreRGB, backRGB)
+        img.Picture = sbl.GetPicture(sz, foreRGB, backRGB)
     Next
 
     fraQRCodeImage.ScrollHeight = _
@@ -120,7 +118,7 @@ Private Sub btnSave_Click()
     Dim fs As New FileSystemObject
 
     Dim fileFilters As String
-    fileFilters = "Monochrome Bitmap (*.bmp), *.bmp, SVG (*.svg), *svg"
+    fileFilters = "BMP (*.bmp), *.bmp,PNG (*.png), *png,SVG (*.svg), *svg"
 
     Dim fBaseName As Variant
     fBaseName = Application.GetSaveAsFilename("", fileFilters)
@@ -132,6 +130,19 @@ Private Sub btnSave_Click()
 
     fBaseName = fs.GetParentFolderName(fBaseName) & "\" & fs.GetBaseName(fBaseName)
 
+    Dim fmt As ImageFormat
+
+    Select Case LCase(ext)
+        Case ".bmp"
+            fmt = fmtBMP + fmtMonochrome
+        Case ".png"
+            fmt = fmtPNG + fmtMonochrome
+        Case ".svg"
+            fmt = fmtSVG
+        Case Else
+            Call Err.Raise(51)
+    End Select
+
 On Error GoTo Catch
     Dim sbls As Symbols
     Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, encMode)
@@ -139,8 +150,8 @@ On Error GoTo Catch
 
     Dim filePath As String
     Dim sbl      As Symbol
-    Dim i        As Long
 
+    Dim i As Long
     For i = 0 To sbls.Count - 1
         Set sbl = sbls(i)
 
@@ -154,14 +165,7 @@ On Error GoTo Catch
             Call fs.DeleteFile(filePath)
         End If
 
-        Select Case LCase(ext)
-            Case ".bmp"
-                Call sbl.SaveBitmap(filePath, sz, True, foreRGB, backRGB)
-            Case ".svg"
-                Call sbl.SaveSvg(filePath, sz, foreRGB)
-            Case Else
-                Call Err.Raise(51)
-        End Select
+        Call sbl.SaveAs(filePath, sz, foreRGB, backRGB, fmt)
     Next
 
 Finally:
@@ -299,4 +303,3 @@ Private Sub UserForm_Initialize()
 
     btnSave.Enabled = False
 End Sub
-

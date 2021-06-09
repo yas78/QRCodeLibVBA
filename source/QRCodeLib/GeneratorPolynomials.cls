@@ -50,4 +50,3 @@ Public Function Item(ByVal numECCodewords As Long) As Variant
 
     Item = m_gp(numECCodewords)
 End Function
-

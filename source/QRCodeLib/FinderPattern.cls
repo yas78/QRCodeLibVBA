@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Const VAL As Long = Values.FINDER_PTN
+Private Const VAL As Long = Values.FINDER_PTN
 
 Private m_finderPattern() As Variant
 
@@ -32,7 +32,6 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
     Dim i As Long
     Dim j As Long
     Dim v As Long
-
     For i = 0 To UBound(m_finderPattern)
         For j = 0 To UBound(m_finderPattern(i))
             v = m_finderPattern(i)(j)
@@ -43,4 +42,3 @@ Public Sub Place(ByRef moduleMatrix() As Variant)
         Next
     Next
 End Sub
-

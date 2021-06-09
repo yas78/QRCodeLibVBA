@@ -63,7 +63,6 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     Dim bs As New BitSequence
 
     Dim i As Long
-
     For i = 0 To UBound(m_data) - 1
         Call bs.Append(m_data(i), 10)
     Next

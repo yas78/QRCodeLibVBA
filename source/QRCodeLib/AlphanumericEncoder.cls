@@ -76,7 +76,6 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
     bitLength = 11
 
     Dim i As Long
-
     For i = 0 To UBound(m_data) - 1
         Call bs.Append(m_data(i), bitLength)
     Next
@@ -139,4 +138,3 @@ Private Function IQRCodeEncoder_InExclusiveSubset(ByVal c As String) As Boolean
 
     IQRCodeEncoder_InExclusiveSubset = IQRCodeEncoder_InSubset(c)
 End Function
-

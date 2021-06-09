@@ -10,3 +10,11 @@ Public Enum ErrorCorrectionLevel
     Q
     H
 End Enum
+
+Public Enum ImageFormat
+    fmtBMP = &H10
+    fmtPNG = &H20
+    fmtSVG = &H30
+    fmtMonochrome = 0
+    fmtTrueColor = 1
+End Enum

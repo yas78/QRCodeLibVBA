@@ -119,9 +119,9 @@ Public Sub AppendText(ByVal s As String)
     Dim oldMode As EncodingMode
     Dim newMode As EncodingMode
 
-    Dim i As Long
     Dim c As String
 
+    Dim i As Long
     For i = 1 To Len(s)
         oldMode = m_currSymbol.CurrentEncodingMode
 
@@ -172,7 +172,6 @@ Friend Sub UpdateParity(ByVal c As String)
     charBytes = m_encoding.GetBytes(c)
 
     Dim i As Long
-
     For i = 0 To UBound(charBytes)
         m_parity = m_parity Xor charBytes(i)
     Next
@@ -213,7 +212,6 @@ Private Function SelectModeWhenInitialDataAlphaNumeric( _
     cnt = 0
 
     Dim i As Long
-
     For i = startIndex To Len(s)
         If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
@@ -254,7 +252,6 @@ Private Function SelectModeWhenInitialDataNumeric( _
     cnt = 0
 
     Dim i As Long
-
     For i = startIndex To Len(s)
         If m_encNum.InSubset(Mid$(s, i, 1)) Then
             cnt = cnt + 1
@@ -357,14 +354,13 @@ End Function
 Private Function MustChangeAlphanumericToNumeric( _
     ByRef s As String, ByVal startIndex As Long) As Boolean
 
-    Dim cnt As Long
-    cnt = 0
-
     Dim ret As Boolean
     ret = False
 
-    Dim i As Long
+    Dim cnt As Long
+    cnt = 0
 
+    Dim i As Long
     For i = startIndex To Len(s)
         If Not m_encAlpha.InSubset(Mid$(s, i, 1)) Then
             Exit For
@@ -420,14 +416,13 @@ End Function
 Private Function MustChangeByteToNumeric( _
     ByRef s As String, ByVal startIndex As Long) As Boolean
 
-    Dim cnt As Long
-    cnt = 0
-
     Dim ret As Boolean
     ret = False
 
-    Dim i As Long
+    Dim cnt As Long
+    cnt = 0
 
+    Dim i As Long
     For i = startIndex To Len(s)
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For
@@ -469,7 +464,6 @@ Private Function MustChangeByteToAlphanumeric( _
     cnt = 0
 
     Dim i As Long
-
     For i = startIndex To Len(s)
         If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
             Exit For

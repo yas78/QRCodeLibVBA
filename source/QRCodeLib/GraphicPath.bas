@@ -18,10 +18,10 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
     Dim st As Point
     Dim dr As Direction
 
-    Dim c As Long
-    Dim r As Long
     Dim p As Point
 
+    Dim r As Long
+    Dim c As Long
     For r = 0 To UBound(img) - 1
         For c = 0 To UBound(img(r)) - 1
             If img(r)(c) = MAX_VALUE Then GoTo Continue
@@ -138,5 +138,3 @@ Continue:
 
     FindContours = gpPaths.Items()
 End Function
-
-

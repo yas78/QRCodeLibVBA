@@ -24,4 +24,3 @@ End Sub
 Public Function GetTotalNumber(ByVal ver As Long) As Long
     GetTotalNumber = m_totalNumbers(ver)
 End Function
-

@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Const VAL As Long = Values.ALIGNMENT_PTN
+Private Const VAL As Long = Values.ALIGNMENT_PTN
 
 Private m_centerPosArrays(40) As Variant
 
@@ -64,10 +64,8 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
 
     Dim i As Long
     Dim j As Long
-
     Dim r As Long
     Dim c As Long
-
     For i = 0 To maxIndex
         r = centerArray(i)
 
@@ -110,7 +108,6 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
             moduleMatrix(r + 2)(c + 0) = VAL
             moduleMatrix(r + 2)(c + 1) = VAL
             moduleMatrix(r + 2)(c + 2) = VAL
-
 Continue:
         Next
     Next

@@ -54,4 +54,3 @@ End Sub
 Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, ByVal ver As Long) As Long
     GetTotalNumber = m_totalNumbers(ecLevel)(ver)
 End Function
-

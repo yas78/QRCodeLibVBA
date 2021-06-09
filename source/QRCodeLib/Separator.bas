@@ -2,7 +2,7 @@ Attribute VB_Name = "Separator"
 Option Private Module
 Option Explicit
 
-Const VAL As Long = Values.SEPARATOR_PTN
+Private Const VAL As Long = Values.SEPARATOR_PTN
 
 Public Sub Place(ByRef moduleMatrix() As Variant)
     Dim offset As Long

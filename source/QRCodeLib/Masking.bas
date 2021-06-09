@@ -14,7 +14,6 @@ Public Function Apply(ByVal ver As Long, _
     Dim maskedMatrix() As Variant
 
     Dim i As Long
-
     For i = 0 To 7
         temp = moduleMatrix
 
@@ -44,7 +43,6 @@ Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Var
 
     Dim r As Long
     Dim c As Long
-
     For r = 0 To UBound(moduleMatrix)
         For c = 0 To UBound(moduleMatrix(r))
             If Math.Abs(moduleMatrix(r)(c)) = Values.WORD Then

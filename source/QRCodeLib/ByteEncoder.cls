@@ -53,7 +53,6 @@ Private Sub IQRCodeEncoder_Append(ByVal c As String)
     charBytes = m_encoding.GetBytes(c)
 
     Dim v As Variant
-
     For Each v In charBytes
         If m_charCounter = 0 Then
             ReDim m_data(0)

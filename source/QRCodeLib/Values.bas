@@ -14,4 +14,3 @@ Public Const VERSION_INFO   As Long = 7
 Public Function IsDark(ByVal arg As Long) As Boolean
     IsDark = arg > BLANK
 End Function
-

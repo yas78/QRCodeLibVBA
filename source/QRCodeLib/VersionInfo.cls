@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Const VAL As Long = Values.VERSION_INFO
+Private Const VAL As Long = Values.VERSION_INFO
 
 Private m_versionInfoValues() As Variant
 
@@ -31,15 +31,14 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
     Dim versionInfoValue As Long
     versionInfoValue = m_versionInfoValues(ver)
 
-    Dim p1  As Long
+    Dim p1 As Long
     p1 = 0
 
-    Dim p2  As Long
+    Dim p2 As Long
     p2 = numModulesPerSide - 11
 
-    Dim i   As Long
-    Dim v   As Long
-
+    Dim i As Long
+    Dim v As Long
     For i = 0 To 17
         v = IIf((versionInfoValue And 2 ^ i) > 0, VAL, -VAL)
 
@@ -61,7 +60,6 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 
     Dim i As Long
     Dim j As Long
-
     For i = 0 To 5
         For j = numModulesPerSide - 11 To numModulesPerSide - 9
             moduleMatrix(i)(j) = -VAL
@@ -69,4 +67,3 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
         Next
     Next
 End Sub
-

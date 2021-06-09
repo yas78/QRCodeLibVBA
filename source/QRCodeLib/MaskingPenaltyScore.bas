@@ -4,41 +4,41 @@ Option Explicit
 
 Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
     Dim total   As Long
-    Dim penalty As Long
+    total = 0
 
-    penalty = CalcAdjacentModulesInSameColor(moduleMatrix)
-    total = total + penalty
+    Dim penaltyScore As Long
+    penaltyScore = CalcAdjacentModulesInSameColor(moduleMatrix)
+    total = total + penaltyScore
 
-    penalty = CalcBlockOfModulesInSameColor(moduleMatrix)
-    total = total + penalty
+    penaltyScore = CalcBlockOfModulesInSameColor(moduleMatrix)
+    total = total + penaltyScore
 
-    penalty = CalcModuleRatio(moduleMatrix)
-    total = total + penalty
+    penaltyScore = CalcModuleRatio(moduleMatrix)
+    total = total + penaltyScore
 
-    penalty = CalcProportionOfDarkModules(moduleMatrix)
-    total = total + penalty
+    penaltyScore = CalcProportionOfDarkModules(moduleMatrix)
+    total = total + penaltyScore
 
     CalcTotal = total
 End Function
 
 Private Function CalcAdjacentModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
-    Dim penalty As Long
-    penalty = 0
+    Dim penaltyScore As Long
+    penaltyScore = 0
 
-    penalty = penalty + CalcAdjacentModulesInRowInSameColor(moduleMatrix)
-    penalty = penalty + CalcAdjacentModulesInRowInSameColor(ArrayUtil.Rotate90(moduleMatrix))
+    penaltyScore = penaltyScore + CalcAdjacentModulesInRowInSameColor(moduleMatrix)
+    penaltyScore = penaltyScore + CalcAdjacentModulesInRowInSameColor(ArrayUtil.Rotate90(moduleMatrix))
 
-    CalcAdjacentModulesInSameColor = penalty
+    CalcAdjacentModulesInSameColor = penaltyScore
 End Function
 
 Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Variant) As Long
-    Dim penalty As Long
-    penalty = 0
+    Dim penaltyScore As Long
+    penaltyScore = 0
 
     Dim rowArray As Variant
-    Dim i As Long
-    Dim cnt As Long
-
+    Dim i        As Long
+    Dim cnt      As Long
     For Each rowArray In moduleMatrix
         cnt = 1
 
@@ -47,7 +47,7 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
                 cnt = cnt + 1
             Else
                 If cnt >= 5 Then
-                    penalty = penalty + (3 + (cnt - 5))
+                    penaltyScore = penaltyScore + (3 + (cnt - 5))
                 End If
 
                 cnt = 1
@@ -55,19 +55,19 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
         Next
 
         If cnt >= 5 Then
-            penalty = penalty + (3 + (cnt - 5))
+            penaltyScore = penaltyScore + (3 + (cnt - 5))
         End If
     Next
 
-    CalcAdjacentModulesInRowInSameColor = penalty
+    CalcAdjacentModulesInRowInSameColor = penaltyScore
 End Function
 
 Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
-    Dim penalty     As Long
-    Dim r           As Long
-    Dim c           As Long
-    Dim temp        As Boolean
+    Dim penaltyScore As Long
+    Dim temp    As Boolean
 
+    Dim r As Long
+    Dim c As Long
     For r = 0 To UBound(moduleMatrix) - 1
         For c = 0 To UBound(moduleMatrix(r)) - 1
             temp = Values.IsDark(moduleMatrix(r)(c))
@@ -75,43 +75,42 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
             If (Values.IsDark(moduleMatrix(r + 0)(c + 1)) = temp) And _
                (Values.IsDark(moduleMatrix(r + 1)(c + 0)) = temp) And _
                (Values.IsDark(moduleMatrix(r + 1)(c + 1)) = temp) Then
-                penalty = penalty + 3
+                penaltyScore = penaltyScore + 3
             End If
         Next
     Next
 
-    CalcBlockOfModulesInSameColor = penalty
+    CalcBlockOfModulesInSameColor = penaltyScore
 End Function
 
 Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
     Dim moduleMatrixTemp() As Variant
     moduleMatrixTemp = QuietZone.Place(moduleMatrix)
 
-    Dim penalty As Long
-    penalty = 0
+    Dim penaltyScore As Long
+    penaltyScore = 0
 
-    penalty = penalty + CalcModuleRatioInRow(moduleMatrixTemp)
-    penalty = penalty + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrixTemp))
+    penaltyScore = penaltyScore + CalcModuleRatioInRow(moduleMatrixTemp)
+    penaltyScore = penaltyScore + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrixTemp))
 
-    CalcModuleRatio = penalty
+    CalcModuleRatio = penaltyScore
 End Function
 
 Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
-    Dim penalty As Long
+    Dim penaltyScore As Long
 
     Dim ratio3Ranges As Collection
-    Dim rowArray As Variant
 
     Dim ratio1 As Long
     Dim ratio3 As Long
     Dim ratio4 As Long
 
-    Dim i As Long
-    Dim cnt As Long
+    Dim cnt    As Long
     Dim impose As Boolean
 
-    Dim rng As Variant
-
+    Dim rowArray As Variant
+    Dim rng      As Variant
+    Dim i        As Long
     For Each rowArray In moduleMatrix
         Set ratio3Ranges = GetRatio3Ranges(rowArray)
 
@@ -196,21 +195,21 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
             End If
 
             If impose Then
-                penalty = penalty + 40
+                penaltyScore = penaltyScore + 40
             End If
 Continue:
         Next
     Next
 
-    CalcModuleRatioInRow = penalty
+    CalcModuleRatioInRow = penaltyScore
 End Function
 
 Private Function GetRatio3Ranges(ByRef arg As Variant) As Collection
     Dim ret As New Collection
 
     Dim s As Long
-    Dim i As Long
 
+    Dim i As Long
     For i = 1 To UBound(arg) - 1
         If Values.IsDark(arg(i)) Then
             If Not Values.IsDark(arg(i - 1)) Then
@@ -232,8 +231,7 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
     Dim darkCount As Long
 
     Dim rowArray As Variant
-    Dim v As Variant
-
+    Dim v        As Variant
     For Each rowArray In moduleMatrix
         For Each v In rowArray
             If Values.IsDark(v) Then
@@ -249,9 +247,8 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
     k = darkCount / numModules * 100
     k = Abs(k - 50)
     k = Int(k / 5)
-    Dim penalty As Long
-    penalty = CLng(k) * 10
+    Dim penaltyScore As Long
+    penaltyScore = CLng(k) * 10
 
-    CalcProportionOfDarkModules = penalty
+    CalcProportionOfDarkModules = penaltyScore
 End Function
-

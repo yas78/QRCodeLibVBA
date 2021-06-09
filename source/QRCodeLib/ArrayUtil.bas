@@ -6,21 +6,22 @@ Public Function Rotate90(ByRef array2D() As Variant) As Variant()
     Dim ret() As Variant
     ReDim ret(UBound(array2D(0)))
 
-    Dim i As Long
-    Dim j As Long
     Dim rowArray() As Long
 
-    For i = 0 To UBound(ret)
+    Dim i1 As Long
+    For i1 = 0 To UBound(ret)
         ReDim rowArray(UBound(array2D))
-        ret(i) = rowArray
+        ret(i1) = rowArray
     Next
 
     Dim k As Long
     k = UBound(ret)
 
-    For i = 0 To UBound(ret)
-        For j = 0 To UBound(ret(i))
-            ret(i)(j) = array2D(j)(k - i)
+    Dim i2 As Long
+    Dim j  As Long
+    For i2 = 0 To UBound(ret)
+        For j = 0 To UBound(ret(i2))
+            ret(i2)(j) = array2D(j)(k - i2)
         Next
     Next
 

@@ -51,4 +51,3 @@ End Function
 Public Function ToInt(ByVal arg As Long) As Long
     ToInt = m_expToIntTable(arg)
 End Function
-

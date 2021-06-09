@@ -69,7 +69,6 @@ Public Function GetBytes() As Byte()
     ReDim ret(m_buffer.Count - 1)
 
     Dim i As Long
-
     For i = 0 To m_buffer.Count - 1
         ret(i) = m_buffer(i)
     Next

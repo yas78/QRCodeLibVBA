@@ -8,15 +8,41 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
-                             ByVal pictWidth As Long, _
-                             ByVal pictHeight As Long, _
-                             ByVal foreColorRGB As Long, _
-                             ByVal backColorRGB As Long) As Byte()
-    Dim bfh         As BITMAPFILEHEADER
-    Dim bih         As BITMAPINFOHEADER
-    Dim palette(1)  As RGBQUAD
+Private Type BitmapFileHeader
+    bfType      As Integer
+    bfSize      As Long
+    bfReserved1 As Integer
+    bfReserved2 As Integer
+    bfOffBits   As Long
+End Type
 
+Private Type BitmapInfoHeader
+    biSize          As Long
+    biWidth         As Long
+    biHeight        As Long
+    biPlanes        As Integer
+    biBitCount      As Integer
+    biCompression   As Long
+    biSizeImage     As Long
+    biXPelsPerMeter As Long
+    biYPelsPerMeter As Long
+    biClrUsed       As Long
+    biClrImportant  As Long
+End Type
+
+Private Type RgbQuad
+    rgbBlue     As Byte
+    rgbGreen    As Byte
+    rgbRed      As Byte
+    rgbReserved As Byte
+End Type
+
+Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
+                                   ByVal pictWidth As Long, _
+                                   ByVal pictHeight As Long, _
+                                   ByVal foreColorRGB As Long, _
+                                   ByVal backColorRGB As Long) As Byte()
+    Dim bfh As BitmapFileHeader
     With bfh
         .bfType = &H4D42
         .bfSize = 62 + (UBound(bitmapData) + 1)
@@ -25,6 +51,7 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .bfOffBits = 62
     End With
 
+    Dim bih As BitmapInfoHeader
     With bih
         .biSize = 40
         .biWidth = pictWidth
@@ -38,6 +65,8 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         .biClrUsed = 0
         .biClrImportant = 0
     End With
+
+    Dim palette(1) As RgbQuad
 
     With palette(0)
         .rgbBlue = CByte((foreColorRGB And &HFF0000) \ 2 ^ 16)
@@ -78,31 +107,16 @@ Public Function Build1bppDIB(ByRef bitmapData() As Byte, _
         Call MoveMemory(VarPtr(ret(50)), VarPtr(.biClrImportant), 4)
     End With
 
-    With palette(0)
-        ret(54) = .rgbBlue
-        ret(55) = .rgbGreen
-        ret(56) = .rgbRed
-        ret(57) = .rgbReserved
-    End With
-
-    With palette(1)
-        ret(58) = .rgbBlue
-        ret(59) = .rgbGreen
-        ret(60) = .rgbRed
-        ret(61) = .rgbReserved
-    End With
-
+    Call MoveMemory(VarPtr(ret(54)), VarPtr(palette(0)), 8)
     Call MoveMemory(VarPtr(ret(62)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
 
-    Build1bppDIB = ret
+    BuildMonochromeBin = ret
 End Function
 
-Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
-                              ByVal pictWidth As Long, _
-                              ByVal pictHeight As Long) As Byte()
-    Dim bfh As BITMAPFILEHEADER
-    Dim bih As BITMAPINFOHEADER
-
+Public Function BuildTrueColorBin(ByRef bitmapData() As Byte, _
+                                  ByVal pictWidth As Long, _
+                                  ByVal pictHeight As Long) As Byte()
+    Dim bfh As BitmapFileHeader
     With bfh
         .bfType = &H4D42
         .bfSize = 54 + (UBound(bitmapData) + 1)
@@ -111,6 +125,7 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
         .bfOffBits = 54
     End With
 
+    Dim bih As BitmapInfoHeader
     With bih
         .biSize = 40
         .biWidth = pictWidth
@@ -152,5 +167,5 @@ Public Function Build24bppDIB(ByRef bitmapData() As Byte, _
 
     Call MoveMemory(VarPtr(ret(54)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
 
-    Build24bppDIB = ret
+    BuildTrueColorBin = ret
 End Function
