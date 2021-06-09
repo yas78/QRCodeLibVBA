@@ -91,7 +91,7 @@ sbls(0).SaveAs "filename", fmt:=fmtPNG
 sbls(0).SaveAs "filename", fmt:=fmtPNG + fmtTrueColor
 
 ' SVG
-sbls(0).SaveAs "filename", fmt:=fmtSVG + fmtTrueColor
+sbls(0).SaveAs "filename", fmt:=fmtSVG
         
 ' 10 pixels per module
 sbls(0).SaveAs "filename", moduleSize:=10
