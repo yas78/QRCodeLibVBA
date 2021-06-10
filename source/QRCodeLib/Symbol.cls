@@ -437,7 +437,7 @@ End Sub
 
 Private Function GetModuleMatrix() As Variant()
     Dim numModulesPerSide As Long
-    numModulesPerSide = module.GetNumModulesPerSide(m_currVersion)
+    numModulesPerSide = Module.GetNumModulesPerSide(m_currVersion)
 
     Dim moduleMatrix() As Variant
     ReDim moduleMatrix(numModulesPerSide - 1)
@@ -670,7 +670,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
 End Function
 
 Public Function GetBMP(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                       Optional ByVal Monochrome As Boolean = False, _
+                       Optional ByVal monochrome As Boolean = False, _
                        Optional ByVal foreRgb As String = ColorCode.BLACK, _
                        Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
@@ -679,7 +679,7 @@ Public Function GetBMP(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
-    If Monochrome Then
+    If monochrome Then
         GetBMP = GetMonochromeBMP(moduleSize, foreRgb, backRgb)
     Else
         GetBMP = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
@@ -840,7 +840,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
 End Function
 
 Public Function GetPNG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                       Optional ByVal Monochrome As Boolean = False, _
+                       Optional ByVal monochrome As Boolean = False, _
                        Optional ByVal foreRgb As String = ColorCode.BLACK, _
                        Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
@@ -849,7 +849,7 @@ Public Function GetPNG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
-    If Monochrome Then
+    If monochrome Then
         GetPNG = GetMonochromePNG(moduleSize, foreRgb, backRgb)
     Else
         GetPNG = GetTrueColorPNG(moduleSize, foreRgb, backRgb)
@@ -975,19 +975,17 @@ Public Sub SaveAs(ByVal filePath As String, _
     End Select
 
     Dim fNum As Integer
+    fNum = FreeFile()
 
     If isBin Then
-        fNum = FreeFile()
         Open filePath For Binary As #fNum
         Put #fNum, , binData
-        Close #fNum
     Else
-        fNum = FreeFile()
         Open filePath For Output As #fNum Len = &H7FFF
         Print #fNum, strData
-        Close #fNum
     End If
-
+    
+    Close #fNum
 End Sub
 
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
