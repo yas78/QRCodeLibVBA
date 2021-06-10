@@ -881,9 +881,9 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim c As Long
 
     Dim rowArray As Variant
-    Dim v        As Variant
-    Dim j        As Long
-    Dim i        As Long
+    Dim v As Variant
+    Dim j As Long
+    Dim i As Long
     For Each rowArray In moduleMatrix
         ReDim imgRow(imageWidth - 1)
         c = 0
