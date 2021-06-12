@@ -37,8 +37,8 @@ Private Function CalcAdjacentModulesInRowInSameColor(ByRef moduleMatrix() As Var
     penaltyScore = 0
 
     Dim rowArray As Variant
-    Dim i As Long
-    Dim cnt As Long
+    Dim i        As Long
+    Dim cnt      As Long
     For Each rowArray In moduleMatrix
         cnt = 1
 
@@ -109,8 +109,8 @@ Private Function CalcModuleRatioInRow(ByRef moduleMatrix() As Variant) As Long
     Dim impose As Boolean
 
     Dim rowArray As Variant
-    Dim rng As Variant
-    Dim i As Long
+    Dim rng      As Variant
+    Dim i        As Long
     For Each rowArray In moduleMatrix
         Set ratio3Ranges = GetRatio3Ranges(rowArray)
 
@@ -231,7 +231,7 @@ Private Function CalcProportionOfDarkModules(ByRef moduleMatrix() As Variant) As
     Dim darkCount As Long
 
     Dim rowArray As Variant
-    Dim v As Variant
+    Dim v        As Variant
     For Each rowArray In moduleMatrix
         For Each v In rowArray
             If Values.IsDark(v) Then

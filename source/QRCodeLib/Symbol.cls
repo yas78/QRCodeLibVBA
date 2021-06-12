@@ -255,13 +255,13 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
     Dim gp() As Variant
     gp = GeneratorPolynomials.Item(numECCodewords)
 
-    Dim eccIdx As Long
-    Dim data() As Long
-    Dim exp    As Long
+    Dim eccIdx   As Long
+    Dim data()   As Long
+    Dim exp      As Long
 
     Dim blockIdx As Long
-    Dim i As Long
-    Dim j As Long
+    Dim i        As Long
+    Dim j        As Long
     For blockIdx = 0 To UBound(dataBlock)
         ReDim data(UBound(dataBlock(blockIdx)) + UBound(ret(blockIdx)) + 1)
         eccIdx = UBound(data)
@@ -380,7 +380,7 @@ Private Sub WriteSegments(ByVal bs As BitSequence)
     Dim codewordBitLength As Long
 
     Dim segment As IQRCodeEncoder
-    Dim i As Long
+    Dim i       As Long
     For Each segment In m_segments
         Call bs.Append(segment.ModeIndicator, ModeIndicator.Length)
         Call bs.Append(segment.CharCount, _
@@ -490,8 +490,8 @@ Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
     Dim rowDirection As Long
     rowDirection = -1
 
+    Dim v      As Variant
     Dim bitPos As Long
-    Dim v As Variant
     For Each v In data
         bitPos = 7
 
@@ -909,7 +909,7 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     indent = String(11, " ")
 
     Dim gpPath As Variant
-    Dim k As Long
+    Dim k      As Long
     For Each gpPath In gpPaths
         Call buf.Add(indent & "M ")
 
@@ -953,10 +953,6 @@ Public Sub SaveAs(ByVal filePath As String, _
     Dim binData() As Byte
     Dim strData   As String
     Dim isBin     As Boolean
-
-    If (fmt And &HF0&) = 0 Then
-        fmt = fmt + ImageFormat.fmtBMP
-    End If
 
     Select Case fmt
         Case &H10

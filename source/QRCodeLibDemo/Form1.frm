@@ -115,8 +115,7 @@ Private Sub btnSave_Click()
     Dim encMode As String
     encMode = cmbCharset.Value
 
-    Dim fs As Object
-    Set fs = CreateObject("Scripting.FileSystemObject")
+    Dim fs As New FileSystemObject
 
     Dim fileFilters As String
     fileFilters = "BMP (*.bmp), *.bmp,PNG (*.png), *png,SVG (*.svg), *svg"
