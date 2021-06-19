@@ -8,11 +8,11 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Public Type PngSignature
+Private Type PngSignature
     psData(7) As Byte
 End Type
 
-Public Type PngChunk
+Private Type PngChunk
     pLength As Long
     pType   As Long
     pData() As Byte

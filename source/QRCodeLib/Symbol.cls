@@ -29,8 +29,8 @@ Private m_currVersion      As Long
 Private m_dataBitCapacity As Long
 Private m_dataBitCounter  As Long
 
-Private m_segments       As Collection ' Item : IQRCodeEncoder
-Private m_segmentCounter As Object ' Is Scripting.Dictionary Key : EncodingMode, Item : Long
+Private m_segments       As Collection
+Private m_segmentCounter As Object
 
 Private m_index As Long
 
@@ -380,7 +380,7 @@ Private Sub WriteSegments(ByVal bs As BitSequence)
     Dim codewordBitLength As Long
 
     Dim segment As IQRCodeEncoder
-    Dim i       As Long
+    Dim i As Long
     For Each segment In m_segments
         Call bs.Append(segment.ModeIndicator, ModeIndicator.Length)
         Call bs.Append(segment.CharCount, _
@@ -857,7 +857,7 @@ Public Function GetPNG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
 End Function
 
 Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
-                       Optional ByVal foreRgb As String = BLACK) As String
+                       Optional ByVal foreRgb As String = ColorCode.BLACK) As String
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
@@ -884,12 +884,14 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim v As Variant
     Dim j As Long
     Dim i As Long
+    Dim cl As Long
     For Each rowArray In moduleMatrix
         ReDim imgRow(imageWidth - 1)
         c = 0
         For Each v In rowArray
+            cl = IIf(Values.IsDark(v), 1, 0)
             For j = 1 To moduleSize
-                imgRow(c) = IIf(Values.IsDark(v), 1, 0)
+                imgRow(c) = cl
                 c = c + 1
             Next
         Next

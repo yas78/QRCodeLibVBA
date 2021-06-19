@@ -53,8 +53,10 @@ Private Function DeleteShape(ByVal Targe As Range)
     Dim i As Long
     For i = shps.Count To 1 Step -1
         Set shp = shps(i)
-        Set rng = ws.Range(shp.TopLeftCell, shp.BottomRightCell)
-        If Not (Intersect(Targe, rng) Is Nothing) Then shp.Delete
+        If shp.Type = msoPicture Then
+            Set rng = ws.Range(shp.TopLeftCell, shp.BottomRightCell)
+            If Not (Intersect(Targe, rng) Is Nothing) Then shp.Delete
+        End If
     Next
 End Function
 
