@@ -8,7 +8,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 - BMP、PNG、SVGファイルに保存可能です
 - QRコードをIPictureDispオブジェクトとして取得可能です  
 - 配色を指定可能です
-- 8ビットバイトモードの文字コードを指定可能です
+- 8ビットバイトモードの文字セットを指定可能です
 - QRコードをクリップボードに保存可能です
 
 
@@ -44,8 +44,9 @@ Dim sbls As Symbols
 Set sbls = CreateSymbols(maxVer:=10)
 ```
 
-### 例４．8ビットバイトモードの文字コードを指定する
+### 例４．8ビットバイトモードの文字セットを指定する
 CreateSymbols関数の charsetName 引数を設定してSymbolsオブジェクトを生成します。
+（ADODB.Stream に依存しています。使用可能な文字セットはレジストリ[HKEY_CLASSES_ROOT\MIME\Database\Charset]を確認してください。）
 
 ```VBA
 Dim sbls As Symbols
@@ -82,7 +83,7 @@ sbls.AppendText "012345abcdefg"
 sbls(0).SaveAs "filename"
 
 ' true color BMP
-sbls(0).SaveAs "filename", fmt:=fmtBMP + fmtTrueColor
+sbls(0).SaveAs "filename", fmt:=fmtTrueColor
 
 ' monochrome PNG
 sbls(0).SaveAs "filename", fmt:=fmtPNG
