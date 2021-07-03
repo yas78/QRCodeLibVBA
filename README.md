@@ -5,7 +5,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 ## 特徴
 - 数字・英数字・8ビットバイト・漢字モードに対応しています
 - 分割QRコードを作成可能です
-- BMP、PNG、SVGファイルに保存可能です
+- BMP、PNG、SVG、EMFファイルに保存可能です
 - QRコードをIPictureDispオブジェクトとして取得可能です  
 - 配色を指定可能です
 - 8ビットバイトモードの文字セットを指定可能です
@@ -71,7 +71,24 @@ For Each sbl In sbls
 Next
 ```
 
-### 例６．ファイルへ保存する
+### 例６．画像形式を指定してIPictureDispオブジェクトを取得する
+GetPictureメソッドのpicType引数を設定します。
+
+```VBA
+Dim sbls As Symbols
+Set sbls = CreateSymbols()
+sbls.AppendText "012345abcdefg"
+
+Dim pict As stdole.IPictureDisp
+
+' Bitmap
+Set pict = sbls(0).GetPicture(picType:=Bitmap)
+
+' Metafile
+Set pict = sbls(0).GetPicture(picType:=EnhMetaFile)
+```
+
+### 例７．ファイルへ保存する
 SymbolクラスのSaveAsメソッドを使用します。
 
 ```VBA
@@ -93,7 +110,10 @@ sbls(0).SaveAs "filename", fmt:=fmtPNG + fmtTrueColor
 
 ' SVG
 sbls(0).SaveAs "filename", fmt:=fmtSVG
-        
+
+' EMF
+sbls(0).SaveAs "filename", fmt:=fmtEMF
+
 ' 10 pixels per module
 sbls(0).SaveAs "filename", moduleSize:=10
     
@@ -101,8 +121,7 @@ sbls(0).SaveAs "filename", moduleSize:=10
 sbls(0).SaveAs "filename", foreRgb:="#0000FF", backRgb:="#FFFF00"
 ```
 
-
-### 例７．クリップボードへ保存する
+### 例８．クリップボードへ保存する
 SymbolクラスのSetToClipBoardメソッドを使用します。
 
 ```VBA
@@ -112,4 +131,3 @@ sbls.AppendText "012345abcdefg"
     
 sbls(0).SetToClipBoard
 ```
-

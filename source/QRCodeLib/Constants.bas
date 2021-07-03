@@ -15,6 +15,12 @@ Public Enum ImageFormat
     fmtBMP = &H10
     fmtPNG = &H20
     fmtSVG = &H30
+    fmtEMF = &H40
     fmtMonochrome = 0
     fmtTrueColor = 1
+End Enum
+
+Public Enum OlePicType
+    Bitmap = 1
+    EnhMetaFile = 4
 End Enum

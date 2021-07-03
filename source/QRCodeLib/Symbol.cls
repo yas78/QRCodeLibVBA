@@ -536,8 +536,8 @@ End Sub
 Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
                                   ByVal foreRgb As String, _
                                   ByVal backRgb As String) As Byte()
-    Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRgb)
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRgb)
@@ -606,14 +606,14 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetMonochromeBMP = DIB.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
+    GetMonochromeBMP = DIB.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRGB)
 End Function
 
 Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
                                  ByVal foreRgb As String, _
                                  ByVal backRgb As String) As Byte()
-    Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRgb)
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRgb)
@@ -650,7 +650,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
         idx = 0
 
         For Each v In moduleMatrix(r)
-            colorRGB = IIf(Values.IsDark(v), foreColorRGB, backColorRGB)
+            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRGB)
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
@@ -688,7 +688,8 @@ End Function
 
 Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                            Optional ByVal foreRgb As String = ColorCode.BLACK, _
-                           Optional ByVal backRgb As String = ColorCode.WHITE) As stdole.IPictureDisp
+                           Optional ByVal backRgb As String = ColorCode.WHITE, _
+                           Optional ByVal picType As OlePicType = OlePicType.Bitmap) As stdole.IPictureDisp
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
@@ -696,16 +697,34 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
     Dim dibData() As Byte
-    dibData = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
     
-    Set GetPicture = ImageConverter.ConvertFrom(dibData)
+#If VBA7 Then
+    Dim hEmf As LongPtr
+#Else
+    Dim hEmf As Long
+#End If
+
+    Dim ret As stdole.IPictureDisp
+
+    Select Case picType
+        Case OlePicType.Bitmap
+            dibData = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
+            Set ret = ImageConverter.ConvertFromDIB(dibData)
+        Case OlePicType.EnhMetaFile
+            hEmf = GetEMF(moduleSize, foreRgb)
+            Set ret = ImageConverter.ConvertFromEMF(hEmf)
+        Case Else
+            Call Err.Raise(5)
+    End Select
+    
+    Set GetPicture = ret
 End Function
 
 Private Function GetMonochromePNG(ByVal moduleSize As Long, _
                                   ByVal foreRgb As String, _
                                   ByVal backRgb As String) As Byte()
-    Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRgb)
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRgb)
@@ -770,14 +789,14 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetMonochromePNG = PNG.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRGB, backColorRGB)
+    GetMonochromePNG = PNG.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRGB)
 End Function
 
 Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
                                  ByVal foreRgb As String, _
                                  ByVal backRgb As String) As Byte()
-    Dim foreColorRGB As Long
-    foreColorRGB = ColorCode.ToRGB(foreRgb)
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRGB As Long
     backColorRGB = ColorCode.ToRGB(backRgb)
@@ -820,7 +839,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
         idx = idx + 1
 
         For Each v In moduleMatrix(r)
-            colorRGB = IIf(Values.IsDark(v), foreColorRGB, backColorRGB)
+            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRGB)
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte(colorRGB And &HFF&)               ' R
@@ -866,14 +885,14 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
 
-    Dim imageWidth As Long
-    imageWidth = (UBound(moduleMatrix) + 1) * moduleSize
+    Dim pictWidth As Long
+    pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
 
-    Dim imageHeight As Long
-    imageHeight = imageWidth
+    Dim pictHeight As Long
+    pictHeight = pictWidth
 
     Dim img() As Variant
-    ReDim img(imageHeight - 1)
+    ReDim img(pictHeight - 1)
 
     Dim imgRow() As Long
 
@@ -886,7 +905,7 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim i As Long
     Dim cl As Long
     For Each rowArray In moduleMatrix
-        ReDim imgRow(imageWidth - 1)
+        ReDim imgRow(pictWidth - 1)
         c = 0
         For Each v In rowArray
             cl = IIf(Values.IsDark(v), 1, 0)
@@ -905,40 +924,71 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim gpPaths() As Variant
     gpPaths = GraphicPath.FindContours(img)
 
-    Dim buf As New List
+    GetSVG = SVG.BuildSVG(gpPaths, pictWidth, pictHeight, foreRgb)
+End Function
 
-    Dim indent As String
-    indent = String(11, " ")
 
-    Dim gpPath As Variant
-    Dim k As Long
-    For Each gpPath In gpPaths
-        Call buf.Add(indent & "M ")
+#If VBA7 Then
+Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                       Optional ByVal foreRgb As String = ColorCode.BLACK) As LongPtr
+#Else
+Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                       Optional ByVal foreRgb As String = ColorCode.BLACK) As Long
+#End If
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
-        For k = 0 To UBound(gpPath)
-            Call buf.Add(CStr(gpPath(k).X) & "," & CStr(gpPath(k).Y) & " ")
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
+
+    Dim moduleMatrix() As Variant
+    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+
+    Dim pictWidth As Long
+    pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
+
+    Dim pictHeight As Long
+    pictHeight = pictWidth
+
+    Dim img() As Variant
+    ReDim img(pictHeight - 1)
+
+    Dim imgRow() As Long
+
+    Dim r As Long
+    Dim c As Long
+
+    Dim rowArray As Variant
+    Dim v As Variant
+    Dim j As Long
+    Dim i As Long
+    Dim cl As Long
+    For Each rowArray In moduleMatrix
+        ReDim imgRow(pictWidth - 1)
+        c = 0
+        For Each v In rowArray
+            cl = IIf(Values.IsDark(v), 1, 0)
+            For j = 1 To moduleSize
+                imgRow(c) = cl
+                c = c + 1
+            Next
         Next
-        Call buf.Add("Z" & vbNewLine)
+
+        For i = 1 To moduleSize
+            img(r) = imgRow
+            r = r + 1
+        Next
     Next
 
-    Dim data As String
-    data = Trim$(Join(buf.Items(), ""))
-    data = Left$(data, Len(data) - Len(vbNewLine))
+    Dim gpPaths() As Variant
+    gpPaths = GraphicPath.FindContours(img)
 
-    Dim ret As String
-    ret = _
-        "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" & vbNewLine & _
-        "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'" & vbNewLine & _
-        "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>" & vbNewLine & _
-        "<svg xmlns='http://www.w3.org/2000/svg'" & vbNewLine & _
-        "    width='" & CStr(imageWidth) & "' height='" & CStr(imageHeight) & "' viewBox='0 0 " & CStr(imageWidth) & " " & CStr(imageHeight) & "'>" & vbNewLine & _
-        "    <path fill='" & foreRgb & "' stroke='" & foreRgb & "' stroke-width='1'" & vbNewLine & _
-        "        d='" & data & "'" & vbNewLine & _
-        "    />" & vbNewLine & _
-        "</svg>"
-
-    GetSVG = ret
+    GetEMF = EMF.BuildEMF(gpPaths, pictWidth, pictHeight, foreColorRgb)
 End Function
+
+
 
 Public Sub SaveAs(ByVal filePath As String, _
                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
@@ -952,9 +1002,15 @@ Public Sub SaveAs(ByVal filePath As String, _
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
+#If VBA7 Then
+    Dim hEmf As LongPtr
+#Else
+    Dim hEmf As Long
+#End If
+    
     Dim binData() As Byte
     Dim strData   As String
-    Dim isBin     As Boolean
+    Dim pict      As stdole.IPictureDisp
 
     If (fmt And &HF0&) = 0 Then
         fmt = fmt + ImageFormat.fmtBMP
@@ -962,20 +1018,17 @@ Public Sub SaveAs(ByVal filePath As String, _
     
     Select Case fmt
         Case &H10
-            isBin = True
             binData = GetMonochromeBMP(moduleSize, foreRgb, backRgb)
         Case &H11 To &H1F
-            isBin = True
             binData = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
         Case &H20
-            isBin = True
             binData = GetMonochromePNG(moduleSize, foreRgb, backRgb)
         Case &H21 To &H2F
-            isBin = True
             binData = GetTrueColorPNG(moduleSize, foreRgb, backRgb)
         Case &H30 To &H3F
-            isBin = False
             strData = GetSVG(moduleSize, foreRgb)
+        Case &H40 To &H4F
+            Set pict = GetPicture(moduleSize, foreRgb, picType:=OlePicType.EnhMetaFile)
         Case Else
             Call Err.Raise(5)
     End Select
@@ -983,15 +1036,22 @@ Public Sub SaveAs(ByVal filePath As String, _
     Dim fNum As Integer
     fNum = FreeFile()
 
-    If isBin Then
-        Open filePath For Binary As #fNum
-        Put #fNum, , binData
-    Else
-        Open filePath For Output As #fNum Len = &H7FFF
-        Print #fNum, strData
-    End If
-    
-    Close #fNum
+    Select Case fmt
+        Case &H10 To &H2F
+            fNum = FreeFile()
+            Open filePath For Binary As #fNum
+            Put #fNum, , binData
+            Close #fNum
+        Case &H30 To &H3F
+            fNum = FreeFile()
+            Open filePath For Output As #fNum Len = &H7FFF
+            Print #fNum, strData
+            Close #fNum
+        Case &H40 To &H4F
+            Call stdole.SavePicture(pict, filePath)
+        Case Else
+            Call Err.Raise(5)
+    End Select
 End Sub
 
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _

@@ -40,7 +40,7 @@ End Type
 Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
                                    ByVal pictWidth As Long, _
                                    ByVal pictHeight As Long, _
-                                   ByVal foreColorRGB As Long, _
+                                   ByVal foreColorRgb As Long, _
                                    ByVal backColorRGB As Long) As Byte()
     Dim bfh As BitmapFileHeader
     With bfh
@@ -69,9 +69,9 @@ Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
     Dim palette(1) As RgbQuad
 
     With palette(0)
-        .rgbBlue = CByte((foreColorRGB And &HFF0000) \ 2 ^ 16)
-        .rgbGreen = CByte((foreColorRGB And &HFF00&) \ 2 ^ 8)
-        .rgbRed = CByte(foreColorRGB And &HFF&)
+        .rgbBlue = CByte((foreColorRgb And &HFF0000) \ 2 ^ 16)
+        .rgbGreen = CByte((foreColorRgb And &HFF00&) \ 2 ^ 8)
+        .rgbRed = CByte(foreColorRgb And &HFF&)
         .rgbReserved = 0
     End With
 

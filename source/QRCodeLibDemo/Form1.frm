@@ -119,7 +119,7 @@ Private Sub btnSave_Click()
     Set fs = CreateObject("Scripting.FileSystemObject")
 
     Dim fileFilters As String
-    fileFilters = "BMP (*.bmp), *.bmp,PNG (*.png), *png,SVG (*.svg), *svg"
+    fileFilters = "BMP (*.bmp), *.bmp,PNG (*.png), *png,SVG (*.svg), *svg,EMF (*.emf), *emf"
 
     Dim fBaseName As Variant
     fBaseName = Application.GetSaveAsFilename("", fileFilters)
@@ -140,6 +140,8 @@ Private Sub btnSave_Click()
             fmt = fmtPNG + fmtMonochrome
         Case ".svg"
             fmt = fmtSVG
+        Case ".emf"
+            fmt = fmtEMF
         Case Else
             Call Err.Raise(51)
     End Select

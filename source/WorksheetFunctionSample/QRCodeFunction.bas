@@ -27,7 +27,7 @@ On Error GoTo Catch
     filePath = m_fs.GetSpecialFolder(TemporaryFolder) & "\" & m_fs.GetTempName()
 
     If m_fs.FileExists(filePath) Then Call m_fs.DeleteFile(filePath)
-    Call sbls(0).SaveAs(filePath)
+    Call sbls(0).SaveAs(filePath, fmt:=fmtEMF)
     Call AddPicture(filePath, rng)
 
     QR = ""

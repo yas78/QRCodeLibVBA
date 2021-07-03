@@ -34,7 +34,7 @@ On Error GoTo Catch
     With Me.imgQr
         .PictureAlignment = fmPictureAlignmentCenter
         .PictureSizeMode = fmPictureSizeModeStretch
-        .Picture = sbls(0).GetPicture(MODULE_SIZE)
+        .Picture = sbls(0).GetPicture(MODULE_SIZE, pictype:=OlePicType.EnhMetaFile)
     End With
 
 Finally:

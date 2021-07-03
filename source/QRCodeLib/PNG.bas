@@ -8,11 +8,11 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Private Type PngSignature
+Public Type PngSignature
     psData(7) As Byte
 End Type
 
-Private Type PngChunk
+Public Type PngChunk
     pLength As Long
     pType   As Long
     pData() As Byte
@@ -47,7 +47,7 @@ End Enum
 Public Function BuildMonochromeBin(ByRef data() As Byte, _
                                    ByVal pictWidth As Long, _
                                    ByVal pictHeight As Long, _
-                                   ByVal foreColorRGB As Long, _
+                                   ByVal foreColorRgb As Long, _
                                    ByVal backColorRGB As Long) As Byte()
     Dim psgn As PngSignature
     Call MakePngSignature(psgn)
@@ -65,7 +65,7 @@ Public Function BuildMonochromeBin(ByRef data() As Byte, _
     )
 
     Dim iplt As PngChunk
-    Call MakeIPLT(iplt, foreColorRGB, backColorRGB)
+    Call MakeIPLT(iplt, foreColorRgb, backColorRGB)
 
     Dim idat As PngChunk
     Call MakeIDAT(data, DeflateBType.NoCompression, idat)
