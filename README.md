@@ -108,6 +108,9 @@ sbls(0).SaveAs "filename", fmt:=fmtPNG
 ' true color PNG 
 sbls(0).SaveAs "filename", fmt:=fmtPNG + fmtTrueColor
 
+' transparent PNG 
+sbls(0).SaveAs "filename" fmt:=fmtPNG + fmtTrueColor, bkStyle:=bkTransparent
+
 ' SVG
 sbls(0).SaveAs "filename", fmt:=fmtSVG
 

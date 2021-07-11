@@ -6,42 +6,44 @@ Option Explicit
     Private Declare PtrSafe Function GetDC Lib "user32" (ByVal hWnd As LongPtr) As LongPtr
     Private Declare PtrSafe Function ReleaseDC Lib "user32" (ByVal hWnd As LongPtr, ByVal hDC As LongPtr) As Long
     Private Declare PtrSafe Function GetDeviceCaps Lib "gdi32" (ByVal hDC As LongPtr, ByVal nIndex As Long) As Long
-    
-    Private Declare PtrSafe Function CreateEnhMetaFile Lib "gdi32" Alias "CreateEnhMetaFileA" (ByVal hDC As LongPtr, ByVal lpFilename As String, ByRef lprc As RECT, ByVal lpDesc As String) As LongPtr
+
+    Private Declare PtrSafe Function CreateEnhMetaFile Lib "gdi32" Alias "CreateEnhMetaFileA" (ByVal hDC As LongPtr, ByVal lpFilename As String, ByRef lprc As Any, ByVal lpDesc As String) As LongPtr
     Private Declare PtrSafe Function CloseEnhMetaFile Lib "gdi32" (ByVal hDC As LongPtr) As LongPtr
-    
+
     Private Declare PtrSafe Function SelectObject Lib "gdi32" (ByVal hDC As LongPtr, ByVal hObject As LongPtr) As LongPtr
     Private Declare PtrSafe Function DeleteObject Lib "gdi32" (ByVal hObject As LongPtr) As Long
-  
+
     Private Declare PtrSafe Function BeginPath Lib "gdi32" (ByVal hDC As LongPtr) As Long
     Private Declare PtrSafe Function EndPath Lib "gdi32" (ByVal hDC As LongPtr) As Long
-    
+
     Private Declare PtrSafe Function CreatePen Lib "gdi32" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As LongPtr
     Private Declare PtrSafe Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As LongPtr
-    
+
     Private Declare PtrSafe Function Polygon Lib "gdi32" (ByVal hDC As LongPtr, ByRef lpPoint As POINTAPI, ByVal nCount As Long) As Long
-    
+    Private Declare PtrSafe Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal nLeftRect As Long, ByVal nTopRect As Long, ByVal nRightRect As Long, ByVal nBottomRect As Long) As Long
+
     Private Declare PtrSafe Function SetPolyFillMode Lib "gdi32" (ByVal hDC As LongPtr, ByVal nPolyFillMode As Long) As Long
     Private Declare PtrSafe Function StrokeAndFillPath Lib "gdi32" (ByVal hDC As LongPtr) As Long
 #Else
     Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
     Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
     Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
-    
+
     Private Declare Function CreateEnhMetaFile Lib "gdi32" Alias "CreateEnhMetaFileA" (ByVal hDC As Long, ByVal lpFilename As String, ByRef lprc As RECT, ByVal lpDesc As String) As Long
     Private Declare Function CloseEnhMetaFile Lib "gdi32" (ByVal hDC As Long) As Long
-    
+
     Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
     Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
-  
+
     Private Declare Function BeginPath Lib "gdi32" (ByVal hDC As Long) As Long
     Private Declare Function EndPath Lib "gdi32" (ByVal hDC As Long) As Long
-    
+
     Private Declare Function CreatePen Lib "gdi32" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
     Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
-    
+
     Private Declare Function Polygon Lib "gdi32" (ByVal hDC As Long, ByRef lpPoint As POINTAPI, ByVal nCount As Long) As Long
-    
+    Private Declare Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal nLeftRect As Long, ByVal nTopRect As Long, ByVal nRightRect As Long, ByVal nBottomRect As Long) As Long
+
     Private Declare Function SetPolyFillMode Lib "gdi32" (ByVal hDC As Long, ByVal nPolyFillMode As Long) As Long
     Private Declare Function StrokeAndFillPath Lib "gdi32" (ByVal hDC As Long) As Long
 #End If
@@ -88,16 +90,19 @@ Private Const VERTSIZE As Long = 6
 Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
 
+Private Const FLOODFILLBORDER  As Long = 0
+Private Const FLOODFILLSURFACE As Long = 1
+
 #If VBA7 Then
-Public Function BuildEMF(ByRef gpPaths() As Variant, _
-                         ByVal pictWidth As Long, _
-                         ByVal pictHeight As Long, _
-                         ByVal foreColorRgb As Long) As LongPtr
+Public Function GetEMF(ByRef gpPaths() As Variant, _
+                       ByVal pictWidth As Long, _
+                       ByVal pictHeight As Long, _
+                       ByVal foreColorRgb As Long) As LongPtr
 #Else
-Public Function BuildEMF(ByRef gpPaths() As Variant, _
-                         ByVal pictWidth As Long, _
-                         ByVal pictHeight As Long, _
-                         ByVal foreColorRgb As Long) As Long
+Public Function GetEMF(ByRef gpPaths() As Variant, _
+                       ByVal pictWidth As Long, _
+                       ByVal pictHeight As Long, _
+                       ByVal foreColorRgb As Long) As Long
 #End If
 
 #If VBA7 Then
@@ -107,46 +112,29 @@ Public Function BuildEMF(ByRef gpPaths() As Variant, _
 #End If
 
     hScreenDC = GetDC(0)
-    
+
     Dim mmPerPixelH As Double
-    mmPerPixelH = GetDeviceCaps(hScreenDC, HORZSIZE) / GetDeviceCaps(hScreenDC, HORZRES) * 100
+    mmPerPixelH = GetDeviceCaps(hScreenDC, HORZSIZE) / GetDeviceCaps(hScreenDC, HORZRES)
     Dim mmPerPixelV As Double
-    mmPerPixelV = GetDeviceCaps(hScreenDC, VERTSIZE) / GetDeviceCaps(hScreenDC, VERTRES) * 100
-    
+    mmPerPixelV = GetDeviceCaps(hScreenDC, VERTSIZE) / GetDeviceCaps(hScreenDC, VERTRES)
+
     Call ReleaseDC(0, hScreenDC)
-    
+
     Dim r As RECT
     With r
         .Left = 0
         .Top = 0
-        .Right = mmPerPixelH * pictWidth
-        .Bottom = mmPerPixelV * pictHeight
+        .Right = mmPerPixelH * pictWidth * 100
+        .Bottom = mmPerPixelV * pictHeight * 100
     End With
 
 #If VBA7 Then
-    Dim hDC  As LongPtr
+    Dim hDC As LongPtr
 #Else
-    Dim hDC  As Long
+    Dim hDC As Long
 #End If
-    
-    hDC = CreateEnhMetaFile(0, vbNullString, r, vbNullString)
 
-#If VBA7 Then
-    Dim hBrush    As LongPtr
-    Dim hOldBrush As LongPtr
-    Dim hPen      As LongPtr
-    Dim hOldPen   As LongPtr
-#Else
-    Dim hBrush    As Long
-    Dim hOldBrush As Long
-    Dim hPen      As Long
-    Dim hOldPen   As Long
-#End If
-   
-    hBrush = CreateSolidBrush(foreColorRgb)
-    hOldBrush = SelectObject(hDC, hBrush)
-    hPen = CreatePen(PS_SOLID, 0, foreColorRgb)
-    hOldPen = SelectObject(hDC, hPen)
+    hDC = CreateEnhMetaFile(0, vbNullString, r, vbNullString)
 
     Call BeginPath(hDC)
 
@@ -161,16 +149,33 @@ Public Function BuildEMF(ByRef gpPaths() As Variant, _
         Next
         Call Polygon(hDC, pArray(0), UBound(pArray) + 1)
     Next
-    
+
     Call EndPath(hDC)
-    
+
+#If VBA7 Then
+    Dim hBrush    As LongPtr
+    Dim hOldBrush As LongPtr
+    Dim hPen      As LongPtr
+    Dim hOldPen   As LongPtr
+#Else
+    Dim hBrush    As Long
+    Dim hOldBrush As Long
+    Dim hPen      As Long
+    Dim hOldPen   As Long
+#End If
+
+    hBrush = CreateSolidBrush(foreColorRgb)
+    hOldBrush = SelectObject(hDC, hBrush)
+    hPen = CreatePen(PS_SOLID, 0, foreColorRgb)
+    hOldPen = SelectObject(hDC, hPen)
+
     Call SetPolyFillMode(hDC, PolygonFillMode.ALTERNATE)
     Call StrokeAndFillPath(hDC)
-    
+
     Call SelectObject(hDC, hOldBrush)
     Call DeleteObject(hBrush)
     Call SelectObject(hDC, hOldPen)
     Call DeleteObject(hPen)
-    
-    BuildEMF = CloseEnhMetaFile(hDC)
+
+    GetEMF = CloseEnhMetaFile(hDC)
 End Function

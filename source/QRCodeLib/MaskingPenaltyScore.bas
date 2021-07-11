@@ -3,7 +3,7 @@ Option Private Module
 Option Explicit
 
 Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
-    Dim total   As Long
+    Dim total As Long
     total = 0
 
     Dim penaltyScore As Long

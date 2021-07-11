@@ -8,18 +8,18 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
-Public Type PngSignature
+Private Type PngSignature
     psData(7) As Byte
 End Type
 
-Public Type PngChunk
+Private Type PngChunk
     pLength As Long
     pType   As Long
     pData() As Byte
     pCRC    As Long
 End Type
 
-Private Enum PngColorType
+Public Enum PngColorType
     pGrayscale = 0
     pTrueColor = 2
     pIndexColor = 3
@@ -44,11 +44,22 @@ Private Enum PngInterlaceMethod
     pAdam7 = 1
 End Enum
 
-Public Function BuildMonochromeBin(ByRef data() As Byte, _
-                                   ByVal pictWidth As Long, _
-                                   ByVal pictHeight As Long, _
-                                   ByVal foreColorRgb As Long, _
-                                   ByVal backColorRGB As Long) As Byte()
+Public Function GetPNG(ByRef data() As Byte, _
+                       ByVal pictWidth As Long, _
+                       ByVal pictHeight As Long, _
+                       ByVal foreColorRgb As Long, _
+                       ByVal backColorRgb As Long, _
+                       ByVal tColor As PngColorType) As Byte()
+    Dim bitDepth As Long
+    Select Case tColor
+        Case pTrueColor, pTrueColorAlpha
+            bitDepth = 8
+        Case pIndexColor
+            bitDepth = 1
+        Case Else
+            Call Err.Raise(5)
+    End Select
+
     Dim psgn As PngSignature
     Call MakePngSignature(psgn)
 
@@ -56,8 +67,8 @@ Public Function BuildMonochromeBin(ByRef data() As Byte, _
     Call MakeIHDR( _
         pictWidth, _
         pictHeight, _
-        1, _
-        PngColorType.pIndexColor, _
+        bitDepth, _
+        tColor, _
         PngCompressionMethod.Deflate, _
         PngFilterType.pNone, _
         PngInterlaceMethod.pNo, _
@@ -65,7 +76,9 @@ Public Function BuildMonochromeBin(ByRef data() As Byte, _
     )
 
     Dim iplt As PngChunk
-    Call MakeIPLT(iplt, foreColorRgb, backColorRGB)
+    If tColor = PngColorType.pIndexColor Then
+        Call MakeIPLT(iplt, foreColorRgb, backColorRgb)
+    End If
 
     Dim idat As PngChunk
     Call MakeIDAT(data, DeflateBType.NoCompression, idat)
@@ -76,39 +89,7 @@ Public Function BuildMonochromeBin(ByRef data() As Byte, _
     Dim ret() As Byte
     Call ToBytes(psgn, ihdr, iplt, idat, iend, ret)
 
-    BuildMonochromeBin = ret
-End Function
-
-Public Function BuildTrueColorBin(ByRef data() As Byte, _
-                                  ByVal pictWidth As Long, _
-                                  ByVal pictHeight As Long) As Byte()
-    Dim psgn As PngSignature
-    Call MakePngSignature(psgn)
-
-    Dim ihdr As PngChunk
-    Call MakeIHDR( _
-        pictWidth, _
-        pictHeight, _
-        8, _
-        PngColorType.pTrueColor, _
-        PngCompressionMethod.Deflate, _
-        PngFilterType.pNone, _
-        PngInterlaceMethod.pNo, _
-        ihdr _
-    )
-
-    Dim iplt As PngChunk
-
-    Dim idat As PngChunk
-    Call MakeIDAT(data, DeflateBType.NoCompression, idat)
-
-    Dim iend As PngChunk
-    Call MakeIEND(iend)
-
-    Dim ret() As Byte
-    Call ToBytes(psgn, ihdr, iplt, idat, iend, ret)
-
-    BuildTrueColorBin = ret
+    GetPNG = ret
 End Function
 
 Private Sub MakePngSignature(ByRef psgn As PngSignature)

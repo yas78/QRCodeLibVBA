@@ -8,6 +8,9 @@ Option Explicit
     Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
 #End If
 
+Private Const BF_SIZE As Long = 14
+Private Const BI_SIZE As Long = 40
+
 Private Type BitmapFileHeader
     bfType      As Integer
     bfSize      As Long
@@ -37,27 +40,56 @@ Private Type RgbQuad
     rgbReserved As Byte
 End Type
 
-Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
-                                   ByVal pictWidth As Long, _
-                                   ByVal pictHeight As Long, _
-                                   ByVal foreColorRgb As Long, _
-                                   ByVal backColorRGB As Long) As Byte()
+Public Function GetDIB(ByRef bitmapData() As Byte, _
+                       ByVal pictWidth As Long, _
+                       ByVal pictHeight As Long, _
+                       ByVal foreColorRgb As Long, _
+                       ByVal backColorRgb As Long, _
+                       ByVal monochrome As Boolean) As Byte()
+    Dim bfOffBits  As Long
+    Dim biBitCount As Integer
+
     Dim bfh As BitmapFileHeader
+    Dim bih As BitmapInfoHeader
+    Dim palette() As RgbQuad
+
+    If Not monochrome Then
+        biBitCount = 24
+        bfOffBits = BF_SIZE + BI_SIZE
+    Else
+        ReDim palette(1)
+        With palette(0)
+            .rgbBlue = CByte((foreColorRgb And &HFF0000) \ 2 ^ 16)
+            .rgbGreen = CByte((foreColorRgb And &HFF00&) \ 2 ^ 8)
+            .rgbRed = CByte(foreColorRgb And &HFF&)
+            .rgbReserved = 0
+        End With
+
+        With palette(1)
+            .rgbBlue = CByte((backColorRgb And &HFF0000) \ 2 ^ 16)
+            .rgbGreen = CByte((backColorRgb And &HFF00&) \ 2 ^ 8)
+            .rgbRed = CByte(backColorRgb And &HFF&)
+            .rgbReserved = 0
+        End With
+
+        biBitCount = 1
+        bfOffBits = BF_SIZE + BI_SIZE + (4 * (UBound(palette) + 1))
+    End If
+
     With bfh
         .bfType = &H4D42
-        .bfSize = 62 + (UBound(bitmapData) + 1)
+        .bfSize = bfOffBits + (UBound(bitmapData) + 1)
         .bfReserved1 = 0
         .bfReserved2 = 0
-        .bfOffBits = 62
+        .bfOffBits = bfOffBits
     End With
 
-    Dim bih As BitmapInfoHeader
     With bih
-        .biSize = 40
+        .biSize = BI_SIZE
         .biWidth = pictWidth
         .biHeight = pictHeight
         .biPlanes = 1
-        .biBitCount = 1
+        .biBitCount = biBitCount
         .biCompression = 0
         .biSizeImage = 0
         .biXPelsPerMeter = 0
@@ -66,24 +98,8 @@ Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
         .biClrImportant = 0
     End With
 
-    Dim palette(1) As RgbQuad
-
-    With palette(0)
-        .rgbBlue = CByte((foreColorRgb And &HFF0000) \ 2 ^ 16)
-        .rgbGreen = CByte((foreColorRgb And &HFF00&) \ 2 ^ 8)
-        .rgbRed = CByte(foreColorRgb And &HFF&)
-        .rgbReserved = 0
-    End With
-
-    With palette(1)
-        .rgbBlue = CByte((backColorRGB And &HFF0000) \ 2 ^ 16)
-        .rgbGreen = CByte((backColorRGB And &HFF00&) \ 2 ^ 8)
-        .rgbRed = CByte(backColorRGB And &HFF&)
-        .rgbReserved = 0
-    End With
-
     Dim ret() As Byte
-    ReDim ret(62 + UBound(bitmapData))
+    ReDim ret(bfOffBits + UBound(bitmapData))
 
     With bfh
         Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
@@ -107,65 +123,18 @@ Public Function BuildMonochromeBin(ByRef bitmapData() As Byte, _
         Call MoveMemory(VarPtr(ret(50)), VarPtr(.biClrImportant), 4)
     End With
 
-    Call MoveMemory(VarPtr(ret(54)), VarPtr(palette(0)), 8)
-    Call MoveMemory(VarPtr(ret(62)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
+    Dim idx As Long
+    idx = BF_SIZE + BI_SIZE
+    Dim i As Long
 
-    BuildMonochromeBin = ret
-End Function
+    If monochrome Then
+        For i = 0 To UBound(palette)
+            Call MoveMemory(VarPtr(ret(idx)), VarPtr(palette(i)), 4)
+            idx = idx + 4
+        Next
+    End If
 
-Public Function BuildTrueColorBin(ByRef bitmapData() As Byte, _
-                                  ByVal pictWidth As Long, _
-                                  ByVal pictHeight As Long) As Byte()
-    Dim bfh As BitmapFileHeader
-    With bfh
-        .bfType = &H4D42
-        .bfSize = 54 + (UBound(bitmapData) + 1)
-        .bfReserved1 = 0
-        .bfReserved2 = 0
-        .bfOffBits = 54
-    End With
+    Call MoveMemory(VarPtr(ret(idx)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
 
-    Dim bih As BitmapInfoHeader
-    With bih
-        .biSize = 40
-        .biWidth = pictWidth
-        .biHeight = pictHeight
-        .biPlanes = 1
-        .biBitCount = 24
-        .biCompression = 0
-        .biSizeImage = 0
-        .biXPelsPerMeter = 0
-        .biYPelsPerMeter = 0
-        .biClrUsed = 0
-        .biClrImportant = 0
-    End With
-
-    Dim ret() As Byte
-    ReDim ret(54 + UBound(bitmapData))
-
-    With bfh
-        Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
-        Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
-        Call MoveMemory(VarPtr(ret(6)), VarPtr(.bfReserved1), 2)
-        Call MoveMemory(VarPtr(ret(8)), VarPtr(.bfReserved2), 2)
-        Call MoveMemory(VarPtr(ret(10)), VarPtr(.bfOffBits), 4)
-    End With
-
-    With bih
-        Call MoveMemory(VarPtr(ret(14)), VarPtr(.biSize), 4)
-        Call MoveMemory(VarPtr(ret(18)), VarPtr(.biWidth), 4)
-        Call MoveMemory(VarPtr(ret(22)), VarPtr(.biHeight), 4)
-        Call MoveMemory(VarPtr(ret(26)), VarPtr(.biPlanes), 2)
-        Call MoveMemory(VarPtr(ret(28)), VarPtr(.biBitCount), 2)
-        Call MoveMemory(VarPtr(ret(30)), VarPtr(.biCompression), 4)
-        Call MoveMemory(VarPtr(ret(34)), VarPtr(.biSizeImage), 4)
-        Call MoveMemory(VarPtr(ret(38)), VarPtr(.biXPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(42)), VarPtr(.biYPelsPerMeter), 4)
-        Call MoveMemory(VarPtr(ret(46)), VarPtr(.biClrUsed), 4)
-        Call MoveMemory(VarPtr(ret(50)), VarPtr(.biClrImportant), 4)
-    End With
-
-    Call MoveMemory(VarPtr(ret(54)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
-
-    BuildTrueColorBin = ret
+    GetDIB = ret
 End Function

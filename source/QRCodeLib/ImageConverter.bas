@@ -111,18 +111,18 @@ Public Function ConvertFromEMF(ByVal hEmf As LongPtr) As stdole.IPictureDisp
 Public Function ConvertFromEMF(ByVal hEmf As Long) As stdole.IPictureDisp
 #End If
     Dim lpPictDesc As PICTDESC
-    
+
     With lpPictDesc
       .cbSizeofstruct = Len(lpPictDesc)
       .picType = PICTYPE_ENHMETAFILE
       .hEmf = hEmf
     End With
-    
+
     Dim iid As UUID
     Call IIDFromString(StrPtr(IID_IPictureDisp), iid)
-  
+
     Dim ret As stdole.IPictureDisp
     Call OleCreatePictureIndirect(lpPictDesc, iid, False, ret)
-    
+
     Set ConvertFromEMF = ret
 End Function

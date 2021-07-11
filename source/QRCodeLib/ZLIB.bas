@@ -1,4 +1,4 @@
-Attribute VB_Name = "Zlib"
+Attribute VB_Name = "ZLIB"
 Option Private Module
 Option Explicit
 

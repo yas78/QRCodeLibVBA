@@ -539,8 +539,8 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
-    Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRgb)
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -606,7 +606,7 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetMonochromeBMP = DIB.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRGB)
+    GetMonochromeBMP = DIB.GetDIB(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRgb, True)
 End Function
 
 Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
@@ -615,8 +615,8 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
-    Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRgb)
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -650,7 +650,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
         idx = 0
 
         For Each v In moduleMatrix(r)
-            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRGB)
+            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRgb)
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
@@ -666,7 +666,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetTrueColorBMP = DIB.BuildTrueColorBin(bitmapData, pictWidth, pictHeight)
+    GetTrueColorBMP = DIB.GetDIB(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRgb, False)
 End Function
 
 Public Function GetBMP(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
@@ -697,7 +697,7 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
     Dim dibData() As Byte
-    
+
 #If VBA7 Then
     Dim hEmf As LongPtr
 #Else
@@ -716,7 +716,7 @@ Public Function GetPicture(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SI
         Case Else
             Call Err.Raise(5)
     End Select
-    
+
     Set GetPicture = ret
 End Function
 
@@ -726,8 +726,8 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
-    Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRgb)
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -789,17 +789,19 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetMonochromePNG = PNG.BuildMonochromeBin(bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRGB)
+    GetMonochromePNG = PNG.GetPNG( _
+        bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRgb, PngColorType.pIndexColor)
 End Function
 
 Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
                                  ByVal foreRgb As String, _
-                                 ByVal backRgb As String) As Byte()
+                                 ByVal backRgb As String, _
+                                 ByVal bkStyle As BackStyle) As Byte()
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
-    Dim backColorRGB As Long
-    backColorRGB = ColorCode.ToRGB(backRgb)
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
 
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -813,7 +815,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
     pictHeight = pictWidth
 
     Dim rowSize As Long
-    rowSize = 1 + 3 * pictWidth
+    rowSize = 1 + IIf(bkStyle = BackStyle.bkTransparent, 4, 3) * pictWidth
 
     Dim bitmapData() As Byte
     ReDim bitmapData(rowSize * pictHeight - 1)
@@ -822,6 +824,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
     offset = 0
 
     Dim colorRGB    As Long
+    Dim alpha       As Byte
     Dim bitmapRow() As Byte
     Dim idx         As Long
 
@@ -839,13 +842,24 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
         idx = idx + 1
 
         For Each v In moduleMatrix(r)
-            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRGB)
+            If Values.IsDark(v) Then
+                colorRGB = foreColorRgb
+                alpha = &HFF
+            Else
+                colorRGB = backColorRgb
+                alpha = 0
+            End If
 
             For i = 1 To moduleSize
                 bitmapRow(idx + 0) = CByte(colorRGB And &HFF&)               ' R
                 bitmapRow(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
                 bitmapRow(idx + 2) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
                 idx = idx + 3
+
+                If bkStyle = BackStyle.bkTransparent Then
+                    bitmapRow(idx) = alpha
+                    idx = idx + 1
+                End If
             Next
         Next
 
@@ -855,13 +869,22 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
         Next
     Next
 
-    GetTrueColorPNG = PNG.BuildTrueColorBin(bitmapData, pictWidth, pictHeight)
+    Dim tColor As PngColorType
+    If bkStyle = BackStyle.bkTransparent Then
+        tColor = PngColorType.pTrueColorAlpha
+    Else
+        tColor = PngColorType.pTrueColor
+    End If
+
+    GetTrueColorPNG = PNG.GetPNG( _
+        bitmapData, pictWidth, pictHeight, foreColorRgb, backColorRgb, tColor)
 End Function
 
 Public Function GetPNG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                        Optional ByVal monochrome As Boolean = False, _
                        Optional ByVal foreRgb As String = ColorCode.BLACK, _
-                       Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
+                       Optional ByVal backRgb As String = ColorCode.WHITE, _
+                       Optional ByVal bkStyle As BackStyle = BackStyle.bkOpaque) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
@@ -871,7 +894,7 @@ Public Function GetPNG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     If monochrome Then
         GetPNG = GetMonochromePNG(moduleSize, foreRgb, backRgb)
     Else
-        GetPNG = GetTrueColorPNG(moduleSize, foreRgb, backRgb)
+        GetPNG = GetTrueColorPNG(moduleSize, foreRgb, backRgb, bkStyle)
     End If
 End Function
 
@@ -926,7 +949,6 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
 
     GetSVG = SVG.BuildSVG(gpPaths, pictWidth, pictHeight, foreRgb)
 End Function
-
 
 #If VBA7 Then
 Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
@@ -985,16 +1007,15 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim gpPaths() As Variant
     gpPaths = GraphicPath.FindContours(img)
 
-    GetEMF = EMF.BuildEMF(gpPaths, pictWidth, pictHeight, foreColorRgb)
+    GetEMF = EMF.GetEMF(gpPaths, pictWidth, pictHeight, foreColorRgb)
 End Function
-
-
 
 Public Sub SaveAs(ByVal filePath As String, _
                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                   Optional ByVal foreRgb As String = ColorCode.BLACK, _
                   Optional ByVal backRgb As String = ColorCode.WHITE, _
-                  Optional ByVal fmt As ImageFormat = fmtBMP + fmtMonochrome)
+                  Optional ByVal fmt As ImageFormat = fmtbmp + fmtMonochrome, _
+                  Optional ByVal bkStyle As BackStyle = BackStyle.bkOpaque)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     If Len(filePath) = 0 Then Call Err.Raise(5)
@@ -1007,15 +1028,15 @@ Public Sub SaveAs(ByVal filePath As String, _
 #Else
     Dim hEmf As Long
 #End If
-    
+
     Dim binData() As Byte
     Dim strData   As String
     Dim pict      As stdole.IPictureDisp
 
     If (fmt And &HF0&) = 0 Then
-        fmt = fmt + ImageFormat.fmtBMP
+        fmt = fmt + ImageFormat.fmtbmp
     End If
-    
+
     Select Case fmt
         Case &H10
             binData = GetMonochromeBMP(moduleSize, foreRgb, backRgb)
@@ -1024,11 +1045,11 @@ Public Sub SaveAs(ByVal filePath As String, _
         Case &H20
             binData = GetMonochromePNG(moduleSize, foreRgb, backRgb)
         Case &H21 To &H2F
-            binData = GetTrueColorPNG(moduleSize, foreRgb, backRgb)
+            binData = GetTrueColorPNG(moduleSize, foreRgb, backRgb, bkStyle)
         Case &H30 To &H3F
             strData = GetSVG(moduleSize, foreRgb)
         Case &H40 To &H4F
-            Set pict = GetPicture(moduleSize, foreRgb, picType:=OlePicType.EnhMetaFile)
+            Set pict = GetPicture(moduleSize, foreRgb, backRgb, picType:=OlePicType.EnhMetaFile)
         Case Else
             Call Err.Raise(5)
     End Select

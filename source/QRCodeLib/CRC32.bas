@@ -22,13 +22,13 @@ Public Function Update(ByVal crc As Long, ByRef data() As Byte) As Long
         c = m_crcTable((c Xor data(n)) And &HFF) Xor _
                 (((c And &HFFFFFF00) \ 2 ^ 8) And &HFFFFFF)
     Next
-    
+
     Update = c Xor &HFFFFFFFF
 End Function
 
 Private Sub MakeCrcTable()
     Dim c As Long
-    
+
     Dim k As Long
     Dim n As Long
     For n = 0 To 255
@@ -40,7 +40,7 @@ Private Sub MakeCrcTable()
                 c = (c \ 2) And &H7FFFFFFF
             End If
         Next k
-        
+
         m_crcTable(n) = c
     Next n
 

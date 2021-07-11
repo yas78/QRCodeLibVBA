@@ -251,11 +251,11 @@ Private Sub txtModuleSize_KeyDown( _
 
     Select Case KeyCode
         Case 38
-            If 2 <= sz And sz < 20 Then
+            If 2 <= sz And sz < 100 Then
                 txtModuleSize.Text = CStr(sz + 1)
             End If
         Case 40
-            If 2 < sz And sz <= 20 Then
+            If 2 < sz And sz <= 100 Then
                 txtModuleSize.Text = CStr(sz - 1)
             End If
     End Select

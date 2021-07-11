@@ -14,7 +14,7 @@ Public Function CreateSymbols( _
             Call Err.Raise(5)
     End Select
 
-    If Not (1 <= maxVer And maxVer <= 40) Then Call Err.Raise(5)
+    If Not (MIN_VERSION <= maxVer And maxVer <= MAX_VERSION) Then Call Err.Raise(5)
 
     Dim charEncoding As New Encoding
     Call charEncoding.Init(charsetName)

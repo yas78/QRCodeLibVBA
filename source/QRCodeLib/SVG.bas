@@ -7,10 +7,10 @@ Public Function BuildSVG(ByRef gpPaths() As Variant, _
                          ByVal pictHeight As Long, _
                          ByVal foreRgb As String) As String
     Dim buf As New List
-    
+
     Dim indent As String
     indent = String(11, " ")
-    
+
     Dim gpPath As Variant
     Dim i As Long
     For Each gpPath In gpPaths

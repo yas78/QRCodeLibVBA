@@ -24,3 +24,8 @@ Public Enum OlePicType
     Bitmap = 1
     EnhMetaFile = 4
 End Enum
+
+Public Enum BackStyle
+    bkTransparent = 0
+    bkOpaque = 1
+End Enum
