@@ -20,7 +20,6 @@ Option Explicit
     Private Declare PtrSafe Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As LongPtr
 
     Private Declare PtrSafe Function Polygon Lib "gdi32" (ByVal hDC As LongPtr, ByRef lpPoint As POINTAPI, ByVal nCount As Long) As Long
-    Private Declare PtrSafe Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal nLeftRect As Long, ByVal nTopRect As Long, ByVal nRightRect As Long, ByVal nBottomRect As Long) As Long
 
     Private Declare PtrSafe Function SetPolyFillMode Lib "gdi32" (ByVal hDC As LongPtr, ByVal nPolyFillMode As Long) As Long
     Private Declare PtrSafe Function StrokeAndFillPath Lib "gdi32" (ByVal hDC As LongPtr) As Long
@@ -42,7 +41,6 @@ Option Explicit
     Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
 
     Private Declare Function Polygon Lib "gdi32" (ByVal hDC As Long, ByRef lpPoint As POINTAPI, ByVal nCount As Long) As Long
-    Private Declare Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal nLeftRect As Long, ByVal nTopRect As Long, ByVal nRightRect As Long, ByVal nBottomRect As Long) As Long
 
     Private Declare Function SetPolyFillMode Lib "gdi32" (ByVal hDC As Long, ByVal nPolyFillMode As Long) As Long
     Private Declare Function StrokeAndFillPath Lib "gdi32" (ByVal hDC As Long) As Long
@@ -89,9 +87,6 @@ Private Const HORZSIZE As Long = 4
 Private Const VERTSIZE As Long = 6
 Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
-
-Private Const FLOODFILLBORDER  As Long = 0
-Private Const FLOODFILLSURFACE As Long = 1
 
 #If VBA7 Then
 Public Function GetEMF(ByRef gpPaths() As Variant, _

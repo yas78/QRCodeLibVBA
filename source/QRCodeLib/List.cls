@@ -17,7 +17,7 @@ End Sub
 
 Public Sub Add(ByVal arg As Variant)
     ReDim Preserve m_buf(UBound(m_buf) + 1)
-    
+
     If (VarType(arg) And VbVarType.vbObject) = VbVarType.vbObject Then
         Set m_buf(UBound(m_buf)) = arg
     Else

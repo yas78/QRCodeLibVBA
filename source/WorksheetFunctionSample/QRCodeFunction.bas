@@ -41,9 +41,9 @@ Catch:
     Resume Finally
 End Function
 
-Private Function DeleteShape(ByVal Targe As Range)
+Private Function DeleteShape(ByVal Target As Range)
     Dim ws As Worksheet
-    Set ws = Targe.Parent
+    Set ws = Target.Parent
 
     Dim shps As Shapes
     Set shps = ws.Shapes
@@ -55,7 +55,7 @@ Private Function DeleteShape(ByVal Targe As Range)
         Set shp = shps(i)
         If shp.Type = msoPicture Then
             Set rng = ws.Range(shp.TopLeftCell, shp.BottomRightCell)
-            If Not (Intersect(Targe, rng) Is Nothing) Then shp.Delete
+            If Not (Intersect(Target, rng) Is Nothing) Then shp.Delete
         End If
     Next
 End Function
