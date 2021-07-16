@@ -5,7 +5,7 @@ Private Const TemporaryFolder = 2
 Private m_fs As Object
 
 Public Function QR(ByVal s As String, _
-                   Optional ByVal charsetNmae As String = "Shift_JIS") As Variant
+                   Optional ByVal charsetName As String = "Shift_JIS") As Variant
     If m_fs Is Nothing Then
         Set m_fs = CreateObject("Scripting.FileSystemObject")
     End If
@@ -20,7 +20,7 @@ On Error GoTo Catch
     If Len(s) = 0 Then Exit Function
 
     Dim sbls As Symbols
-    Set sbls = CreateSymbols(charsetName:=charsetNmae)
+    Set sbls = CreateSymbols(charsetName:=charsetName)
     Call sbls.AppendText(s)
 
     Dim filePath As String

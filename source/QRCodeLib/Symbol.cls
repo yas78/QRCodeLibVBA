@@ -29,8 +29,8 @@ Private m_currVersion      As Long
 Private m_dataBitCapacity As Long
 Private m_dataBitCounter  As Long
 
-Private m_segments       As Collection
-Private m_segmentCounter As Object
+Private m_segments As Collection
+Private m_segmentCounter(EncodingMode.NUMERIC To EncodingMode.KANJI) As Long
 
 Private m_index As Long
 
@@ -50,12 +50,6 @@ Friend Sub Init(ByVal parentObj As Symbols)
     m_dataBitCounter = 0
 
     Set m_segments = New Collection
-    Set m_segmentCounter = CreateObject("Scripting.Dictionary")
-
-    Call m_segmentCounter.Add(EncodingMode.NUMERIC, 0)
-    Call m_segmentCounter.Add(EncodingMode.ALPHA_NUMERIC, 0)
-    Call m_segmentCounter.Add(EncodingMode.EIGHT_BIT_BYTE, 0)
-    Call m_segmentCounter.Add(EncodingMode.KANJI, 0)
 
     If parentObj.StructuredAppend Then
         m_dataBitCapacity = m_dataBitCapacity - StructuredAppend.HEADER_LENGTH
@@ -151,11 +145,9 @@ End Function
 
 Private Sub SelectVersion()
     Dim num As Long
-
-    Dim encMode As Variant ' Subtype : EncodingMode
-    For Each encMode In m_segmentCounter.Keys()
+    Dim encMode As EncodingMode
+    For encMode = EncodingMode.NUMERIC To EncodingMode.KANJI
         num = m_segmentCounter(encMode)
-
         m_dataBitCounter = m_dataBitCounter + _
                            num * CharCountIndicator.GetLength( _
                                 m_currVersion + 1, encMode) - _
@@ -1014,7 +1006,7 @@ Public Sub SaveAs(ByVal filePath As String, _
                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                   Optional ByVal foreRgb As String = ColorCode.BLACK, _
                   Optional ByVal backRgb As String = ColorCode.WHITE, _
-                  Optional ByVal fmt As ImageFormat = fmtbmp + fmtMonochrome, _
+                  Optional ByVal fmt As ImageFormat = fmtBMP + fmtMonochrome, _
                   Optional ByVal bkStyle As BackStyle = BackStyle.bkOpaque)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -1034,7 +1026,7 @@ Public Sub SaveAs(ByVal filePath As String, _
     Dim pict      As stdole.IPictureDisp
 
     If (fmt And &HF0&) = 0 Then
-        fmt = fmt + ImageFormat.fmtbmp
+        fmt = fmt + ImageFormat.fmtBMP
     End If
 
     Select Case fmt

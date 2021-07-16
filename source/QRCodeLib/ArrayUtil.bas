@@ -27,4 +27,3 @@ Public Function Rotate90(ByRef array2D() As Variant) As Variant()
 
     Rotate90 = ret
 End Function
-

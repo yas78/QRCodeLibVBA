@@ -9,16 +9,22 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private m_buf As Object
+Private m_buf() As Variant
 
 Private Sub Class_Initialize()
-    Set m_buf = CreateObject("Scripting.Dictionary")
+    m_buf = Array()
 End Sub
 
 Public Sub Add(ByVal arg As Variant)
-    Call m_buf.Add(m_buf.Count, arg)
+    ReDim Preserve m_buf(UBound(m_buf) + 1)
+    
+    If (VarType(arg) And VbVarType.vbObject) = VbVarType.vbObject Then
+        Set m_buf(UBound(m_buf)) = arg
+    Else
+        m_buf(UBound(m_buf)) = arg
+    End If
 End Sub
 
 Public Function Items() As Variant()
-    Items = m_buf.Items()
+    Items = m_buf
 End Function

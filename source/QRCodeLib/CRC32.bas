@@ -39,10 +39,10 @@ Private Sub MakeCrcTable()
             Else
                 c = (c \ 2) And &H7FFFFFFF
             End If
-        Next k
+        Next
 
         m_crcTable(n) = c
-    Next n
+    Next
 
     m_crcTableComputed = True
 End Sub
