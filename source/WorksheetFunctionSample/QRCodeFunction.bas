@@ -28,7 +28,10 @@ On Error GoTo Catch
 
     If m_fs.FileExists(filePath) Then Call m_fs.DeleteFile(filePath)
     Call sbls(0).SaveAs(filePath, fmt:=fmtEMF)
-    Call AddPicture(filePath, rng)
+
+    Dim shp As Shape
+    Set shp = AddPicture(filePath, rng)
+    Call FillShape(shp, vbWhite)
 
     QR = ""
 
@@ -60,7 +63,7 @@ Private Function DeleteShape(ByVal Target As Range)
     Next
 End Function
 
-Private Sub AddPicture(ByVal filePath As String, ByVal Target As Range)
+Private Function AddPicture(ByVal filePath As String, ByVal Target As Range) As Shape
     Dim shps As Shapes
     Set shps = Target.Parent.Shapes
 
@@ -82,4 +85,14 @@ Private Sub AddPicture(ByVal filePath As String, ByVal Target As Range)
 
     shp.Left = Target.Left + Target.Width / 2 - shp.Width / 2
     shp.Top = Target.Top + Target.Height / 2 - shp.Height / 2
+
+    Set AddPicture = shp
+End Function
+
+Private Sub FillShape(ByVal shp As Shape, ByVal colorRgb)
+    With shp.Fill
+        .ForeColor.RGB = colorRgb
+        .Transparency = 0
+        .Solid
+    End With
 End Sub
