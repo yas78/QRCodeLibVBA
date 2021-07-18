@@ -939,7 +939,7 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim gpPaths() As Variant
     gpPaths = GraphicPath.FindContours(img)
 
-    GetSVG = SVG.BuildSVG(gpPaths, pictWidth, pictHeight, foreRgb)
+    GetSVG = SVG.GetSVG(gpPaths, pictWidth, pictHeight, foreRgb)
 End Function
 
 #If VBA7 Then

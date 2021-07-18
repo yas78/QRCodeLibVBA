@@ -161,7 +161,7 @@ Public Function GetEMF(ByRef gpPaths() As Variant, _
 
     hBrush = CreateSolidBrush(foreColorRgb)
     hOldBrush = SelectObject(hDC, hBrush)
-    hPen = CreatePen(PS_SOLID, 0, foreColorRgb)
+    hPen = CreatePen(PS_SOLID, 1, foreColorRgb)
     hOldPen = SelectObject(hDC, hPen)
 
     Call SetPolyFillMode(hDC, PolygonFillMode.ALTERNATE)

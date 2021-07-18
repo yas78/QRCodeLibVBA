@@ -2,7 +2,7 @@ Attribute VB_Name = "SVG"
 Option Private Module
 Option Explicit
 
-Public Function BuildSVG(ByRef gpPaths() As Variant, _
+Public Function GetSVG(ByRef gpPaths() As Variant, _
                          ByVal pictWidth As Long, _
                          ByVal pictHeight As Long, _
                          ByVal foreRgb As String) As String
@@ -38,5 +38,5 @@ Public Function BuildSVG(ByRef gpPaths() As Variant, _
         "    />" & vbNewLine & _
         "</svg>"
 
-    BuildSVG = ret
+    GetSVG = ret
 End Function
