@@ -630,7 +630,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
     Dim offset As Long
     offset = 0
 
-    Dim colorRgb    As Long
+    Dim colorRGB    As Long
     Dim bitmapRow() As Byte
     Dim idx         As Long
 
@@ -642,12 +642,12 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
         idx = 0
 
         For Each v In moduleMatrix(r)
-            colorRgb = IIf(Values.IsDark(v), foreColorRgb, backColorRgb)
+            colorRGB = IIf(Values.IsDark(v), foreColorRgb, backColorRgb)
 
             For i = 1 To moduleSize
-                bitmapRow(idx + 0) = CByte((colorRgb And &HFF0000) \ 2 ^ 16) ' B
-                bitmapRow(idx + 1) = CByte((colorRgb And &HFF00&) \ 2 ^ 8)   ' G
-                bitmapRow(idx + 2) = CByte(colorRgb And &HFF&)               ' R
+                bitmapRow(idx + 0) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
+                bitmapRow(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
+                bitmapRow(idx + 2) = CByte(colorRGB And &HFF&)               ' R
                 idx = idx + 3
             Next
         Next
@@ -815,7 +815,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
     Dim offset As Long
     offset = 0
 
-    Dim colorRgb    As Long
+    Dim colorRGB    As Long
     Dim alpha       As Byte
     Dim bitmapRow() As Byte
     Dim idx         As Long
@@ -835,17 +835,17 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
 
         For Each v In moduleMatrix(r)
             If Values.IsDark(v) Then
-                colorRgb = foreColorRgb
+                colorRGB = foreColorRgb
                 alpha = &HFF
             Else
-                colorRgb = backColorRgb
+                colorRGB = backColorRgb
                 alpha = 0
             End If
 
             For i = 1 To moduleSize
-                bitmapRow(idx + 0) = CByte(colorRgb And &HFF&)               ' R
-                bitmapRow(idx + 1) = CByte((colorRgb And &HFF00&) \ 2 ^ 8)   ' G
-                bitmapRow(idx + 2) = CByte((colorRgb And &HFF0000) \ 2 ^ 16) ' B
+                bitmapRow(idx + 0) = CByte(colorRGB And &HFF&)               ' R
+                bitmapRow(idx + 1) = CByte((colorRGB And &HFF00&) \ 2 ^ 8)   ' G
+                bitmapRow(idx + 2) = CByte((colorRGB And &HFF0000) \ 2 ^ 16) ' B
                 idx = idx + 3
 
                 If bkStyle = BackStyle.bkTransparent Then
