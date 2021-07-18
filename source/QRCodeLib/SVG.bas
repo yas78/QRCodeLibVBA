@@ -9,7 +9,7 @@ Public Function GetSVG(ByRef gpPaths() As Variant, _
     Dim buf As New List
 
     Dim indent As String
-    indent = String(11, " ")
+    indent = String(5, " ")
 
     Dim gpPath As Variant
     Dim i As Long
@@ -27,16 +27,11 @@ Public Function GetSVG(ByRef gpPaths() As Variant, _
     data = Left$(data, Len(data) - Len(vbNewLine))
 
     Dim ret As String
-    ret = _
-        "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" & vbNewLine & _
-        "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'" & vbNewLine & _
-        "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>" & vbNewLine & _
-        "<svg xmlns='http://www.w3.org/2000/svg'" & vbNewLine & _
-        "    width='" & CStr(pictWidth) & "' height='" & CStr(pictHeight) & "' viewBox='0 0 " & CStr(pictWidth) & " " & CStr(pictHeight) & "'>" & vbNewLine & _
-        "    <path fill='" & foreRgb & "' stroke='" & foreRgb & "' stroke-width='1'" & vbNewLine & _
-        "        d='" & data & "'" & vbNewLine & _
-        "    />" & vbNewLine & _
-        "</svg>"
+    ret = "<svg version=""1.1"" xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink""" & vbNewLine & _
+          "  width=""" & CStr(pictWidth) & "px"" height=""" & CStr(pictHeight) & "px"" viewBox=""0 0 " & CStr(pictWidth) & " " & CStr(pictHeight) & """>" & vbNewLine & _
+          "<path fill=""" & foreRgb & """ stroke=""" & foreRgb & """ stroke-width=""1""" & vbNewLine & _
+          "  d=""" & data & """ />" & vbNewLine & _
+          "</svg>"
 
     GetSVG = ret
 End Function
