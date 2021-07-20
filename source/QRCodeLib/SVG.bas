@@ -3,9 +3,9 @@ Option Private Module
 Option Explicit
 
 Public Function GetSVG(ByRef gpPaths() As Variant, _
-                         ByVal pictWidth As Long, _
-                         ByVal pictHeight As Long, _
-                         ByVal foreRgb As String) As String
+                       ByVal pictWidth As Long, _
+                       ByVal pictHeight As Long, _
+                       ByVal foreRgb As String) As String
     Dim buf As New List
 
     Dim indent As String

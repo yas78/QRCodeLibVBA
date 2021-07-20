@@ -37,7 +37,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
             Set p = st.Clone()
             p.Y = p.Y - 1
 
-            Do
+            Do Until p.Equals(st)
                 Select Case dr
                     Case Direction.Up
                         If img(p.Y)(p.X) > 0 Then
@@ -129,7 +129,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                 Case Else
                     Call Err.Raise(51)
                 End Select
-            Loop While Not p.Equals(st)
+            Loop
 
             Call gpPaths.Add(gpPath.Items())
 Continue:
