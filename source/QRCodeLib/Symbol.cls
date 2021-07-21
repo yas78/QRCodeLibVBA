@@ -165,7 +165,7 @@ Private Sub SelectVersion()
     End If
 End Sub
 
-Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
+Private Function BuildDataBlock() As Variant()
     Dim dataBytes() As Byte
     dataBytes = GetMessageBytes()
 
@@ -177,7 +177,7 @@ Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
     numFolBlocks = RSBlock.GetTotalNumber( _
         m_parent.ErrorCorrectionLevel, m_currVersion, False)
 
-    Dim ret() As Variant ' Subtype : Byte()
+    Dim ret() As Variant
     ReDim ret(numPreBlocks + numFolBlocks - 1)
 
     Dim dataIdx As Long
@@ -220,7 +220,7 @@ Private Function BuildDataBlock() As Variant() ' Subtype : Byte()
     BuildDataBlock = ret
 End Function
 
-Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant() ' Subtype : Byte()
+Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Variant()
     Dim numECCodewords As Long
     numECCodewords = RSBlock.GetNumberECCodewords( _
         m_parent.ErrorCorrectionLevel, m_currVersion)
@@ -233,7 +233,7 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
     numFolBlocks = RSBlock.GetTotalNumber( _
         m_parent.ErrorCorrectionLevel, m_currVersion, False)
 
-    Dim ret() As Variant ' Subtype : Byte()
+    Dim ret() As Variant
     ReDim ret(numPreBlocks + numFolBlocks - 1)
 
     Dim eccDataTmp() As Byte
@@ -288,10 +288,10 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
 End Function
 
 Private Function GetEncodingRegionBytes() As Byte()
-    Dim dataBlock() As Variant ' Subtype : Byte()
+    Dim dataBlock() As Variant
     dataBlock = BuildDataBlock()
 
-    Dim ecBlock() As Variant ' Subtype : Byte()
+    Dim ecBlock() As Variant
     ecBlock = BuildErrorCorrectionBlock(dataBlock)
 
     Dim numCodewords  As Long
@@ -1006,7 +1006,7 @@ Public Sub SaveAs(ByVal filePath As String, _
                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                   Optional ByVal foreRgb As String = ColorCode.BLACK, _
                   Optional ByVal backRgb As String = ColorCode.WHITE, _
-                  Optional ByVal fmt As ImageFormat = fmtBMP + fmtMonochrome, _
+                  Optional ByVal fmt As ImageFormat = ImageFormat.fmtBMP + ImageFormat.fmtMonochrome, _
                   Optional ByVal bkStyle As BackStyle = BackStyle.bkOpaque)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
@@ -1047,7 +1047,6 @@ Public Sub SaveAs(ByVal filePath As String, _
     End Select
 
     Dim fNum As Integer
-    fNum = FreeFile()
 
     Select Case fmt
         Case &H10 To &H2F

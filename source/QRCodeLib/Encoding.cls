@@ -14,7 +14,7 @@ Private Const adTypeText   As Long = 2
 
 Private Const adModeReadWrite As Long = 3
 
-Private m_sr As Object ' Is ADODB.Stream
+Private m_sr As Object
 Private m_charset As String
 
 Public Sub Init(ByVal charsetName As String)
