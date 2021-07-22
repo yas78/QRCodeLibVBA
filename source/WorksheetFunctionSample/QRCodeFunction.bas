@@ -15,7 +15,7 @@ On Error GoTo Catch
 
     Dim rng As Range
     Set rng = Application.Caller.MergeArea
-    Call DeleteShape(rng)
+    Call DeletePictures(rng)
 
     If Len(s) = 0 Then Exit Function
 
@@ -31,6 +31,7 @@ On Error GoTo Catch
 
     Dim shp As Shape
     Set shp = AddPicture(filePath, rng)
+    Call FitToCell(shp)
     Call FillShape(shp, vbWhite)
 
     QR = ""
@@ -44,7 +45,7 @@ Catch:
     Resume Finally
 End Function
 
-Private Function DeleteShape(ByVal Target As Range)
+Private Function DeletePictures(ByVal Target As Range)
     Dim ws As Worksheet
     Set ws = Target.Parent
 
@@ -77,15 +78,6 @@ Private Function AddPicture(ByVal filePath As String, ByVal Target As Range) As 
         .Placement = xlMoveAndSize
     End With
 
-    If Target.Height * shp.Width <= Target.Width * shp.Height Then
-        shp.Height = Target.Height - 10
-    Else
-        shp.Width = Target.Width - 10
-    End If
-
-    shp.Left = Target.Left + Target.Width / 2 - shp.Width / 2
-    shp.Top = Target.Top + Target.Height / 2 - shp.Height / 2
-
     Set AddPicture = shp
 End Function
 
@@ -95,4 +87,18 @@ Private Sub FillShape(ByVal shp As Shape, ByVal colorRgb)
         .Transparency = 0
         .Solid
     End With
+End Sub
+
+Private Sub FitToCell(ByVal shp As Shape)
+    Dim rng As Range
+    Set rng = shp.TopLeftCell.MergeArea
+
+    If rng.Height * shp.Width <= rng.Width * shp.Height Then
+        shp.Height = rng.Height - 10
+    Else
+        shp.Width = rng.Width - 10
+    End If
+
+    shp.Left = rng.Left + rng.Width / 2 - shp.Width / 2
+    shp.Top = rng.Top + rng.Height / 2 - shp.Height / 2
 End Sub
