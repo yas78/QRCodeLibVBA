@@ -75,10 +75,5 @@ End Sub
 
 Public Function GetBytes() As Byte()
     If m_index < 0 Then Call Err.Raise(51)
-
-    Dim ret() As Byte
-    ReDim ret(m_index)
-
-    Call MoveMemory(VarPtr(ret(0)), VarPtr(m_buffer(0)), m_index + 1)
-    GetBytes = ret
+    GetBytes = m_buffer
 End Function
