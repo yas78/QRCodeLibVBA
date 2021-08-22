@@ -45,7 +45,7 @@ Catch:
     Resume Finally
 End Function
 
-Private Function DeletePictures(ByVal Target As Range)
+Private Sub DeletePictures(ByVal Target As Range)
     Dim ws As Worksheet
     Set ws = Target.Parent
 
@@ -62,7 +62,7 @@ Private Function DeletePictures(ByVal Target As Range)
             If Not (Intersect(Target, rng) Is Nothing) Then shp.Delete
         End If
     Next
-End Function
+End Sub
 
 Private Function AddPicture(ByVal filePath As String, ByVal Target As Range) As Shape
     Dim shps As Shapes
