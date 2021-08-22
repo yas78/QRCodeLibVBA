@@ -1184,6 +1184,7 @@ End Function
 
 Public Function GetTIFF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                         Optional ByVal monochrome As Boolean = False, _
+                        Optional ByVal bilevelImage As Boolean = False, _
                         Optional ByVal foreRgb As String = ColorCode.BLACK, _
                         Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
@@ -1194,6 +1195,8 @@ Public Function GetTIFF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE,
 
     If monochrome Then
         GetTIFF = GetPaletteColorTIFF(moduleSize, foreRgb, backRgb)
+    ElseIf bilevelImage Then
+        GetTIFF = GetBilevelTIFF(moduleSize)
     Else
         GetTIFF = GetFullColorTIFF(moduleSize, foreRgb, backRgb)
     End If
