@@ -1212,12 +1212,6 @@ Public Sub SaveAs(ByVal filePath As String, _
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
-#If VBA7 Then
-    Dim hEmf As LongPtr
-#Else
-    Dim hEmf As Long
-#End If
-
     Dim binData() As Byte
     Dim strData   As String
     Dim pict      As stdole.IPictureDisp
