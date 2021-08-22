@@ -15,6 +15,10 @@ Private Sub Class_Initialize()
     m_buf = Array()
 End Sub
 
+Public Property Get Count() As Long
+    Count = UBound(m_buf) + 1
+End Property
+
 Public Sub Add(ByVal arg As Variant)
     ReDim Preserve m_buf(UBound(m_buf) + 1)
 
