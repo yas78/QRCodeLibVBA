@@ -47,23 +47,7 @@ Option Explicit
 #End If
 
 Private Enum PenStyle
-    PS_COSMETIC = &H0
-    PS_ENDCAP_ROUND = &H0
-    PS_JOIN_ROUND = &H0
     PS_SOLID = &H0
-    PS_DASH = &H1
-    PS_DOT = &H2
-    PS_DASHDOT = &H3
-    PS_DASHDOTDOT = &H4
-    PS_NULL = &H5
-    PS_INSIDEFRAME = &H6
-    PS_USERSTYLE = &H7
-    PS_ALTERNATE = &H8
-    PS_ENDCAP_SQUARE = &H100
-    PS_ENDCAP_FLAT = &H200
-    PS_JOIN_BEVEL = &H1000
-    PS_JOIN_MITER = &H2000
-    PS_GEOMETRIC = &H10000
 End Enum
 
 Private Enum PolygonFillMode
