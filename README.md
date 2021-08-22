@@ -117,6 +117,15 @@ sbls(0).SaveAs "filename", fmt:=fmtSVG
 ' EMF
 sbls(0).SaveAs "filename", fmt:=fmtEMF
 
+' monochrome TIFF
+sbls(0).SaveAs "filename", fmt:=fmtTIFF
+
+' true color TIFF
+sbls(0).SaveAs "filename", fmt:=fmtTIFF + fmtTrueColor
+
+' bilevel TIFF
+sbls(0).SaveAs "filename", fmt:=fmtTIFF + fmtBilevel
+
 ' 10 pixels per module
 sbls(0).SaveAs "filename", moduleSize:=10
     

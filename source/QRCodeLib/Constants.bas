@@ -16,8 +16,10 @@ Public Enum ImageFormat
     fmtPNG = &H20
     fmtSVG = &H30
     fmtEMF = &H40
+    fmtTIFF = &H50
     fmtMonochrome = 0
     fmtTrueColor = 1
+    fmtBilevel = 2
 End Enum
 
 Public Enum OlePicType

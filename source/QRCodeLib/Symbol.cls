@@ -528,13 +528,13 @@ End Sub
 Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
                                   ByVal foreRgb As String, _
                                   ByVal backRgb As String) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRgb As Long
     backColorRgb = ColorCode.ToRGB(backRgb)
-
-    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -604,13 +604,13 @@ End Function
 Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
                                  ByVal foreRgb As String, _
                                  ByVal backRgb As String) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRgb As Long
     backColorRgb = ColorCode.ToRGB(backRgb)
-
-    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -715,13 +715,13 @@ End Function
 Private Function GetMonochromePNG(ByVal moduleSize As Long, _
                                   ByVal foreRgb As String, _
                                   ByVal backRgb As String) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRgb As Long
     backColorRgb = ColorCode.ToRGB(backRgb)
-
-    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -789,13 +789,13 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
                                  ByVal foreRgb As String, _
                                  ByVal backRgb As String, _
                                  ByVal bkStyle As BackStyle) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim backColorRgb As Long
     backColorRgb = ColorCode.ToRGB(backRgb)
-
-    If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     Dim moduleMatrix() As Variant
     moduleMatrix = QuietZone.Place(GetModuleMatrix())
@@ -1002,6 +1002,203 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     GetEMF = EMF.GetEMF(gpPaths, pictWidth, pictHeight, foreColorRgb)
 End Function
 
+Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
+    Dim moduleMatrix() As Variant
+    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+
+    Dim moduleCount As Long
+    moduleCount = UBound(moduleMatrix) + 1
+
+    Dim pictWidth As Long
+    pictWidth = moduleCount * moduleSize
+
+    Dim pictHeight As Long
+    pictHeight = moduleCount * moduleSize
+
+    Dim pack8bit As Long
+    If pictWidth Mod 8 > 0 Then
+        pack8bit = 8 - (pictWidth Mod 8)
+    End If
+
+    Dim rowSize As Long
+    rowSize = (pictWidth + pack8bit) \ 8
+
+    Dim bitmapData() As Byte
+    ReDim bitmapData(rowSize * pictHeight - 1)
+
+    Dim bs As New BitSequence
+
+    Dim pixelColor  As Long
+    Dim bitmapRow() As Byte
+
+    Dim offset As Long
+    offset = 0
+
+    Dim r As Long
+    Dim v As Variant
+    Dim i As Long
+    For r = 0 To UBound(moduleMatrix)
+        Call bs.Clear
+
+        For Each v In moduleMatrix(r)
+            pixelColor = IIf(Values.IsDark(v), 0, 1)
+
+            For i = 1 To moduleSize
+                Call bs.Append(pixelColor, 1)
+            Next
+        Next
+        Call bs.Append(0, pack8bit)
+        bitmapRow = bs.GetBytes()
+
+        For i = 1 To moduleSize
+            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            offset = offset + rowSize
+        Next
+    Next
+
+    GetBilevelTIFF = TIFF.GetTIFF( _
+        bitmapData, pictWidth, pictHeight, TiffImageType.Bilevel, Empty)
+End Function
+
+Private Function GetPaletteColorTIFF(ByVal moduleSize As Long, _
+                                     ByVal foreRgb As String, _
+                                     ByVal backRgb As String) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
+
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
+
+    Dim moduleMatrix() As Variant
+    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+
+    Dim pictWidth As Long
+    pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
+
+    Dim pictHeight As Long
+    pictHeight = pictWidth
+
+    Dim rowSize As Long
+    rowSize = pictWidth
+
+    Dim bitmapData() As Byte
+    ReDim bitmapData(rowSize * pictHeight - 1)
+
+    Dim offset As Long
+    offset = 0
+
+    Dim paletteIndex As Long
+    Dim bitmapRow()  As Byte
+    Dim idx          As Long
+
+    Dim r As Long
+    Dim v As Variant
+    Dim i As Long
+    For r = 0 To UBound(moduleMatrix)
+        ReDim bitmapRow(rowSize - 1)
+        idx = 0
+
+        For Each v In moduleMatrix(r)
+            paletteIndex = IIf(Values.IsDark(v), 0, 1)
+
+            For i = 1 To moduleSize
+                bitmapRow(idx) = CByte(paletteIndex)
+                idx = idx + 1
+            Next
+        Next
+
+        For i = 1 To moduleSize
+            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), UBound(bitmapRow) + 1)
+            offset = offset + rowSize
+        Next
+    Next
+
+    GetPaletteColorTIFF = TIFF.GetTIFF( _
+        bitmapData, pictWidth, pictHeight, TiffImageType.PaletteColor, Array(foreColorRgb, backColorRgb))
+End Function
+
+Private Function GetFullColorTIFF(ByVal moduleSize As Long, _
+                                  ByVal foreRgb As String, _
+                                  ByVal backRgb As String) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
+    Dim foreColorRgb As Long
+    foreColorRgb = ColorCode.ToRGB(foreRgb)
+
+    Dim backColorRgb As Long
+    backColorRgb = ColorCode.ToRGB(backRgb)
+
+    Dim moduleMatrix() As Variant
+    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+
+    Dim pictWidth As Long
+    pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
+
+    Dim pictHeight As Long
+    pictHeight = pictWidth
+
+    Dim rowSize As Long
+    rowSize = 3 * pictWidth
+
+    Dim bitmapData() As Byte
+    ReDim bitmapData(rowSize * pictHeight - 1)
+
+    Dim offset As Long
+    offset = 0
+
+    Dim colorRgb    As Long
+    Dim bitmapRow() As Byte
+    Dim idx         As Long
+
+    Dim r As Long
+    Dim v As Variant
+    Dim i As Long
+    For r = 0 To UBound(moduleMatrix)
+        ReDim bitmapRow(rowSize - 1)
+        idx = 0
+
+        For Each v In moduleMatrix(r)
+            colorRgb = IIf(Values.IsDark(v), foreColorRgb, backColorRgb)
+
+            For i = 1 To moduleSize
+                bitmapRow(idx + 0) = CByte(colorRgb And &HFF&)               ' R
+                bitmapRow(idx + 1) = CByte((colorRgb And &HFF00&) \ 2 ^ 8)   ' G
+                bitmapRow(idx + 2) = CByte((colorRgb And &HFF0000) \ 2 ^ 16) ' B
+                idx = idx + 3
+            Next
+        Next
+
+        For i = 1 To moduleSize
+            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), UBound(bitmapRow) + 1)
+            offset = offset + rowSize
+        Next
+    Next
+
+    GetFullColorTIFF = TIFF.GetTIFF( _
+        bitmapData, pictWidth, pictHeight, TiffImageType.FullColor, Empty)
+End Function
+
+Public Function GetTIFF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
+                        Optional ByVal monochrome As Boolean = False, _
+                        Optional ByVal foreRgb As String = ColorCode.BLACK, _
+                        Optional ByVal backRgb As String = ColorCode.WHITE) As Byte()
+    If m_dataBitCounter = 0 Then Call Err.Raise(51)
+
+    If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
+    If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
+
+    If monochrome Then
+        GetTIFF = GetPaletteColorTIFF(moduleSize, foreRgb, backRgb)
+    Else
+        GetTIFF = GetFullColorTIFF(moduleSize, foreRgb, backRgb)
+    End If
+End Function
+
 Public Sub SaveAs(ByVal filePath As String, _
                   Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                   Optional ByVal foreRgb As String = ColorCode.BLACK, _
@@ -1029,37 +1226,58 @@ Public Sub SaveAs(ByVal filePath As String, _
         fmt = fmt + ImageFormat.fmtBMP
     End If
 
-    Select Case fmt
-        Case &H10
-            binData = GetMonochromeBMP(moduleSize, foreRgb, backRgb)
-        Case &H11 To &H1F
-            binData = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
-        Case &H20
-            binData = GetMonochromePNG(moduleSize, foreRgb, backRgb)
-        Case &H21 To &H2F
-            binData = GetTrueColorPNG(moduleSize, foreRgb, backRgb, bkStyle)
-        Case &H30 To &H3F
+    Select Case fmt And &HF0&
+        Case ImageFormat.fmtBMP
+            Select Case fmt And &HF
+                Case ImageFormat.fmtMonochrome
+                    binData = GetMonochromeBMP(moduleSize, foreRgb, backRgb)
+                Case ImageFormat.fmtTrueColor
+                    binData = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
+                Case Else
+                    Call Err.Raise(5)
+            End Select
+        Case ImageFormat.fmtPNG
+            Select Case fmt And &HF
+                Case ImageFormat.fmtMonochrome
+                    binData = GetMonochromePNG(moduleSize, foreRgb, backRgb)
+                Case ImageFormat.fmtTrueColor
+                    binData = GetTrueColorPNG(moduleSize, foreRgb, backRgb, bkStyle)
+                Case Else
+                    Call Err.Raise(5)
+            End Select
+        Case ImageFormat.fmtSVG
             strData = GetSVG(moduleSize, foreRgb)
-        Case &H40 To &H4F
+        Case ImageFormat.fmtEMF
             Set pict = GetPicture(moduleSize, foreRgb, backRgb, picType:=OlePicType.EnhMetaFile)
+        Case ImageFormat.fmtTIFF
+            Select Case fmt And &HF
+                Case ImageFormat.fmtMonochrome
+                    binData = GetPaletteColorTIFF(moduleSize, foreRgb, backRgb)
+                Case ImageFormat.fmtTrueColor
+                    binData = GetFullColorTIFF(moduleSize, foreRgb, backRgb)
+                Case ImageFormat.fmtBilevel
+                    binData = GetBilevelTIFF(moduleSize)
+                Case Else
+                    Call Err.Raise(5)
+            End Select
         Case Else
             Call Err.Raise(5)
     End Select
 
     Dim fNum As Integer
 
-    Select Case fmt
-        Case &H10 To &H2F
+    Select Case fmt And &HF0&
+        Case ImageFormat.fmtBMP, ImageFormat.fmtPNG, ImageFormat.fmtTIFF
             fNum = FreeFile()
             Open filePath For Binary As #fNum
             Put #fNum, , binData
             Close #fNum
-        Case &H30 To &H3F
+        Case ImageFormat.fmtSVG
             fNum = FreeFile()
             Open filePath For Output As #fNum Len = &H7FFF
             Print #fNum, strData
             Close #fNum
-        Case &H40 To &H4F
+        Case ImageFormat.fmtEMF
             Call stdole.SavePicture(pict, filePath)
         Case Else
             Call Err.Raise(5)
