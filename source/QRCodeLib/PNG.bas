@@ -109,7 +109,7 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
                      ByVal pictHeight As Long, _
                      ByVal bitDepth As Long, _
                      ByVal tColor As PngColorType, _
-                     ByVal compression As Long, _
+                     ByVal compressionMethod As Long, _
                      ByVal tFilter As Long, _
                      ByVal interlace As Long, _
                      ByRef ihdr As PngChunk)
@@ -130,7 +130,7 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
 
         .pData(8) = bitDepth
         .pData(9) = tColor
-        .pData(10) = compression
+        .pData(10) = compressionMethod
         .pData(11) = tFilter
         .pData(12) = interlace
 
