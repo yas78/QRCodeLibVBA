@@ -33,28 +33,28 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
 
     flg = flg + fcheck
 
-    Dim bytes() As Byte
-    Call Deflate.Compress(data, btype, bytes)
+    Dim compressedData() As Byte
+    Call Deflate.Compress(data, btype, compressedData)
 
     Dim adler As Long
     adler = ADLER32.Checksum(data)
 
     Dim sz As Long
-    sz = UBound(bytes) + 1
+    sz = UBound(compressedData) + 1
 
     ReDim buffer(1 + 1 + sz + 4 - 1)
 
     Dim idx As Long
     idx = 0
 
-    Dim lbe As Long
-
     Call MoveMemory(VarPtr(buffer(idx)), VarPtr(cmf), 1)
     idx = idx + 1
     Call MoveMemory(VarPtr(buffer(idx)), VarPtr(flg), 1)
     idx = idx + 1
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), sz)
+    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(compressedData(0)), sz)
     idx = idx + sz
-    lbe = BitConverter.ToBigEndian(adler)
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+    
+    Dim bytes() As Byte
+    bytes = BitConverter.GetBytes(adler, True)
+    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
 End Sub

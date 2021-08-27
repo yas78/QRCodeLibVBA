@@ -115,7 +115,7 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
                      ByRef ihdr As PngChunk)
     Const STR_IHDR As Long = &H49484452
 
-    Dim lbe As Long
+    Dim bytes() As Byte
     Dim crc As Long
 
     With ihdr
@@ -123,10 +123,10 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
         .pType = STR_IHDR
 
         ReDim .pData(.pLength - 1)
-        lbe = BitConverter.ToBigEndian(pictWidth)
-        Call MoveMemory(VarPtr(.pData(0)), VarPtr(lbe), 4)
-        lbe = BitConverter.ToBigEndian(pictHeight)
-        Call MoveMemory(VarPtr(.pData(4)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(pictWidth, True)
+        Call MoveMemory(VarPtr(.pData(0)), VarPtr(bytes(0)), 4)
+        bytes = BitConverter.GetBytes(pictHeight, True)
+        Call MoveMemory(VarPtr(.pData(4)), VarPtr(bytes(0)), 4)
 
         .pData(8) = bitDepth
         .pData(9) = tColor
@@ -225,60 +225,60 @@ Private Sub ToBytes(ByRef psgn As PngSignature, _
         idx = idx + 8
     End With
 
-    Dim lbe As Long
+    Dim bytes() As Byte
 
     With ihdr
-        lbe = BitConverter.ToBigEndian(.pLength)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pLength, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
-        lbe = BitConverter.ToBigEndian(.pType)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pType, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
         Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
         idx = idx + .pLength
-        lbe = BitConverter.ToBigEndian(.pCRC)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pCRC, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
     End With
 
     If iplt.pLength > 0 Then
         With iplt
-            lbe = BitConverter.ToBigEndian(.pLength)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+            bytes = BitConverter.GetBytes(.pLength, True)
+            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
             idx = idx + 4
-            lbe = BitConverter.ToBigEndian(.pType)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+            bytes = BitConverter.GetBytes(.pType, True)
+            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
             idx = idx + 4
             Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
             idx = idx + .pLength
-            lbe = BitConverter.ToBigEndian(.pCRC)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+            bytes = BitConverter.GetBytes(.pCRC, True)
+            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
             idx = idx + 4
         End With
     End If
 
     With idat
-        lbe = BitConverter.ToBigEndian(.pLength)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pLength, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
-        lbe = BitConverter.ToBigEndian(.pType)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pType, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
         Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
         idx = idx + .pLength
-        lbe = BitConverter.ToBigEndian(.pCRC)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pCRC, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
     End With
 
     With iend
-        lbe = BitConverter.ToBigEndian(.pLength)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pLength, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
-        lbe = BitConverter.ToBigEndian(.pType)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pType, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
         idx = idx + 4
-        lbe = BitConverter.ToBigEndian(.pCRC)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lbe), 4)
+        bytes = BitConverter.GetBytes(.pCRC, True)
+        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
     End With
 End Sub
