@@ -154,7 +154,7 @@ Private Sub MakeColorPalette(ByVal colors As Variant)
     Erase m_palette.r
     Erase m_palette.g
     Erase m_palette.b
-    
+
     Dim i As Long
     For i = 0 To UBound(colors)
         m_palette.r(i) = ConvertTo16bits(colors(i) And &HFF&)

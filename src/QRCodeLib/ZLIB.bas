@@ -53,7 +53,7 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
     idx = idx + 1
     Call MoveMemory(VarPtr(buffer(idx)), VarPtr(compressedData(0)), sz)
     idx = idx + sz
-    
+
     Dim bytes() As Byte
     bytes = BitConverter.GetBytes(adler, True)
     Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
