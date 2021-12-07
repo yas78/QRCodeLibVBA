@@ -32,11 +32,11 @@ Public Function GetEntries() As IFDEntry()
     Dim ret() As IFDEntry
     ReDim ret(m_entries.Count - 1)
 
-    Dim entry As IFDEntry
+    Dim e As IFDEntry
     Dim idx As Long
     idx = 0
-    For Each entry In m_entries
-        Set ret(idx) = entry
+    For Each e In m_entries
+        Set ret(idx) = e
         idx = idx + 1
     Next
 
@@ -53,9 +53,9 @@ Public Function GetBytes() As Byte()
         Call buf.Add(temp(i))
     Next
 
-    Dim entry As IFDEntry
-    For Each entry In m_entries
-        temp = entry.GetBytes()
+    Dim e As IFDEntry
+    For Each e In m_entries
+        temp = e.GetBytes()
         For i = 0 To UBound(temp)
             Call buf.Add(temp(i))
         Next

@@ -182,26 +182,26 @@ Private Sub UpdateOffsets()
     Dim entries() As IFDEntry
     entries = m_ifd.GetEntries()
 
-    Dim entry As IFDEntry
+    Dim e As IFDEntry
     Dim i As Long
     For i = 0 To UBound(entries)
-        Set entry = entries(i)
-        Select Case entry.TagID
+        Set e = entries(i)
+        Select Case e.TagID
             Case TagID.BitsPerSample
                 If m_imageType = TiffImageType.FullColor Then
-                    entry.Value = offset
-                    offset = offset + entry.GetDataSize()
+                    e.Value = offset
+                    offset = offset + e.GetDataSize()
                 End If
             Case TagID.XResolution, TagID.YResolution, TagID.ColorMap
-                entry.Value = offset
-                offset = offset + entry.GetDataSize()
+                e.Value = offset
+                offset = offset + e.GetDataSize()
         End Select
     Next
 
     For i = 0 To UBound(entries)
-        Set entry = entries(i)
-        If entry.TagID = TagID.StripOffsets Then
-            entry.Value = offset
+        Set e = entries(i)
+        If e.TagID = TagID.StripOffsets Then
+            e.Value = offset
             Exit For
         End If
     Next
