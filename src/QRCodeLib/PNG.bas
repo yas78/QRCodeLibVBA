@@ -195,14 +195,13 @@ Private Sub ToBytes(ByRef psgn As PngSignature, _
                     ByRef idat As PngChunk, _
                     ByRef iend As PngChunk, _
                     ByRef buffer() As Byte)
-    Dim pfhSize As Long
-    pfhSize = 8
+    Dim psgnSize As Long
+    psgnSize = 8
 
     Dim ihdrSize As Long
     ihdrSize = 12 + ihdr.pLength
 
     Dim ipltSize As Long
-
     If iplt.pLength > 0 Then
         ipltSize = 12 + iplt.pLength
     Else
@@ -215,15 +214,13 @@ Private Sub ToBytes(ByRef psgn As PngSignature, _
     Dim iendSize As Long
     iendSize = 12 + iend.pLength
 
-    ReDim buffer(pfhSize + ihdrSize + ipltSize + idatSize + iendSize - 1)
+    ReDim buffer(psgnSize + ihdrSize + ipltSize + idatSize + iendSize - 1)
 
     Dim idx As Long
     idx = 0
 
-    With psgn
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.psData(0)), 8)
-        idx = idx + 8
-    End With
+    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(psgn.psData(0)), 8)
+    idx = idx + 8
 
     Dim bytes() As Byte
 
