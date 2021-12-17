@@ -111,7 +111,6 @@ sbls(0).SaveAs "filename", fmt:=fmtGIF
 ' transparent GIF
 sbls(0).SaveAs "filename", fmt:=fmtGIF, bkStyle:=bkTransparent
 
-
 ' monochrome PNG
 sbls(0).SaveAs "filename", fmt:=fmtPNG
 
