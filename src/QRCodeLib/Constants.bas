@@ -17,6 +17,7 @@ Public Enum ImageFormat
     fmtSVG = &H30
     fmtEMF = &H40
     fmtTIFF = &H50
+    fmtGIF = &H60
     fmtMonochrome = 0
     fmtTrueColor = 1
     fmtBilevel = 2

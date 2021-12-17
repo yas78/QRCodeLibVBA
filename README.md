@@ -102,6 +102,16 @@ sbls(0).SaveAs "filename"
 ' true color BMP
 sbls(0).SaveAs "filename", fmt:=fmtTrueColor
 
+' EMF
+sbls(0).SaveAs "filename", fmt:=fmtEMF
+
+' GIF
+sbls(0).SaveAs "filename", fmt:=fmtGIF
+
+' transparent GIF
+sbls(0).SaveAs "filename", fmt:=fmtGIF, bkStyle:=bkTransparent
+
+
 ' monochrome PNG
 sbls(0).SaveAs "filename", fmt:=fmtPNG
 
@@ -113,9 +123,6 @@ sbls(0).SaveAs "filename", fmt:=fmtPNG + fmtTrueColor, bkStyle:=bkTransparent
 
 ' SVG
 sbls(0).SaveAs "filename", fmt:=fmtSVG
-
-' EMF
-sbls(0).SaveAs "filename", fmt:=fmtEMF
 
 ' monochrome TIFF
 sbls(0).SaveAs "filename", fmt:=fmtTIFF
