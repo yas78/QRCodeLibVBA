@@ -403,7 +403,7 @@ Private Sub ToBytes( _
 
     Dim sz As Long
     sz = hdrSize + lsDescSize + gcTableSize + gcExtSize + imgDescSize + imgBlocksSize + trSize
-    
+
     ReDim buffer(sz - 1)
 
     Dim idx As Long
