@@ -1209,7 +1209,7 @@ Public Function GetGIF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
                        Optional ByVal bpp As Long = 1) As Byte()
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
     If (1 <= bpp And bpp <= 8) = False Then Call Err.Raise(5)
-    
+
     Dim foreColorRgb As Long
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
