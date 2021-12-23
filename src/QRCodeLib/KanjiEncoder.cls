@@ -59,6 +59,7 @@ Private Sub IQRCodeEncoder_Append(ByVal c As String)
     End Select
 
     wd = ((wd \ 2 ^ 8) * &HC0&) + (wd And &HFF&)
+
     If m_charCounter = 0 Then
         ReDim m_data(0)
     Else
