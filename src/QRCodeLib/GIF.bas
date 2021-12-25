@@ -78,7 +78,7 @@ Public Function GetGIF(ByRef data() As Byte, _
     Call MakeLogicalScreenDescriptor(pictWidth, pictHeight, bpp, True, lsDesc)
 
     Dim gcTable() As Byte
-    Call MakeGlobalColorTable(palette, gcTable)
+    Call MakeGlobalColorTable(palette, bpp, gcTable)
 
     Dim gcExt As GraphicControlExtension
     If bkTransparent Then
@@ -138,20 +138,7 @@ Private Sub MakeLogicalScreenDescriptor( _
     End With
 End Sub
 
-Private Sub MakeGlobalColorTable(ByRef palette() As Long, ByRef gcTable() As Byte)
-    Dim bpp As Long
-    bpp = 0
-
-    Dim i As Long
-    For i = 1 To 8
-        If (UBound(palette) + 1) = 2 ^ i Then
-            bpp = i
-            Exit For
-        End If
-    Next
-
-    If bpp = 0 Then Call Err.Raise(5)
-
+Private Sub MakeGlobalColorTable(ByRef palette() As Long, ByVal bpp As Long, gcTable() As Byte)
     ReDim gcTable(2 ^ bpp * 3 - 1)
 
     Dim idx As Long
@@ -294,15 +281,7 @@ Private Sub Compress(ByRef data() As Byte, ByVal bpp As Long, ByRef buffer() As 
             Call m_dict.Add(w, m_dict.Count)
             Call m_buf.Add(Array(m_dict(pfx), m_bitsLen))
             pfx = sfx
-
-            If (m_dict.Count - 1) > (2 ^ m_bitsLen - 1) Then
-                m_bitsLen = m_bitsLen + 1
-
-                If m_bitsLen > 12 Then
-                    Call m_buf.Add(Array(CLng(m_clearCode), 12))
-                    Call InitializeDictionary(bpp)
-                End If
-            End If
+            Call UpdateBitsLength(bpp)
 
             GoTo Continue
         End If
@@ -319,15 +298,7 @@ Private Sub Compress(ByRef data() As Byte, ByVal bpp As Long, ByRef buffer() As 
                 Call m_dict.Add(w & sfx, m_dict.Count)
                 Call m_buf.Add(Array(m_dict(w), m_bitsLen))
                 pfx = sfx
-
-                If (m_dict.Count - 1) > (2 ^ m_bitsLen - 1) Then
-                    m_bitsLen = m_bitsLen + 1
-
-                    If m_bitsLen > 12 Then
-                        Call m_buf.Add(Array(CLng(m_clearCode), 12))
-                        Call InitializeDictionary(bpp)
-                    End If
-                End If
+                Call UpdateBitsLength(bpp)
 
                 Exit Do
             End If
@@ -358,6 +329,17 @@ Continue:
     Next
 
     buffer = bs.GetBytes()
+End Sub
+
+Private Sub UpdateBitsLength(ByVal bpp As Long)
+    If (m_dict.Count - 1) > (2 ^ m_bitsLen - 1) Then
+        m_bitsLen = m_bitsLen + 1
+    End If
+
+    If m_bitsLen > 12 Then
+        Call m_buf.Add(Array(CLng(m_clearCode), 12))
+        Call InitializeDictionary(bpp)
+    End If
 End Sub
 
 Private Sub ToBytes( _

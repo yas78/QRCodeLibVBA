@@ -81,7 +81,7 @@ Private Function AddPicture(ByVal filePath As String, ByVal Target As Range) As 
     Set AddPicture = shp
 End Function
 
-Private Sub FillShape(ByVal shp As Shape, ByVal colorRgb)
+Private Sub FillShape(ByVal shp As Shape, ByVal colorRgb As Long)
     With shp.Fill
         .ForeColor.RGB = colorRgb
         .Transparency = 0
