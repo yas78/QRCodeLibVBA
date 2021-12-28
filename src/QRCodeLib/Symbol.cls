@@ -1268,11 +1268,6 @@ Public Function GetGIF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     palette(0) = foreColorRgb
     palette(1) = backColorRgb
 
-    Dim j As Long
-    For j = 2 To UBound(palette)
-        palette(j) = 0
-    Next
-
     Dim transparentIndex As Long
     transparentIndex = 1
 
