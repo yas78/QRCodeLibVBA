@@ -1368,15 +1368,30 @@ End Sub
 
 Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, _
                           Optional ByVal foreRgb As String = ColorCode.BLACK, _
-                          Optional ByVal backRgb As String = ColorCode.WHITE)
+                          Optional ByVal backRgb As String = ColorCode.WHITE, _
+                          Optional ByVal fmt As ImageFormat = ImageFormat.fmtBMP)
     If m_dataBitCounter = 0 Then Call Err.Raise(51)
 
     If moduleSize < MIN_MODULE_SIZE Then Call Err.Raise(5)
     If ColorCode.IsWebColor(foreRgb) = False Then Call Err.Raise(5)
     If ColorCode.IsWebColor(backRgb) = False Then Call Err.Raise(5)
 
-    Dim bitmapBytes() As Byte
-    bitmapBytes = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
+    Dim bytes() As Byte
 
-    Call ClipboardUtil.SetDIB(bitmapBytes)
+#If VBA7 Then
+    Dim hEmf As LongPtr
+#Else
+    Dim hEmf As Long
+#End If
+
+    Select Case fmt And &HF0&
+        Case ImageFormat.fmtBMP
+            bytes = GetTrueColorBMP(moduleSize, foreRgb, backRgb)
+            Call ClipboardUtil.SetDIB(bytes)
+        Case ImageFormat.fmtEMF
+            hEmf = GetEMF(moduleSize, foreRgb)
+            Call ClipboardUtil.SetEMF(hEmf)
+        Case Else
+            Call Err.Raise(5)
+    End Select
 End Sub
