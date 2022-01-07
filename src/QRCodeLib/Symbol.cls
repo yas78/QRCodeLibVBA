@@ -1234,8 +1234,6 @@ Public Function GetGIF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim offset As Long
     offset = 0
 
-    Dim bs As New BitSequence
-
     Dim paletteIndex As Long
     Dim bitmapRow()  As Byte
     Dim idx          As Long
@@ -1297,8 +1295,6 @@ Public Sub SaveAs(ByVal filePath As String, _
     If (fmt And &HF0&) = 0 Then
         fmt = fmt + ImageFormat.fmtBMP
     End If
-
-    Dim bpp As Long
 
     Select Case fmt And &HF0&
         Case ImageFormat.fmtBMP
