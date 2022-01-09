@@ -9,12 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Private Const DEFAULT_MODULE_SIZE As Long = 5
 Private Const MIN_MODULE_SIZE     As Long = 2
 
@@ -593,7 +587,7 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
         bitmapRow = bs.GetBytes()
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -638,6 +632,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
     Dim v As Variant
     Dim i As Long
     For r = UBound(moduleMatrix) To 0 Step -1
+
         ReDim bitmapRow(rowSize - 1)
         idx = 0
 
@@ -653,7 +648,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
         Next
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -776,7 +771,7 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
         bitmapRow = bs.GetBytes()
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -856,7 +851,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
         Next
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), UBound(bitmapRow) + 1)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -1053,7 +1048,7 @@ Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()
         bitmapRow = bs.GetBytes()
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), rowSize)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -1112,7 +1107,7 @@ Private Function GetPaletteColorTIFF(ByVal moduleSize As Long, _
         Next
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), UBound(bitmapRow) + 1)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -1173,7 +1168,7 @@ Private Function GetFullColorTIFF(ByVal moduleSize As Long, _
         Next
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), UBound(bitmapRow) + 1)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, rowSize)
             offset = offset + rowSize
         Next
     Next
@@ -1255,7 +1250,7 @@ Public Function GetGIF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
 
         For i = 1 To moduleSize
-            Call MoveMemory(VarPtr(bitmapData(offset)), VarPtr(bitmapRow(0)), pictWidth)
+            Call ArrayUtil.Copy(bitmapData, offset, bitmapRow, 0, pictWidth)
             offset = offset + pictWidth
         Next
     Next
@@ -1391,3 +1386,5 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
             Call Err.Raise(5)
     End Select
 End Sub
+
+

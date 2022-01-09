@@ -2,12 +2,6 @@ Attribute VB_Name = "PNG"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Private Type PngSignature
     psData(7) As Byte
 End Type
@@ -124,9 +118,9 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
 
         ReDim .pData(.pLength - 1)
         bytes = BitConverter.GetBytes(pictWidth, True)
-        Call MoveMemory(VarPtr(.pData(0)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(.pData, 0, bytes, 0, 4)
         bytes = BitConverter.GetBytes(pictHeight, True)
-        Call MoveMemory(VarPtr(.pData(4)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(.pData, 4, bytes, 0, 4)
 
         .pData(8) = bitDepth
         .pData(9) = tColor
@@ -219,63 +213,63 @@ Private Sub ToBytes(ByRef psgn As PngSignature, _
     Dim idx As Long
     idx = 0
 
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(psgn.psData(0)), 8)
+    Call ArrayUtil.Copy(buffer, idx, psgn.psData, 0, 8)
     idx = idx + 8
 
     Dim bytes() As Byte
 
     With ihdr
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
         bytes = BitConverter.GetBytes(.pType, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
+        Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
         idx = idx + .pLength
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
     End With
 
     If iplt.pLength > 0 Then
         With iplt
             bytes = BitConverter.GetBytes(.pLength, True)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
             idx = idx + 4
             bytes = BitConverter.GetBytes(.pType, True)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
             idx = idx + 4
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
+            Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
             idx = idx + .pLength
             bytes = BitConverter.GetBytes(.pCRC, True)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
             idx = idx + 4
         End With
     End If
 
     With idat
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
         bytes = BitConverter.GetBytes(.pType, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.pData(0)), .pLength)
+        Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
         idx = idx + .pLength
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
     End With
 
     With iend
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
         bytes = BitConverter.GetBytes(.pType, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
         idx = idx + 4
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
     End With
 End Sub

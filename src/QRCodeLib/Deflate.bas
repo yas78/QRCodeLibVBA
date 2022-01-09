@@ -2,12 +2,6 @@ Attribute VB_Name = "Deflate"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Public Enum DeflateBType
     NoCompression = 0
     CompressedWithFixedHuffmanCodes = 1
@@ -36,14 +30,6 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
 
     ReDim buffer(bufferSize - 1)
 
-#If VBA7 Then
-    Dim srcPtr As LongPtr
-    Dim dstPtr As LongPtr
-#Else
-    Dim srcPtr As Long
-    Dim dstPtr As Long
-#End If
-
     Dim bfinal As Long
     Dim dLen   As Long
     Dim dNLen  As Long
@@ -71,9 +57,7 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
         buffer(idx + 1) = temp(1)
         idx = idx + 2
 
-        srcPtr = VarPtr(data(&HFFFF& * i))
-        dstPtr = VarPtr(buffer(idx))
-        Call MoveMemory(dstPtr, srcPtr, &HFFFF&)
+        Call ArrayUtil.Copy(buffer, idx, data, &HFFFF& * i, &HFFFF&)
         idx = idx + &HFFFF&
     Next
 
@@ -94,9 +78,7 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
         buffer(idx + 1) = temp(1)
         idx = idx + 2
 
-        srcPtr = VarPtr(data(&HFFFF& * quotient))
-        dstPtr = VarPtr(buffer(idx))
-        Call MoveMemory(dstPtr, srcPtr, remainder)
+        Call ArrayUtil.Copy(buffer, idx, data, &HFFFF& * quotient, remainder)
         idx = idx + remainder
     End If
 End Sub

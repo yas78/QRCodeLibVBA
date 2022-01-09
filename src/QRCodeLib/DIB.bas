@@ -2,12 +2,6 @@ Attribute VB_Name = "DIB"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Private Const BF_SIZE As Long = 14
 Private Const BI_SIZE As Long = 40
 
@@ -101,26 +95,77 @@ Public Function GetDIB(ByRef bitmapData() As Byte, _
     Dim ret() As Byte
     ReDim ret(bfOffBits + UBound(bitmapData))
 
+    Dim bytes() As Byte
+    Dim idx As Long
+    idx = 0
+
     With bfh
-        Call MoveMemory(VarPtr(ret(0)), VarPtr(.bfType), 2)
-        Call MoveMemory(VarPtr(ret(2)), VarPtr(.bfSize), 4)
-        Call MoveMemory(VarPtr(ret(6)), VarPtr(.bfReserved1), 8)
+        bytes = BitConverter.GetBytes(.bfType)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.bfSize)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.bfReserved1)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.bfReserved2)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.bfOffBits)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
     End With
 
-    Call MoveMemory(VarPtr(ret(14)), VarPtr(bih.biSize), 40)
+    With bih
+        bytes = BitConverter.GetBytes(.biSize)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biWidth)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biHeight)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biPlanes)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.biBitCount)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.biCompression)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biSizeImage)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biXPelsPerMeter)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biYPelsPerMeter)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biClrUsed)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+        bytes = BitConverter.GetBytes(.biClrImportant)
+        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
+        idx = idx + 4
+    End With
 
-    Dim idx As Long
-    idx = BF_SIZE + BI_SIZE
     Dim i As Long
 
     If monochrome Then
         For i = 0 To UBound(palette)
-            Call MoveMemory(VarPtr(ret(idx)), VarPtr(palette(i)), 4)
+            ret(idx + 0) = palette(i).rgbBlue
+            ret(idx + 1) = palette(i).rgbGreen
+            ret(idx + 2) = palette(i).rgbRed
+            ret(idx + 3) = palette(i).rgbReserved
             idx = idx + 4
         Next
     End If
 
-    Call MoveMemory(VarPtr(ret(idx)), VarPtr(bitmapData(0)), UBound(bitmapData) + 1)
+    Call ArrayUtil.Copy(ret, idx, bitmapData, 0, UBound(bitmapData) + 1)
 
     GetDIB = ret
 End Function

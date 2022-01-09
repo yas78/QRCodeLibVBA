@@ -2,12 +2,6 @@ Attribute VB_Name = "GIF"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Private Type GifHeader
     ExtensionIntroducer() As Byte
     Version()             As Byte
@@ -213,7 +207,7 @@ Private Sub MakeImageBlocks( _
         With imgBlocks(i)
             .Size = &HFE&
             ReDim .BlockData(&HFE& - 1)
-            Call MoveMemory(VarPtr(.BlockData(0)), VarPtr(compressedData(&HFE& * i)), &HFE&)
+            Call ArrayUtil.Copy(.BlockData, 0, compressedData, &HFE& * i, &HFE&)
         End With
     Next
 
@@ -221,7 +215,7 @@ Private Sub MakeImageBlocks( _
         With imgBlocks(quotient)
             .Size = remainder
             ReDim .BlockData(remainder - 1)
-            Call MoveMemory(VarPtr(.BlockData(0)), VarPtr(compressedData(&HFE& * quotient)), remainder)
+            Call ArrayUtil.Copy(.BlockData, 0, compressedData, &HFE& * quotient, remainder)
         End With
     End If
 
@@ -392,50 +386,84 @@ Private Sub ToBytes( _
     idx = 0
 
     With hdr
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ExtensionIntroducer(0)), 3)
+        Call ArrayUtil.Copy(buffer, idx, .ExtensionIntroducer, 0, 3)
         idx = idx + 3
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.Version(0)), 3)
+        Call ArrayUtil.Copy(buffer, idx, .Version, 0, 3)
         idx = idx + 3
     End With
 
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(lsDesc), lsDescSize)
-    idx = idx + lsDescSize
+    Dim bytes() As Byte
 
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(gcTable(0)), gcTableSize)
+    With lsDesc
+        bytes = BitConverter.GetBytes(.LogicalScreenWidth)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(.LogicalScreenHeight)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+        idx = idx + 2
+        buffer(idx) = .PackedFields
+        idx = idx + 1
+        buffer(idx) = .BackgroundColorIndex
+        idx = idx + 1
+        buffer(idx) = .PixelAspectRatio
+        idx = idx + 1
+    End With
+
+    Call ArrayUtil.Copy(buffer, idx, gcTable, 0, gcTableSize)
     idx = idx + gcTableSize
 
     If (gcExt.PackedFields And 1) > 0 Then
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(gcExt.ExtensionIntroducer), gcExtSize)
-        idx = idx + gcExtSize
+        With gcExt
+            buffer(idx) = .ExtensionIntroducer
+            idx = idx + 1
+            buffer(idx) = .GraphicControlLabel
+            idx = idx + 1
+            buffer(idx) = .BlockSize
+            idx = idx + 1
+            buffer(idx) = .PackedFields
+            idx = idx + 1
+            bytes = BitConverter.GetBytes(.DelayTime)
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+            idx = idx + 2
+            buffer(idx) = .TransparentColorIndex
+            idx = idx + 1
+            buffer(idx) = .BlockTerminator
+            idx = idx + 1
+        End With
     End If
 
     With imgDesc
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ImageSeparator), 1)
+        buffer(idx) = .ImageSeparator
         idx = idx + 1
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ImageLeftPosition), 2)
+        bytes = BitConverter.GetBytes(.ImageLeftPosition)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
         idx = idx + 2
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ImageTopPosition), 2)
+        bytes = BitConverter.GetBytes(.ImageTopPosition)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
         idx = idx + 2
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ImageWidth), 2)
+        bytes = BitConverter.GetBytes(.ImageWidth)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
         idx = idx + 2
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.ImageHeight), 2)
+        bytes = BitConverter.GetBytes(.ImageHeight)
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
         idx = idx + 2
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.PackedFields), 1)
+        buffer(idx) = .PackedFields
         idx = idx + 1
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.LZWMinimumCodeSize), 1)
+        buffer(idx) = .LZWMinimumCodeSize
         idx = idx + 1
     End With
 
     For i = 0 To UBound(imgBlocks)
         With imgBlocks(i)
-            Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.Size), 1)
+            buffer(idx) = .Size
             idx = idx + 1
+
             If .Size > 0 Then
-                Call MoveMemory(VarPtr(buffer(idx)), VarPtr(.BlockData(0)), UBound(.BlockData) + 1)
+                Call ArrayUtil.Copy(buffer, idx, .BlockData, 0, UBound(.BlockData) + 1)
                 idx = idx + UBound(.BlockData) + 1
             End If
         End With
     Next
 
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(trailer), trSize)
+    buffer(idx) = trailer
 End Sub

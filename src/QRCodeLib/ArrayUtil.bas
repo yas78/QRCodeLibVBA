@@ -2,6 +2,17 @@ Attribute VB_Name = "ArrayUtil"
 Option Private Module
 Option Explicit
 
+Public Sub Copy(ByRef dest() As Byte, ByVal destIdx As Long, ByRef src() As Byte, ByVal srcIdx As Long, sz As Long)
+    Dim idx As Long
+    idx = destIdx
+
+    Dim i As Long
+    For i = 0 To sz - 1
+        dest(idx) = src(srcIdx + i)
+        idx = idx + 1
+    Next
+End Sub
+
 Public Function Rotate90(ByRef array2D() As Variant) As Variant()
     Dim ret() As Variant
     ReDim ret(UBound(array2D(0)))

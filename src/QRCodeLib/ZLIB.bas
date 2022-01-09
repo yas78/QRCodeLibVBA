@@ -2,12 +2,6 @@ Attribute VB_Name = "ZLIB"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Private Enum CompressionLevel
     Fastest = 0
     Fast = 1
@@ -47,14 +41,16 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
     Dim idx As Long
     idx = 0
 
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(cmf), 1)
+    buffer(idx) = cmf
     idx = idx + 1
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(flg), 1)
+
+    buffer(idx) = flg
     idx = idx + 1
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(compressedData(0)), sz)
+
+    Call ArrayUtil.Copy(buffer, idx, compressedData, 0, sz)
     idx = idx + sz
 
     Dim bytes() As Byte
     bytes = BitConverter.GetBytes(adler, True)
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(bytes(0)), 4)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
 End Sub

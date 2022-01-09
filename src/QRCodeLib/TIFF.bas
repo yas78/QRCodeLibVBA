@@ -2,12 +2,6 @@ Attribute VB_Name = "TIFF"
 Option Private Module
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As LongPtr, ByVal pSrc As LongPtr, ByVal sz As Long)
-#Else
-    Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal pDest As Long, ByVal pSrc As Long, ByVal sz As Long)
-#End If
-
 Public Enum TiffImageType
     Bilevel
     Grayscale
@@ -212,41 +206,77 @@ Private Sub ToBytes(ByRef buffer() As Byte)
 
     Dim idx As Long
     idx = 0
-    Dim sz As Long
-    sz = 0
 
-    sz = LenB(m_ifh)
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_ifh.Data1), sz)
-    idx = idx + sz
+    Dim bytes() As Byte
+
+    bytes = BitConverter.GetBytes(m_ifh.Data1)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+    idx = idx + 2
+    bytes = BitConverter.GetBytes(m_ifh.Data2)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+    idx = idx + 2
+    bytes = BitConverter.GetBytes(m_ifh.Data3)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    idx = idx + 4
+
+    Dim sz As Long
 
     Dim ifdBytes() As Byte
     ifdBytes = m_ifd.GetBytes()
+
     sz = UBound(ifdBytes) + 1
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(ifdBytes(0)), sz)
+    Call ArrayUtil.Copy(buffer, idx, ifdBytes, 0, sz)
     idx = idx + sz
 
     If m_imageType = TiffImageType.FullColor Then
-        sz = 2 * (UBound(m_bitsPerSample) + 1)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_bitsPerSample(0)), sz)
-        idx = idx + sz
+        bytes = BitConverter.GetBytes(m_bitsPerSample(0))
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(m_bitsPerSample(1))
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+        idx = idx + 2
+        bytes = BitConverter.GetBytes(m_bitsPerSample(2))
+        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+        idx = idx + 2
     End If
 
-    sz = LenB(m_xResolution)
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_xResolution.Data1), sz)
-    idx = idx + sz
+    bytes = BitConverter.GetBytes(m_xResolution.Data1)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    idx = idx + 4
+    bytes = BitConverter.GetBytes(m_xResolution.Data2)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    idx = idx + 4
+    bytes = BitConverter.GetBytes(m_yResolution.Data1)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    idx = idx + 4
+    bytes = BitConverter.GetBytes(m_yResolution.Data2)
+    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    idx = idx + 4
 
-    sz = LenB(m_yResolution)
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_yResolution.Data1), sz)
-    idx = idx + sz
+    Dim i As Long
 
     If m_imageType = TiffImageType.PaletteColor Then
-        sz = LenB(m_palette)
-        Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_palette), sz)
-        idx = idx + sz
+        For i = 0 To UBound(m_palette.r)
+            bytes = BitConverter.GetBytes(m_palette.r(i))
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+            idx = idx + 2
+        Next
+
+        For i = 0 To UBound(m_palette.g)
+            bytes = BitConverter.GetBytes(m_palette.g(i))
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+            idx = idx + 2
+        Next
+
+        For i = 0 To UBound(m_palette.b)
+            bytes = BitConverter.GetBytes(m_palette.b(i))
+            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
+            idx = idx + 2
+        Next
     End If
 
     sz = UBound(m_data) + 1
-    Call MoveMemory(VarPtr(buffer(idx)), VarPtr(m_data(0)), sz)
+    Call ArrayUtil.Copy(buffer, idx, m_data, 0, sz)
 End Sub
 
 Private Function CalcSize() As Long
