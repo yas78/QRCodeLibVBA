@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form1 
    Caption         =   "QR Code"
-   ClientHeight    =   9225
+   ClientHeight    =   9225.001
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   10590
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
@@ -119,7 +120,7 @@ Private Sub btnSave_Click()
     Set fs = CreateObject("Scripting.FileSystemObject")
 
     Dim fileFilters As String
-    fileFilters = "BMP (*.bmp),*.bmp,EMF (*.emf),*emf,GIF (*.gif),*gif,PNG (*.png),*png,SVG (*.svg),*svg,TIFF (*.tif; *.tiff),*tif;*tiff"
+    fileFilters = "BMP (*.bmp),*.bmp,EMF (*.emf),*.emf,GIF (*.gif),*.gif,PNG (*.png),*.png,SVG (*.svg),*.svg,TIFF (*.tif; *.tiff),*.tif;*.tiff"
 
     Dim fBaseName As Variant
     fBaseName = Application.GetSaveAsFilename("", fileFilters)
