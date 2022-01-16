@@ -219,11 +219,10 @@ Private Sub ToBytes(ByRef buffer() As Byte)
     Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
     idx = idx + 4
 
-    Dim sz As Long
-
     Dim ifdBytes() As Byte
     ifdBytes = m_ifd.GetBytes()
 
+    Dim sz As Long
     sz = UBound(ifdBytes) + 1
     Call ArrayUtil.Copy(buffer, idx, ifdBytes, 0, sz)
     idx = idx + sz
@@ -275,8 +274,7 @@ Private Sub ToBytes(ByRef buffer() As Byte)
         Next
     End If
 
-    sz = UBound(m_data) + 1
-    Call ArrayUtil.Copy(buffer, idx, m_data, 0, sz)
+    Call ArrayUtil.Copy(buffer, idx, m_data, 0, UBound(m_data) + 1)
 End Sub
 
 Private Function CalcSize() As Long
