@@ -13,8 +13,13 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 Option Explicit
+
+#If VBA7 Then
+    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As LongPtr
+#Else
+    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+#End If
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
 Private Const DEFAULT_VERSION     As Long = 40
@@ -22,6 +27,60 @@ Private Const IMAGE_WIDTH         As Long = 166
 Private Const IMAGE_HEIGHT        As Long = 166
 Private Const IMAGE_MARGIN        As Long = 2
 Private Const COL_COUNT           As Long = 3
+
+#If VBA7 Then
+    Private m_hwnd As LongPtr
+#Else
+    Private m_hwnd As Long
+#End If
+
+Private Sub UserForm_Initialize()
+    m_hwnd = GetHwnd()
+
+    With cmbErrorCorrectionLevel
+        .ColumnCount = 2
+        .ColumnWidths = "0"
+        .TextColumn = 2
+        .BoundColumn = 1
+
+        .AddItem
+        .List(0, 0) = ErrorCorrectionLevel.L
+        .List(0, 1) = "L (7%)"
+
+        .AddItem
+        .List(1, 0) = ErrorCorrectionLevel.M
+        .List(1, 1) = "M (15%)"
+
+        .AddItem
+        .List(2, 0) = ErrorCorrectionLevel.Q
+        .List(2, 1) = "Q (25%)"
+
+        .AddItem
+        .List(3, 0) = ErrorCorrectionLevel.H
+        .List(3, 1) = "H (30%)"
+
+        .ListIndex = 1
+    End With
+
+    Call cmbCharset.AddItem("Shift_JIS")
+    Call cmbCharset.AddItem("UTF-8")
+    cmbCharset.ListIndex = 0
+
+    Dim i As Long
+    For i = 1 To 40
+        Call cmbMaxVersion.AddItem(i)
+    Next
+
+    cmbMaxVersion.Value = DEFAULT_VERSION
+
+    Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
+    chkStructuredAppend.Value = False
+
+    txtForeColor.Text = "000000"
+    txtBackColor.Text = "FFFFFF"
+
+    btnSave.Enabled = False
+End Sub
 
 Private Sub Update_fraQRCodeImage()
     btnSave.Enabled = False
@@ -57,22 +116,11 @@ On Error GoTo Catch
     Call sbls.AppendText(txtData.Text)
 
     Dim sbl As Symbol
-    Dim ctl As Control
     Dim img As Image
     Dim idx As Long
     For idx = 0 To sbls.Count - 1
         Set sbl = sbls(idx)
-        Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
-        With ctl
-            .Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod COL_COUNT) + IMAGE_MARGIN
-            .Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ COL_COUNT) + IMAGE_MARGIN
-            .Width = IMAGE_WIDTH
-            .Height = IMAGE_HEIGHT
-        End With
-
-        Set img = ctl
-        img.PictureSizeMode = fmPictureSizeModeStretch
-        img.BorderStyle = fmBorderStyleNone
+        Set img = AddImageControl(idx)
         img.Picture = sbl.GetPicture(sz, foreRGB, backRGB)
     Next
 
@@ -88,6 +136,24 @@ Catch:
     Call MsgBox(Err.Description, vbExclamation, "")
     Resume Finally
 End Sub
+
+Private Function AddImageControl(ByVal idx As Long) As Image
+    Dim ctl As Control
+    Set ctl = Me.fraQRCodeImage.Controls.Add("Forms.Image.1")
+    With ctl
+        .Left = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx Mod COL_COUNT) + IMAGE_MARGIN
+        .Top = (IMAGE_WIDTH + IMAGE_MARGIN) * (idx \ COL_COUNT) + IMAGE_MARGIN
+        .Width = IMAGE_WIDTH
+        .Height = IMAGE_HEIGHT
+    End With
+
+    Dim img As Image
+    Set img = ctl
+    img.PictureSizeMode = fmPictureSizeModeStretch
+    img.BorderStyle = fmBorderStyleNone
+    
+    Set AddImageControl = img
+End Function
 
 Private Sub Set_txtModuleSize(ByVal moduleSize As Long)
     txtModuleSize.Text = CStr(moduleSize)
@@ -122,10 +188,23 @@ Private Sub btnSave_Click()
     Dim fileFilters As String
     fileFilters = "BMP (*.bmp),*.bmp,EMF (*.emf),*.emf,GIF (*.gif),*.gif,PNG (*.png),*.png,SVG (*.svg),*.svg,TIFF (*.tif; *.tiff),*.tif;*.tiff"
 
-    Dim fBaseName As Variant
-    fBaseName = Application.GetSaveAsFilename("", fileFilters)
+    Dim dlg As New SaveFileDialog
+    dlg.Filter = fileFilters
 
-    If VarType(fBaseName) = vbBoolean Then Exit Sub
+    Dim currEnableCancelKey As Long
+    currEnableCancelKey = Application.EnableCancelKey
+    
+    Application.EnableCancelKey = 0
+    
+    Dim dlgResult As Boolean
+    dlgResult = dlg.ShowDialog(m_hwnd)
+    
+    Application.EnableCancelKey = currEnableCancelKey
+    
+    If dlgResult = False Then Exit Sub
+
+    Dim fBaseName As Variant
+    fBaseName = dlg.FileName
 
     Dim ext As String
     ext = "." & fs.GetExtensionName(fBaseName)
@@ -134,7 +213,7 @@ Private Sub btnSave_Click()
 
     Dim fmt As ImageFormat
 
-    Select Case LCase(ext)
+    Select Case LCase$(ext)
         Case ".bmp"
             fmt = fmtBMP
         Case ".emf"
@@ -266,48 +345,24 @@ Private Sub txtModuleSize_KeyDown( _
     End Select
 End Sub
 
-Private Sub UserForm_Initialize()
-    With cmbErrorCorrectionLevel
-        .ColumnCount = 2
-        .ColumnWidths = "0"
-        .TextColumn = 2
-        .BoundColumn = 1
+#If VBA7 Then
+Private Function GetHwnd() As LongPtr
+#Else
+Private Function GetHwnd() As Long
+#End If
+    Dim cp As String
+    cp = Me.Caption
 
-        .AddItem
-        .List(0, 0) = ErrorCorrectionLevel.L
-        .List(0, 1) = "L (7%)"
-
-        .AddItem
-        .List(1, 0) = ErrorCorrectionLevel.M
-        .List(1, 1) = "M (15%)"
-
-        .AddItem
-        .List(2, 0) = ErrorCorrectionLevel.Q
-        .List(2, 1) = "Q (25%)"
-
-        .AddItem
-        .List(3, 0) = ErrorCorrectionLevel.H
-        .List(3, 1) = "H (30%)"
-
-        .ListIndex = 1
-    End With
-
-    Call cmbCharset.AddItem("Shift_JIS")
-    Call cmbCharset.AddItem("UTF-8")
-    cmbCharset.ListIndex = 0
-
-    Dim i As Long
-    For i = 1 To 40
-        Call cmbMaxVersion.AddItem(i)
-    Next
-
-    cmbMaxVersion.Value = DEFAULT_VERSION
-
-    Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
-    chkStructuredAppend.Value = False
-
-    txtForeColor.Text = "000000"
-    txtBackColor.Text = "FFFFFF"
-
-    btnSave.Enabled = False
-End Sub
+    Me.Caption = Me.Caption & CStr(Timer())
+    
+#If VBA7 Then
+    Dim ret As LongPtr
+#Else
+    Dim ret As Long
+#End If
+    
+    ret = FindWindow("ThunderDFrame", Me.Caption)
+    Me.Caption = cp
+    
+    GetHwnd = ret
+End Function

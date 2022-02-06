@@ -24,7 +24,10 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     Dim s As String
     s = Me.Range(ADDR_DATA).Value
 
-    If Len(s) = 0 Then Exit Sub
+    If Len(s) = 0 Then
+        Me.imgQr.Picture = LoadPicture("")
+        Exit Sub
+    End If
 
 On Error GoTo Catch
     Dim sbls As Symbols
