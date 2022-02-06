@@ -2,7 +2,7 @@ Attribute VB_Name = "ArrayUtil"
 Option Private Module
 Option Explicit
 
-Public Sub Copy(ByRef dest() As Byte, ByVal destIdx As Long, ByRef src() As Byte, ByVal srcIdx As Long, sz As Long)
+Public Sub Copy(ByRef dest() As Byte, ByVal destIdx As Long, ByRef src() As Byte, ByVal srcIdx As Long, ByVal sz As Long)
     Dim idx As Long
     idx = destIdx
 

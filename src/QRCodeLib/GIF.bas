@@ -132,7 +132,7 @@ Private Sub MakeLogicalScreenDescriptor( _
     End With
 End Sub
 
-Private Sub MakeGlobalColorTable(ByRef palette() As Long, ByVal bpp As Long, gcTable() As Byte)
+Private Sub MakeGlobalColorTable(ByRef palette() As Long, ByVal bpp As Long, ByRef gcTable() As Byte)
     ReDim gcTable(2 ^ bpp * 3 - 1)
 
     Dim idx As Long
@@ -232,18 +232,18 @@ Private Sub InitializeDictionary(ByVal bpp As Long)
 
     Dim code As Long
     For code = 0 To (2 ^ bpp - 1)
-        Call m_dict.Add("&H" & Hex(code), code)
+        Call m_dict.Add("&H" & Hex$(code), code)
 
         If code >= (2 ^ m_bitsLen - 1) Then
             m_bitsLen = m_bitsLen + 1
         End If
     Next
 
-    m_clearCode = "&H" & Hex(m_dict.Count)
+    m_clearCode = "&H" & Hex$(m_dict.Count)
     code = m_dict.Count
     Call m_dict.Add(m_clearCode, code)
 
-    m_endCode = "&H" & Hex(m_dict.Count)
+    m_endCode = "&H" & Hex$(m_dict.Count)
     code = m_dict.Count
     Call m_dict.Add(m_endCode, code)
 End Sub
@@ -261,14 +261,14 @@ Private Sub Compress(ByRef data() As Byte, ByVal bpp As Long, ByRef buffer() As 
     Dim i As Long
     i = 0
 
-    pfx = "&H" & Hex(data(i))
+    pfx = "&H" & Hex$(data(i))
 
     Dim maxIndex As Long
     maxIndex = UBound(data)
 
     Do While i < maxIndex
         i = i + 1
-        sfx = "&H" & Hex(data(i))
+        sfx = "&H" & Hex$(data(i))
         w = pfx & sfx
 
         If Not m_dict.Exists(w) Then
@@ -284,7 +284,7 @@ Private Sub Compress(ByRef data() As Byte, ByVal bpp As Long, ByRef buffer() As 
             i = i + 1
             If i > maxIndex Then Exit Do
 
-            sfx = "&H" & Hex(data(i))
+            sfx = "&H" & Hex$(data(i))
 
             If m_dict.Exists(w & sfx) Then
                 w = w & sfx
@@ -302,7 +302,7 @@ Continue:
 
     Select Case i
         Case Is = maxIndex
-            Call m_buf.Add(Array(m_dict("&H" & Hex(data(UBound(data)))), m_bitsLen))
+            Call m_buf.Add(Array(m_dict("&H" & Hex$(data(UBound(data)))), m_bitsLen))
         Case Is > maxIndex
             Call m_buf.Add(Array(m_dict(w), m_bitsLen))
         Case Else

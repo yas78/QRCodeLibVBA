@@ -39,7 +39,7 @@ Public Function GetBytes(ByVal s As String) As Byte()
     m_sr.Position = 0
     m_sr.Type = adTypeBinary
 
-    Select Case LCase(m_charset)
+    Select Case LCase$(m_charset)
         Case "utf-16", "unicode"
             m_sr.Position = 2
         Case "utf-8"

@@ -70,7 +70,7 @@ Public Function GetBytes() As Byte()
     ReDim ret(buf.Count - 1)
 
     Dim v As Variant
-    Dim idx
+    Dim idx As Long
     idx = 0
     For Each v In buf
         ret(idx) = CByte(v)
