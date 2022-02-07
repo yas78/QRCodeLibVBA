@@ -158,8 +158,8 @@ sbls(0).SetToClipboard fmt:=fmtEMF
 ```
 
 ### 例９．型番を固定して画像サイズを一定にする
-CreateSymbols関数のmaxVer引数とfixedSize引数を設定してSymbolsオブジェクトを生成します。
-常にmaxVer引数で指定された型番で生成されます。
+CreateSymbols関数のmaxVer引数とfixedSize引数を設定してSymbolsオブジェクトを生成します。  
+常にmaxVer引数で指定された型番で生成されます。  
 型番10に固定する例を以下に示します。
 
 ```VBA
