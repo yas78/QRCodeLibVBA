@@ -37,7 +37,7 @@ Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
 ```
 
 ### 例３．型番の上限を指定する
-CreateSymbols関数の maxVer 引数を設定してSymbolsオブジェクトを生成します。
+CreateSymbols関数のmaxVer引数を設定してSymbolsオブジェクトを生成します。
 
 ```VBA
 Dim sbls As Symbols
@@ -45,10 +45,10 @@ Set sbls = CreateSymbols(maxVer:=10)
 ```
 
 ### 例４．文字セットを指定する
-CreateSymbols関数の charsetName 引数を設定してSymbolsオブジェクトを生成します。
+CreateSymbols関数のcharsetName引数を設定してSymbolsオブジェクトを生成します。
 （ADODB.Stream に依存しています。使用可能な文字セットはレジストリ[HKEY_CLASSES_ROOT\MIME\Database\Charset]を確認してください。）
 
-既定値は Shift_JIS です。UTF-8 への設定例を以下に示します。
+既定値は Shift_JIS です。UTF-8の設定例を以下に示します。
 
 
 ```VBA
@@ -155,4 +155,15 @@ sbls(0).SetToClipBoard
 
 ' Metafile
 sbls(0).SetToClipboard fmt:=fmtEMF
+```
+
+### 例９．型番を固定して画像サイズを一定にする
+CreateSymbols関数のmaxVer引数とfixedSize引数を設定してSymbolsオブジェクトを生成します。
+常にmaxVer引数で指定された型番で生成されます。
+型番10に固定する例を以下に示します。
+
+```VBA
+Dim sbls As Symbols
+Set sbls = CreateSymbols(maxVer:=10, fixedSize:=True)
+sbls.AppendText "Hello World"
 ```

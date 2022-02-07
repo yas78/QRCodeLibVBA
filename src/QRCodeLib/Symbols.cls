@@ -32,16 +32,13 @@ Private Sub Class_Initialize()
 End Sub
 
 Friend Sub Init(ByVal ecLevel As ErrorCorrectionLevel, _
+                ByVal minVer As Long, _
                 ByVal maxVer As Long, _
                 ByVal allowStructuredAppend As Boolean, _
                 ByVal charEncoding As Encoding)
-    If Not (Constants.MIN_VERSION <= maxVer And maxVer <= Constants.MAX_VERSION) Then
-        Call Err.Raise(5)
-    End If
-
     Set m_items = New Collection
 
-    m_minVersion = Constants.MIN_VERSION
+    m_minVersion = minVer
     m_maxVersion = maxVer
     m_errorCorrectionLevel = ecLevel
     m_structuredAppend = allowStructuredAppend

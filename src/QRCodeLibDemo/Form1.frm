@@ -22,7 +22,6 @@ Option Explicit
 #End If
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
-Private Const DEFAULT_VERSION     As Long = 40
 Private Const IMAGE_WIDTH         As Long = 166
 Private Const IMAGE_HEIGHT        As Long = 166
 Private Const IMAGE_MARGIN        As Long = 2
@@ -71,7 +70,7 @@ Private Sub UserForm_Initialize()
         Call cmbMaxVersion.AddItem(i)
     Next
 
-    cmbMaxVersion.Value = DEFAULT_VERSION
+    cmbMaxVersion.Value = 40
 
     Call Set_txtModuleSize(DEFAULT_MODULE_SIZE)
     chkStructuredAppend.Value = False
@@ -107,12 +106,12 @@ Private Sub Update_fraQRCodeImage()
     Dim structAppend As Boolean
     structAppend = chkStructuredAppend.Value
 
-    Dim encMode As String
-    encMode = cmbCharset.Value
+    Dim charsetName As String
+    charsetName = cmbCharset.Value
 
 On Error GoTo Catch
     Dim sbls As QRCodeLib.Symbols
-    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, encMode)
+    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, charsetName)
     Call sbls.AppendText(txtData.Text)
 
     Dim sbl As Symbol
@@ -151,7 +150,7 @@ Private Function AddImageControl(ByVal idx As Long) As Image
     Set img = ctl
     img.PictureSizeMode = fmPictureSizeModeStretch
     img.BorderStyle = fmBorderStyleNone
-    
+
     Set AddImageControl = img
 End Function
 
@@ -179,8 +178,8 @@ Private Sub btnSave_Click()
     Dim structAppend As Boolean
     structAppend = chkStructuredAppend.Value
 
-    Dim encMode As String
-    encMode = cmbCharset.Value
+    Dim charsetName As String
+    charsetName = cmbCharset.Value
 
     Dim fs As Object
     Set fs = CreateObject("Scripting.FileSystemObject")
@@ -193,14 +192,14 @@ Private Sub btnSave_Click()
 
     Dim currEnableCancelKey As Long
     currEnableCancelKey = Application.EnableCancelKey
-    
+
     Application.EnableCancelKey = 0
-    
+
     Dim dlgResult As Boolean
     dlgResult = dlg.ShowDialog(m_hwnd)
-    
+
     Application.EnableCancelKey = currEnableCancelKey
-    
+
     If dlgResult = False Then Exit Sub
 
     Dim fBaseName As Variant
@@ -232,7 +231,7 @@ Private Sub btnSave_Click()
 
 On Error GoTo Catch
     Dim sbls As Symbols
-    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, encMode)
+    Set sbls = CreateSymbols(ecLevel, maxVer, structAppend, charsetName)
     Call sbls.AppendText(txtData.Text)
 
     Dim filePath As String
@@ -354,15 +353,15 @@ Private Function GetHwnd() As Long
     cp = Me.Caption
 
     Me.Caption = Me.Caption & CStr(Timer())
-    
+
 #If VBA7 Then
     Dim ret As LongPtr
 #Else
     Dim ret As Long
 #End If
-    
+
     ret = FindWindow("ThunderDFrame", Me.Caption)
     Me.Caption = cp
-    
+
     GetHwnd = ret
 End Function
