@@ -11,8 +11,8 @@ Option Explicit
 
 Private Const VAL As Long = Values.FORMAT_INFO
 
-Private m_formatInfoValues()     As Variant
-Private m_formatInfoMaskArray()  As Variant
+Private m_formatInfoValues()    As Variant
+Private m_formatInfoMaskArray() As Variant
 
 Private Sub Class_Initialize()
     m_formatInfoValues = Array( _

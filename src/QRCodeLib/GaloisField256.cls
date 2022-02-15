@@ -9,8 +9,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private m_intToExpTable  As Variant
-Private m_expToIntTable  As Variant
+Private m_intToExpTable As Variant
+Private m_expToIntTable As Variant
 
 Private Sub Class_Initialize()
     m_intToExpTable = Array( _

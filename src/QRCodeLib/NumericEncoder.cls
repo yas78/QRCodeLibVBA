@@ -10,9 +10,9 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IQRCodeEncoder
 
-Private m_data()        As Long
-Private m_charCounter   As Long
-Private m_bitCounter    As Long
+Private m_data()      As Long
+Private m_charCounter As Long
+Private m_bitCounter  As Long
 
 Private Sub IQRCodeEncoder_Init(ByVal charEncoding As Encoding)
     ' NOP

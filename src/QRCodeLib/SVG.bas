@@ -2,22 +2,22 @@ Attribute VB_Name = "SVG"
 Option Private Module
 Option Explicit
 
-Public Function GetSVG(ByRef gpPaths() As Variant, _
+Public Function GetSVG(ByRef pts() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreRgb As String) As String
     Dim buf As New List
 
     Dim indent As String
-    indent = String(5, " ")
+    indent = String$(5, " ")
 
-    Dim gpPath As Variant
+    Dim ptArray As Variant
     Dim i As Long
-    For Each gpPath In gpPaths
+    For Each ptArray In pts
         Call buf.Add(indent & "M ")
 
-        For i = 0 To UBound(gpPath)
-            Call buf.Add(CStr(gpPath(i).X) & "," & CStr(gpPath(i).Y) & " ")
+        For i = 0 To UBound(ptArray)
+            Call buf.Add(CStr(ptArray(i).X) & "," & CStr(ptArray(i).Y) & " ")
         Next
         Call buf.Add("Z" & vbNewLine)
     Next

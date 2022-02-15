@@ -37,4 +37,3 @@ Public Enum BackStyle
     bkTransparent = 0
     bkOpaque = 1
 End Enum
-

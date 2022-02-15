@@ -11,20 +11,20 @@ Option Explicit
 
 Private m_items  As Collection
 
-Private m_minVersion            As Long
-Private m_maxVersion            As Long
-Private m_errorCorrectionLevel  As ErrorCorrectionLevel
-Private m_structuredAppend      As Boolean
-Private m_encoding              As Encoding
+Private m_minVersion           As Long
+Private m_maxVersion           As Long
+Private m_errorCorrectionLevel As ErrorCorrectionLevel
+Private m_structuredAppend     As Boolean
+Private m_encoding             As Encoding
 
 Private m_parity As Long
 
 Private m_currSymbol As Symbol
 
-Private m_encNum    As IQRCodeEncoder
-Private m_encAlpha  As IQRCodeEncoder
-Private m_encByte   As IQRCodeEncoder
-Private m_encKanji  As IQRCodeEncoder
+Private m_encNum   As IQRCodeEncoder
+Private m_encAlpha As IQRCodeEncoder
+Private m_encByte  As IQRCodeEncoder
+Private m_encKanji As IQRCodeEncoder
 
 Private Sub Class_Initialize()
     Set m_encNum = New NumericEncoder
@@ -340,7 +340,7 @@ Private Function SelectModeWhileInAlphanumeric( _
         Exit Function
     End If
 
-    If MustChangeAlphanumericToNumeric(s, startIndex) Then
+    If ShouldChangeAlphanumericToNumeric(s, startIndex) Then
         SelectModeWhileInAlphanumeric = EncodingMode.NUMERIC
         Exit Function
     End If
@@ -348,7 +348,7 @@ Private Function SelectModeWhileInAlphanumeric( _
     SelectModeWhileInAlphanumeric = EncodingMode.ALPHA_NUMERIC
 End Function
 
-Private Function MustChangeAlphanumericToNumeric( _
+Private Function ShouldChangeAlphanumericToNumeric( _
     ByRef s As String, ByVal startIndex As Long) As Boolean
 
     Dim ret As Boolean
@@ -384,7 +384,7 @@ Private Function MustChangeAlphanumericToNumeric( _
         End Select
     End If
 
-    MustChangeAlphanumericToNumeric = ret
+    ShouldChangeAlphanumericToNumeric = ret
 End Function
 
 Private Function SelectModeWhileInByte( _
@@ -397,12 +397,12 @@ Private Function SelectModeWhileInByte( _
         End If
     End If
 
-    If MustChangeByteToNumeric(s, startIndex) Then
+    If ShouldChangeByteToNumeric(s, startIndex) Then
         SelectModeWhileInByte = EncodingMode.NUMERIC
         Exit Function
     End If
 
-    If MustChangeByteToAlphanumeric(s, startIndex) Then
+    If ShouldChangeByteToAlphanumeric(s, startIndex) Then
         SelectModeWhileInByte = EncodingMode.ALPHA_NUMERIC
         Exit Function
     End If
@@ -410,7 +410,7 @@ Private Function SelectModeWhileInByte( _
     SelectModeWhileInByte = EncodingMode.EIGHT_BIT_BYTE
 End Function
 
-Private Function MustChangeByteToNumeric( _
+Private Function ShouldChangeByteToNumeric( _
     ByRef s As String, ByVal startIndex As Long) As Boolean
 
     Dim ret As Boolean
@@ -448,10 +448,10 @@ Private Function MustChangeByteToNumeric( _
         End Select
     End If
 
-    MustChangeByteToNumeric = ret
+    ShouldChangeByteToNumeric = ret
 End Function
 
-Private Function MustChangeByteToAlphanumeric( _
+Private Function ShouldChangeByteToAlphanumeric( _
     ByRef s As String, ByVal startIndex As Long) As Boolean
 
     Dim ret As Boolean
@@ -489,5 +489,5 @@ Private Function MustChangeByteToAlphanumeric( _
         End Select
     End If
 
-    MustChangeByteToAlphanumeric = ret
+    ShouldChangeByteToAlphanumeric = ret
 End Function

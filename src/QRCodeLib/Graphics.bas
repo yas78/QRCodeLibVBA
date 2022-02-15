@@ -1,4 +1,4 @@
-Attribute VB_Name = "GraphicPath"
+Attribute VB_Name = "Graphics"
 Option Private Module
 Option Explicit
 

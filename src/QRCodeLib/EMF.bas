@@ -67,44 +67,36 @@ Private Type POINTAPI
     Y As Long
 End Type
 
+Private Type Size
+    Width As Double
+    Height As Double
+End Type
+
 Private Const HORZSIZE As Long = 4
 Private Const VERTSIZE As Long = 6
 Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
 
 #If VBA7 Then
-Public Function GetEMF(ByRef gpPaths() As Variant, _
+Public Function GetEMF(ByRef pts() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As LongPtr
 #Else
-Public Function GetEMF(ByRef gpPaths() As Variant, _
+Public Function GetEMF(ByRef pts() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As Long
 #End If
+    Dim pixelSize As Size
+    pixelSize = GetPixelSize()
 
-#If VBA7 Then
-    Dim hScreenDC As LongPtr
-#Else
-    Dim hScreenDC As Long
-#End If
-
-    hScreenDC = GetDC(0)
-
-    Dim mmPerPixelH As Double
-    mmPerPixelH = GetDeviceCaps(hScreenDC, HORZSIZE) / GetDeviceCaps(hScreenDC, HORZRES)
-    Dim mmPerPixelV As Double
-    mmPerPixelV = GetDeviceCaps(hScreenDC, VERTSIZE) / GetDeviceCaps(hScreenDC, VERTRES)
-
-    Call ReleaseDC(0, hScreenDC)
-
-    Dim r As RECT
-    With r
+    Dim region As RECT
+    With region
         .Left = 0
         .Top = 0
-        .Right = mmPerPixelH * pictWidth * 100
-        .Bottom = mmPerPixelV * pictHeight * 100
+        .Right = pixelSize.Width * pictWidth * 100
+        .Bottom = pixelSize.Height * pictHeight * 100
     End With
 
 #If VBA7 Then
@@ -113,24 +105,58 @@ Public Function GetEMF(ByRef gpPaths() As Variant, _
     Dim hDC As Long
 #End If
 
-    hDC = CreateEnhMetaFile(0, vbNullString, r, vbNullString)
+    hDC = CreateEnhMetaFile(0, vbNullString, region, vbNullString)
+    Call MakePath(pts, hDC)
+    Call DrawAndFillPath(foreColorRgb, foreColorRgb, hDC)
 
+    GetEMF = CloseEnhMetaFile(hDC)
+End Function
+
+Private Function GetPixelSize() As Size
+#If VBA7 Then
+    Dim hScreenDC As LongPtr
+#Else
+    Dim hScreenDC As Long
+#End If
+
+    hScreenDC = GetDC(0)
+
+    Dim ret As Size
+    ret.Width = GetDeviceCaps(hScreenDC, HORZSIZE) / GetDeviceCaps(hScreenDC, HORZRES)
+    ret.Height = GetDeviceCaps(hScreenDC, VERTSIZE) / GetDeviceCaps(hScreenDC, VERTRES)
+
+    Call ReleaseDC(0, hScreenDC)
+
+    GetPixelSize = ret
+End Function
+
+#If VBA7 Then
+Private Sub MakePath(ByRef pts() As Variant, ByVal hDC As LongPtr)
+#Else
+Private Sub MakePath(ByRef pts() As Variant, ByVal hDC As Long)
+#End If
     Call BeginPath(hDC)
 
-    Dim gpPath As Variant
+    Dim ptArray As Variant
+    Dim ptApiArray() As POINTAPI
     Dim i As Long
-    Dim pArray() As POINTAPI
-    For Each gpPath In gpPaths
-        ReDim pArray(UBound(gpPath))
-        For i = 0 To UBound(gpPath)
-            pArray(i).X = gpPath(i).X
-            pArray(i).Y = gpPath(i).Y
+    For Each ptArray In pts
+        ReDim ptApiArray(UBound(ptArray))
+        For i = 0 To UBound(ptArray)
+            ptApiArray(i).X = ptArray(i).X
+            ptApiArray(i).Y = ptArray(i).Y
         Next
-        Call Polygon(hDC, pArray(0), UBound(pArray) + 1)
+        Call Polygon(hDC, ptApiArray(0), UBound(ptApiArray) + 1)
     Next
 
     Call EndPath(hDC)
+End Sub
 
+#If VBA7 Then
+Private Sub DrawAndFillPath(ByVal outlineRgb As Long, ByVal fillRgb As Long, ByVal hDC As LongPtr)
+#Else
+Private Sub DrawAndFillPath(ByVal outlineRgb As Long, ByVal fillRgb As Long, ByVal hDC As Long)
+#End If
 #If VBA7 Then
     Dim hBrush    As LongPtr
     Dim hOldBrush As LongPtr
@@ -143,9 +169,9 @@ Public Function GetEMF(ByRef gpPaths() As Variant, _
     Dim hOldPen   As Long
 #End If
 
-    hBrush = CreateSolidBrush(foreColorRgb)
+    hBrush = CreateSolidBrush(fillRgb)
     hOldBrush = SelectObject(hDC, hBrush)
-    hPen = CreatePen(PS_SOLID, 1, foreColorRgb)
+    hPen = CreatePen(PS_SOLID, 1, outlineRgb)
     hOldPen = SelectObject(hDC, hPen)
 
     Call SetPolyFillMode(hDC, PolygonFillMode.ALTERNATE)
@@ -155,6 +181,4 @@ Public Function GetEMF(ByRef gpPaths() As Variant, _
     Call DeleteObject(hBrush)
     Call SelectObject(hDC, hOldPen)
     Call DeleteObject(hPen)
-
-    GetEMF = CloseEnhMetaFile(hDC)
-End Function
+End Sub

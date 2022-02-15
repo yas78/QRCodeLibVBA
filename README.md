@@ -33,7 +33,10 @@ CreateSymbols関数の引数に、ErrorCorrectionLevel列挙型の値を設定�
 
 ```VBA
 Dim sbls As Symbols
-Set sbls = CreateSymbols(ErrorCorrectionLevel.H)
+Set sbls = CreateSymbols(ErrorCorrectionLevel.L) ' 7%
+Set sbls = CreateSymbols(ErrorCorrectionLevel.M) ' 15%(default)
+Set sbls = CreateSymbols(ErrorCorrectionLevel.Q) ' 25%
+Set sbls = CreateSymbols(ErrorCorrectionLevel.H) ' 30%
 ```
 
 ### 例３．型番の上限を指定する
@@ -48,7 +51,7 @@ Set sbls = CreateSymbols(maxVer:=10)
 CreateSymbols関数のcharsetName引数を設定してSymbolsオブジェクトを生成します。
 （ADODB.Stream に依存しています。使用可能な文字セットはレジストリ[HKEY_CLASSES_ROOT\MIME\Database\Charset]を確認してください。）
 
-既定値は Shift_JIS です。UTF-8の設定例を以下に示します。
+既定値はShift_JISです。UTF-8の設定例を以下に示します。
 
 
 ```VBA

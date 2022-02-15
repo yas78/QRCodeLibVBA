@@ -2,9 +2,7 @@ Attribute VB_Name = "CharCountIndicator"
 Option Private Module
 Option Explicit
 
-Public Function GetLength( _
-    ByVal ver As Long, ByVal encMode As EncodingMode) As Long
-
+Public Function GetLength(ByVal ver As Long, ByVal encMode As EncodingMode) As Long
     Select Case ver
         Case 1 To 9
             Select Case encMode

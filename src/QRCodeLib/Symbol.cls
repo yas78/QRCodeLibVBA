@@ -540,7 +540,7 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
     pictWidth = moduleCount * moduleSize
 
     Dim pictHeight As Long
-    pictHeight = moduleCount * moduleSize
+    pictHeight = pictWidth
 
     Dim rowBytesLen As Long
     rowBytesLen = (pictWidth + 7) \ 8
@@ -728,7 +728,7 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
     pictWidth = moduleCount * moduleSize
 
     Dim pictHeight As Long
-    pictHeight = moduleCount * moduleSize
+    pictHeight = pictWidth
 
     Dim pack8bit As Long
     If pictWidth Mod 8 > 0 Then
@@ -901,40 +901,10 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim pictHeight As Long
     pictHeight = pictWidth
 
-    Dim img() As Variant
-    ReDim img(pictHeight - 1)
+    Dim pts() As Variant
+    pts = GetContourPoints(moduleMatrix, moduleSize, pictWidth, pictHeight)
 
-    Dim imgRow() As Long
-
-    Dim r As Long
-    Dim c As Long
-
-    Dim rowArray As Variant
-    Dim v As Variant
-    Dim j As Long
-    Dim i As Long
-    Dim cl As Long
-    For Each rowArray In moduleMatrix
-        ReDim imgRow(pictWidth - 1)
-        c = 0
-        For Each v In rowArray
-            cl = IIf(Values.IsDark(v), 1, 0)
-            For j = 1 To moduleSize
-                imgRow(c) = cl
-                c = c + 1
-            Next
-        Next
-
-        For i = 1 To moduleSize
-            img(r) = imgRow
-            r = r + 1
-        Next
-    Next
-
-    Dim gpPaths() As Variant
-    gpPaths = GraphicPath.FindContours(img)
-
-    GetSVG = SVG.GetSVG(gpPaths, pictWidth, pictHeight, foreRgb)
+    GetSVG = SVG.GetSVG(pts, pictWidth, pictHeight, foreRgb)
 End Function
 
 #If VBA7 Then
@@ -961,6 +931,16 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim pictHeight As Long
     pictHeight = pictWidth
 
+    Dim pts() As Variant
+    pts = GetContourPoints(moduleMatrix, moduleSize, pictWidth, pictHeight)
+
+    GetEMF = EMF.GetEMF(pts, pictWidth, pictHeight, foreColorRgb)
+End Function
+
+Private Function GetContourPoints(ByRef moduleMatrix() As Variant, _
+                                  ByVal moduleSize As Long, _
+                                  ByVal pictWidth As Long, _
+                                  ByVal pictHeight As Long) As Variant()
     Dim img() As Variant
     ReDim img(pictHeight - 1)
 
@@ -971,16 +951,15 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
 
     Dim rowArray As Variant
     Dim v As Variant
-    Dim j As Long
+    Dim clr As Long
     Dim i As Long
-    Dim cl As Long
     For Each rowArray In moduleMatrix
         ReDim imgRow(pictWidth - 1)
         c = 0
         For Each v In rowArray
-            cl = IIf(Values.IsDark(v), 1, 0)
-            For j = 1 To moduleSize
-                imgRow(c) = cl
+            clr = IIf(Values.IsDark(v), 1, 0)
+            For i = 1 To moduleSize
+                imgRow(c) = clr
                 c = c + 1
             Next
         Next
@@ -991,10 +970,7 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
         Next
     Next
 
-    Dim gpPaths() As Variant
-    gpPaths = GraphicPath.FindContours(img)
-
-    GetEMF = EMF.GetEMF(gpPaths, pictWidth, pictHeight, foreColorRgb)
+    GetContourPoints = Graphics.FindContours(img)
 End Function
 
 Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()
@@ -1010,7 +986,7 @@ Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()
     pictWidth = moduleCount * moduleSize
 
     Dim pictHeight As Long
-    pictHeight = moduleCount * moduleSize
+    pictHeight = pictWidth
 
     Dim pack8bit As Long
     If pictWidth Mod 8 > 0 Then
@@ -1386,5 +1362,3 @@ Public Sub SetToClipboard(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZ
             Call Err.Raise(5)
     End Select
 End Sub
-
-

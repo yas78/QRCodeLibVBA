@@ -10,14 +10,14 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IQRCodeEncoder
 
-Private m_data()        As Byte
-Private m_charCounter   As Long
-Private m_bitCounter    As Long
+Private m_data()      As Byte
+Private m_charCounter As Long
+Private m_bitCounter  As Long
 
-Private m_encAlpha  As IQRCodeEncoder
-Private m_encKanji  As IQRCodeEncoder
+Private m_encAlpha As IQRCodeEncoder
+Private m_encKanji As IQRCodeEncoder
 
-Private m_encoding  As Encoding
+Private m_encoding As Encoding
 
 Private Sub Class_Initialize()
     Set m_encAlpha = New AlphanumericEncoder

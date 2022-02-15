@@ -1,18 +1,22 @@
 Attribute VB_Name = "QRCodeFunction"
 Option Explicit
 
-Private Const TemporaryFolder = 2
 Private m_fs As Object
+Private m_tempFolder As String
 
 Public Function QR(ByVal s As String, _
                    Optional ByVal charsetName As String = "Shift_JIS") As Variant
+    If Not (TypeOf Application.Caller Is Range) Then Exit Function
+
     If m_fs Is Nothing Then
         Set m_fs = CreateObject("Scripting.FileSystemObject")
     End If
 
-On Error GoTo Catch
-    If Not (TypeOf Application.Caller Is Range) Then Exit Function
+    If Len(m_tempFolder) = 0 Then
+        m_tempFolder = Environ$("TEMP")
+    End If
 
+On Error GoTo Catch
     Dim rng As Range
     Set rng = Application.Caller.MergeArea
     Call DeletePictures(rng)
@@ -24,7 +28,7 @@ On Error GoTo Catch
     Call sbls.AppendText(s)
 
     Dim filePath As String
-    filePath = m_fs.GetSpecialFolder(TemporaryFolder) & "\" & m_fs.GetTempName()
+    filePath = m_tempFolder & "\" & m_fs.GetTempName()
 
     If m_fs.FileExists(filePath) Then Call m_fs.DeleteFile(filePath)
     Call sbls(0).SaveAs(filePath, fmt:=fmtEMF)
