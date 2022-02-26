@@ -43,8 +43,7 @@ On Error GoTo Catch
 Finally:
 On Error GoTo 0
     Exit Sub
-
 Catch:
-    MsgBox Err.Description, vbExclamation
+    Call MsgBox(Err.Description, vbExclamation)
     Resume Finally
 End Sub

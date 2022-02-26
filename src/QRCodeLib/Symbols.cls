@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 Option Explicit
 
-Private m_items  As Collection
+Private m_items As Collection
 
 Private m_minVersion           As Long
 Private m_maxVersion           As Long

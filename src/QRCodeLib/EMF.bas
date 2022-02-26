@@ -68,7 +68,7 @@ Private Type POINTAPI
 End Type
 
 Private Type Size
-    Width As Double
+    Width  As Double
     Height As Double
 End Type
 
@@ -78,26 +78,18 @@ Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
 
 #If VBA7 Then
-Public Function GetEMF(ByRef pts() As Variant, _
+Public Function GetEMF(ByRef contours() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As LongPtr
 #Else
-Public Function GetEMF(ByRef pts() As Variant, _
+Public Function GetEMF(ByRef contours() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As Long
 #End If
-    Dim pixelSize As Size
-    pixelSize = GetPixelSize()
-
-    Dim region As RECT
-    With region
-        .Left = 0
-        .Top = 0
-        .Right = pixelSize.Width * pictWidth * 100
-        .Bottom = pixelSize.Height * pictHeight * 100
-    End With
+    Dim dimension As RECT
+    dimension = GetDimension(pictWidth, pictHeight)
 
 #If VBA7 Then
     Dim hDC As LongPtr
@@ -105,8 +97,17 @@ Public Function GetEMF(ByRef pts() As Variant, _
     Dim hDC As Long
 #End If
 
-    hDC = CreateEnhMetaFile(0, vbNullString, region, vbNullString)
-    Call MakePath(pts, hDC)
+    hDC = CreateEnhMetaFile(0, vbNullString, dimension, vbNullString)
+
+    Call BeginPath(hDC)
+
+    Dim pts As Variant
+    For Each pts In contours
+        Call AddPolygon(pts, hDC)
+    Next
+
+    Call EndPath(hDC)
+
     Call DrawAndFillPath(foreColorRgb, foreColorRgb, hDC)
 
     GetEMF = CloseEnhMetaFile(hDC)
@@ -130,26 +131,39 @@ Private Function GetPixelSize() As Size
     GetPixelSize = ret
 End Function
 
-#If VBA7 Then
-Private Sub MakePath(ByRef pts() As Variant, ByVal hDC As LongPtr)
-#Else
-Private Sub MakePath(ByRef pts() As Variant, ByVal hDC As Long)
-#End If
-    Call BeginPath(hDC)
+Private Function GetDimension(ByVal pictWidth As Long, ByVal pictHeight As Long) As RECT
+    Dim pixelSize As Size
+    pixelSize = GetPixelSize()
 
-    Dim ptArray As Variant
-    Dim ptApiArray() As POINTAPI
+    Dim ret As RECT
+    With ret
+        .Left = 0
+        .Top = 0
+        .Right = pixelSize.Width * pictWidth * 100
+        .Bottom = pixelSize.Height * pictHeight * 100
+    End With
+
+    GetDimension = ret
+End Function
+
+#If VBA7 Then
+Private Sub AddPolygon(ByRef pts As Variant, ByVal hDC As LongPtr)
+#Else
+Private Sub AddPolygon(ByRef pts As Variant, ByVal hDC As Long)
+#End If
+    Dim ptsApi() As POINTAPI
+    ReDim ptsApi(UBound(pts))
+
+    Dim pt As Point
+
     Dim i As Long
-    For Each ptArray In pts
-        ReDim ptApiArray(UBound(ptArray))
-        For i = 0 To UBound(ptArray)
-            ptApiArray(i).X = ptArray(i).X
-            ptApiArray(i).Y = ptArray(i).Y
-        Next
-        Call Polygon(hDC, ptApiArray(0), UBound(ptApiArray) + 1)
+    For i = 0 To UBound(pts)
+        Set pt = pts(i)
+        ptsApi(i).X = pt.X
+        ptsApi(i).Y = pt.Y
     Next
 
-    Call EndPath(hDC)
+    Call Polygon(hDC, ptsApi(0), UBound(ptsApi) + 1)
 End Sub
 
 #If VBA7 Then

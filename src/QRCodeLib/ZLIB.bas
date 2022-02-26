@@ -31,7 +31,7 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
     Call Deflate.Compress(data, btype, compressedData)
 
     Dim adler As Long
-    adler = ADLER32.Checksum(data)
+    adler = Adler32.Checksum(data)
 
     Dim sz As Long
     sz = UBound(compressedData) + 1

@@ -8,9 +8,9 @@ Public Function Apply(ByVal ver As Long, _
     Dim minPenalty As Long
     minPenalty = &H7FFFFFFF
 
-    Dim temp()  As Variant
+    Dim temp() As Variant
     Dim penalty As Long
-    Dim maskPatternReference As Long
+    Dim maskPattern As Long
     Dim maskedMatrix() As Variant
 
     Dim i As Long
@@ -28,18 +28,18 @@ Public Function Apply(ByVal ver As Long, _
 
         If penalty < minPenalty Then
             minPenalty = penalty
-            maskPatternReference = i
+            maskPattern = i
             maskedMatrix = temp
         End If
     Next
 
     moduleMatrix = maskedMatrix
-    Apply = maskPatternReference
+    Apply = maskPattern
 End Function
 
-Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Variant)
+Private Sub Mask(ByVal maskPattern As Long, ByRef moduleMatrix() As Variant)
     Dim condition As IMaskingCondition
-    Set condition = GetCondition(maskPatternReference)
+    Set condition = GetCondition(maskPattern)
 
     Dim r As Long
     Dim c As Long
@@ -54,10 +54,10 @@ Private Sub Mask(ByVal maskPatternReference As Long, ByRef moduleMatrix() As Var
     Next
 End Sub
 
-Private Function GetCondition(ByVal maskPatternReference As Long) As IMaskingCondition
+Private Function GetCondition(ByVal maskPattern As Long) As IMaskingCondition
     Dim ret As IMaskingCondition
 
-    Select Case maskPatternReference
+    Select Case maskPattern
         Case 0
             Set ret = New MaskingCondition0
         Case 1

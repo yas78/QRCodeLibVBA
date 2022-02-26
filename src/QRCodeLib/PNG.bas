@@ -103,9 +103,9 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
                      ByVal pictHeight As Long, _
                      ByVal bitDepth As Long, _
                      ByVal tColor As PngColorType, _
-                     ByVal compressionMethod As Long, _
-                     ByVal tFilter As Long, _
-                     ByVal interlace As Long, _
+                     ByVal compressionMethod As PngCompressionMethod, _
+                     ByVal tFilter As PngFilterType, _
+                     ByVal interlace As PngInterlaceMethod, _
                      ByRef ihdr As PngChunk)
     Const STR_IHDR As Long = &H49484452
 

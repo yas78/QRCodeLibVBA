@@ -288,7 +288,7 @@ Private Function GetEncodingRegionBytes() As Byte()
     Dim ecBlock() As Variant
     ecBlock = BuildErrorCorrectionBlock(dataBlock)
 
-    Dim numCodewords  As Long
+    Dim numCodewords As Long
     numCodewords = Codeword.GetTotalNumber(m_currVersion)
 
     Dim numDataCodewords As Long
@@ -632,7 +632,6 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
     Dim v As Variant
     Dim i As Long
     For r = UBound(moduleMatrix) To 0 Step -1
-
         ReDim bitmapRow(rowSize - 1)
         idx = 0
 
@@ -970,7 +969,7 @@ Private Function GetContourPoints(ByRef moduleMatrix() As Variant, _
         Next
     Next
 
-    GetContourPoints = Graphics.FindContours(img)
+    GetContourPoints = Figure.FindContours(img)
 End Function
 
 Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()

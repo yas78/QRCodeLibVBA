@@ -1,4 +1,4 @@
-Attribute VB_Name = "Graphics"
+Attribute VB_Name = "Figure"
 Option Private Module
 Option Explicit
 
@@ -12,8 +12,8 @@ End Enum
 Public Function FindContours(ByRef img() As Variant) As Variant()
     Const MAX_VALUE As Long = &H7FFFFFFF
 
-    Dim gpPaths As New List
-    Dim gpPath  As List
+    Dim ptsList As New List
+    Dim ptList  As List
 
     Dim st As Point
     Dim dr As Direction
@@ -30,8 +30,8 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
             img(r)(c) = MAX_VALUE
             Set st = New Point
             Call st.Init(c, r)
-            Set gpPath = New List
-            Call gpPath.Add(st)
+            Set ptList = New List
+            Call ptList.Add(st)
 
             dr = Direction.Up
             Set p = st.Clone()
@@ -47,7 +47,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                                 Set p = p.Clone()
                                 p.Y = p.Y - 1
                             Else
-                                Call gpPath.Add(p)
+                                Call ptList.Add(p)
                                 dr = Direction.Right
                                 Set p = p.Clone()
                                 p.X = p.X + 1
@@ -55,7 +55,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                         Else
                             Set p = p.Clone()
                             p.Y = p.Y + 1
-                            Call gpPath.Add(p)
+                            Call ptList.Add(p)
                             dr = Direction.Left
                             Set p = p.Clone()
                             p.X = p.X - 1
@@ -69,7 +69,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                                 Set p = p.Clone()
                                 p.Y = p.Y + 1
                             Else
-                                Call gpPath.Add(p)
+                                Call ptList.Add(p)
                                 dr = Direction.Left
                                 Set p = p.Clone()
                                 p.X = p.X - 1
@@ -77,7 +77,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                         Else
                             Set p = p.Clone()
                             p.Y = p.Y - 1
-                            Call gpPath.Add(p)
+                            Call ptList.Add(p)
                             dr = Direction.Right
                             Set p = p.Clone()
                             p.X = p.X + 1
@@ -91,7 +91,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                                 Set p = p.Clone()
                                 p.X = p.X - 1
                             Else
-                                Call gpPath.Add(p)
+                                Call ptList.Add(p)
                                 dr = Direction.Up
                                 Set p = p.Clone()
                                 p.Y = p.Y - 1
@@ -99,7 +99,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                         Else
                             Set p = p.Clone()
                             p.X = p.X + 1
-                            Call gpPath.Add(p)
+                            Call ptList.Add(p)
                             dr = Direction.Down
                             Set p = p.Clone()
                             p.Y = p.Y + 1
@@ -113,7 +113,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                                 Set p = p.Clone()
                                 p.X = p.X + 1
                             Else
-                                Call gpPath.Add(p)
+                                Call ptList.Add(p)
                                 dr = Direction.Down
                                 Set p = p.Clone()
                                 p.Y = p.Y + 1
@@ -121,7 +121,7 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                         Else
                             Set p = p.Clone()
                             p.X = p.X - 1
-                            Call gpPath.Add(p)
+                            Call ptList.Add(p)
                             dr = Direction.Up
                             Set p = p.Clone()
                             p.Y = p.Y - 1
@@ -131,10 +131,10 @@ Public Function FindContours(ByRef img() As Variant) As Variant()
                 End Select
             Loop
 
-            Call gpPaths.Add(gpPath.Items())
+            Call ptsList.Add(ptList.Items())
 Continue:
         Next
     Next
 
-    FindContours = gpPaths.Items()
+    FindContours = ptsList.Items()
 End Function

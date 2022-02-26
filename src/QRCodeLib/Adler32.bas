@@ -1,4 +1,4 @@
-Attribute VB_Name = "ADLER32"
+Attribute VB_Name = "Adler32"
 Option Private Module
 Option Explicit
 

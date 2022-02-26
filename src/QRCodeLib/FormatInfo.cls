@@ -26,10 +26,10 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
-                 ByVal maskPatternReference As Long, _
+                 ByVal maskPattern As Long, _
                  ByRef moduleMatrix() As Variant)
     Dim formatInfoValue As Long
-    formatInfoValue = GetFormatInfoValue(ecLevel, maskPatternReference)
+    formatInfoValue = GetFormatInfoValue(ecLevel, maskPattern)
 
     Dim temp As Long
     Dim v    As Long
@@ -98,7 +98,7 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
 End Sub
 
 Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
-                                    ByVal maskPatternReference As Long) As Long
+                                    ByVal maskPattern As Long) As Long
     Dim indicator As Long
 
     Select Case ecLevel
@@ -114,5 +114,5 @@ Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
             Call Err.Raise(5)
     End Select
 
-    GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPatternReference)
+    GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPattern)
 End Function
