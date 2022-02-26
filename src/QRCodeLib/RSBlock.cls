@@ -12,8 +12,8 @@ Option Explicit
 Private m_totalNumbers() As Variant
 
 Private Sub Class_Initialize()
-    Dim ecLevelL() As Variant
-    ecLevelL = Array( _
+    Dim ecLevelL() As Long
+    ecLevelL = ArrayUtil.LongArray( _
          0, _
          1, 1, 1, 1, 1, 2, 2, 2, 2, 4, _
          4, 4, 4, 4, 6, 6, 6, 6, 7, 8, _
@@ -21,8 +21,8 @@ Private Sub Class_Initialize()
         16, 17, 18, 19, 19, 20, 21, 22, 24, 25 _
     )
 
-    Dim ecLevelM() As Variant
-    ecLevelM = Array( _
+    Dim ecLevelM() As Long
+    ecLevelM = ArrayUtil.LongArray( _
          0, _
          1, 1, 1, 2, 2, 4, 4, 4, 5, 5, _
          5, 8, 9, 9, 10, 10, 11, 13, 14, 16, _
@@ -30,8 +30,8 @@ Private Sub Class_Initialize()
         31, 33, 35, 37, 38, 40, 43, 45, 47, 49 _
     )
 
-    Dim ecLevelQ() As Variant
-    ecLevelQ = Array( _
+    Dim ecLevelQ() As Long
+    ecLevelQ = ArrayUtil.LongArray( _
          0, _
          1, 1, 2, 2, 4, 4, 6, 6, 8, 8, _
          8, 10, 12, 16, 12, 17, 16, 18, 21, 20, _
@@ -39,8 +39,8 @@ Private Sub Class_Initialize()
         43, 45, 48, 51, 53, 56, 59, 62, 65, 68 _
     )
 
-    Dim ecLevelH() As Variant
-    ecLevelH = Array( _
+    Dim ecLevelH() As Long
+    ecLevelH = ArrayUtil.LongArray( _
          0, _
          1, 1, 2, 4, 4, 4, 5, 6, 8, 8, _
         11, 11, 16, 16, 18, 16, 19, 21, 25, 25, _
@@ -57,7 +57,7 @@ Public Function GetTotalNumber(ByVal ecLevel As ErrorCorrectionLevel, _
     Dim dataWordCapacity As Long
     dataWordCapacity = DataCodeword.GetTotalNumber(ecLevel, ver)
 
-    Dim blockCount As Variant
+    Dim blockCount() As Long
     blockCount = m_totalNumbers(ecLevel)
 
     If preceding Then

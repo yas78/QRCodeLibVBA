@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private m_totalNumbers() As Variant
+Private m_totalNumbers() As Long
 
 Private Sub Class_Initialize()
-    m_totalNumbers = Array( _
+    m_totalNumbers = ArrayUtil.LongArray( _
         -1, _
         26, 44, 70, 100, 134, 172, 196, 242, 292, 346, _
         404, 466, 532, 581, 655, 733, 815, 901, 991, 1085, _

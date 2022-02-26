@@ -40,3 +40,15 @@ Public Function Rotate90(ByRef array2D() As Variant) As Variant()
 
     Rotate90 = ret
 End Function
+
+Public Function LongArray(ParamArray args() As Variant) As Long()
+    Dim ret() As Long
+    ReDim ret(UBound(args))
+
+    Dim i As Long
+    For i = 0 To UBound(args)
+        ret(i) = args(i)
+    Next
+
+    LongArray = ret
+End Function

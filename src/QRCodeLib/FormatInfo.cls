@@ -11,18 +11,18 @@ Option Explicit
 
 Private Const VAL As Long = Values.FORMAT_INFO
 
-Private m_formatInfoValues()    As Variant
-Private m_formatInfoMaskArray() As Variant
+Private m_formatInfoValues()    As Long
+Private m_formatInfoMaskArray() As Long
 
 Private Sub Class_Initialize()
-    m_formatInfoValues = Array( _
+    m_formatInfoValues = ArrayUtil.LongArray( _
         &H0&, &H537&, &HA6E&, &HF59&, &H11EB&, &H14DC&, &H1B85&, &H1EB2&, &H23D6&, &H26E1&, _
         &H29B8&, &H2C8F&, &H323D&, &H370A&, &H3853&, &H3D64&, &H429B&, &H47AC&, &H48F5&, &H4DC2&, _
         &H5370&, &H5647&, &H591E&, &H5C29&, &H614D&, &H647A&, &H6B23&, &H6E14&, &H70A6&, &H7591&, _
         &H7AC8&, &H7FFF& _
     )
 
-    m_formatInfoMaskArray = Array(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
+    m_formatInfoMaskArray = ArrayUtil.LongArray(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
 End Sub
 
 Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
