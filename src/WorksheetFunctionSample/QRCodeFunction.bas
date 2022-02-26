@@ -31,7 +31,7 @@ On Error GoTo Catch
     filePath = m_tempFolder & "\" & m_fs.GetTempName()
 
     If m_fs.FileExists(filePath) Then Call m_fs.DeleteFile(filePath)
-    Call sbls(0).SaveAs(filePath, fmt:=fmtEMF)
+    Call sbls(0).SaveAs(filePath, 2, fmt:=fmtEMF)
 
     Dim shp As Shape
     Set shp = AddPicture(filePath, rng)
