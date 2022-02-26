@@ -13,7 +13,7 @@ Private m_totalNumbers() As Variant
 
 Private Sub Class_Initialize()
     Dim ecLevelL() As Long
-    ecLevelL = ArrayUtil.LongArray( _
+    ecLevelL = LongArray( _
          0, _
          1, 1, 1, 1, 1, 2, 2, 2, 2, 4, _
          4, 4, 4, 4, 6, 6, 6, 6, 7, 8, _
@@ -22,7 +22,7 @@ Private Sub Class_Initialize()
     )
 
     Dim ecLevelM() As Long
-    ecLevelM = ArrayUtil.LongArray( _
+    ecLevelM = LongArray( _
          0, _
          1, 1, 1, 2, 2, 4, 4, 4, 5, 5, _
          5, 8, 9, 9, 10, 10, 11, 13, 14, 16, _
@@ -31,7 +31,7 @@ Private Sub Class_Initialize()
     )
 
     Dim ecLevelQ() As Long
-    ecLevelQ = ArrayUtil.LongArray( _
+    ecLevelQ = LongArray( _
          0, _
          1, 1, 2, 2, 4, 4, 6, 6, 8, 8, _
          8, 10, 12, 16, 12, 17, 16, 18, 21, 20, _
@@ -40,7 +40,7 @@ Private Sub Class_Initialize()
     )
 
     Dim ecLevelH() As Long
-    ecLevelH = ArrayUtil.LongArray( _
+    ecLevelH = LongArray( _
          0, _
          1, 1, 2, 4, 4, 4, 5, 6, 8, 8, _
         11, 11, 16, 16, 18, 16, 19, 21, 25, 25, _

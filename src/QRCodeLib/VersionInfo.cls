@@ -11,10 +11,10 @@ Option Explicit
 
 Private Const VAL As Long = Values.VERSION_INFO
 
-Private m_items() As Long
+Private m_values() As Long
 
 Private Sub Class_Initialize()
-    m_items = ArrayUtil.LongArray( _
+    m_values = LongArray( _
         -1, -1, -1, -1, -1, -1, -1, _
         &H7C94&, &H85BC&, &H9A99&, &HA4D3&, &HBBF6&, &HC762&, &HD847&, &HE60D&, _
         &HF928&, &H10B78, &H1145D, &H12A17, &H13532, &H149A6, &H15683, &H168C9, _
@@ -29,7 +29,7 @@ Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
     numModulesPerSide = UBound(moduleMatrix) + 1
 
     Dim versionInfoValue As Long
-    versionInfoValue = m_items(ver)
+    versionInfoValue = m_values(ver)
 
     Dim p1 As Long
     p1 = 0

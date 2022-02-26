@@ -11,30 +11,30 @@ Option Explicit
 
 Private Const VAL As Long = Values.FINDER_PTN
 
-Private m_items() As Variant
+Private m_values() As Variant
 
 Private Sub Class_Initialize()
-    m_items = Array( _
-        ArrayUtil.LongArray(VAL, VAL, VAL, VAL, VAL, VAL, VAL), _
-        ArrayUtil.LongArray(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
-        ArrayUtil.LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
-        ArrayUtil.LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
-        ArrayUtil.LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
-        ArrayUtil.LongArray(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
-        ArrayUtil.LongArray(VAL, VAL, VAL, VAL, VAL, VAL, VAL) _
+    m_values = Array( _
+        LongArray(VAL, VAL, VAL, VAL, VAL, VAL, VAL), _
+        LongArray(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
+        LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        LongArray(VAL, -VAL, VAL, VAL, VAL, -VAL, VAL), _
+        LongArray(VAL, -VAL, -VAL, -VAL, -VAL, -VAL, VAL), _
+        LongArray(VAL, VAL, VAL, VAL, VAL, VAL, VAL) _
     )
 End Sub
 
 Public Sub Place(ByRef moduleMatrix() As Variant)
     Dim offset As Long
-    offset = (UBound(moduleMatrix) + 1) - (UBound(m_items) + 1)
+    offset = (UBound(moduleMatrix) + 1) - (UBound(m_values) + 1)
 
     Dim i As Long
     Dim j As Long
     Dim v As Long
-    For i = 0 To UBound(m_items)
-        For j = 0 To UBound(m_items(i))
-            v = m_items(i)(j)
+    For i = 0 To UBound(m_values)
+        For j = 0 To UBound(m_values(i))
+            v = m_values(i)(j)
 
             moduleMatrix(i)(j) = v
             moduleMatrix(i)(j + offset) = v

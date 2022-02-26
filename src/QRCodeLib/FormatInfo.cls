@@ -11,25 +11,25 @@ Option Explicit
 
 Private Const VAL As Long = Values.FORMAT_INFO
 
-Private m_formatInfoValues()    As Long
-Private m_formatInfoMaskArray() As Long
+Private m_values()     As Long
+Private m_maskValues() As Long
 
 Private Sub Class_Initialize()
-    m_formatInfoValues = ArrayUtil.LongArray( _
+    m_values = LongArray( _
         &H0&, &H537&, &HA6E&, &HF59&, &H11EB&, &H14DC&, &H1B85&, &H1EB2&, &H23D6&, &H26E1&, _
         &H29B8&, &H2C8F&, &H323D&, &H370A&, &H3853&, &H3D64&, &H429B&, &H47AC&, &H48F5&, &H4DC2&, _
         &H5370&, &H5647&, &H591E&, &H5C29&, &H614D&, &H647A&, &H6B23&, &H6E14&, &H70A6&, &H7591&, _
         &H7AC8&, &H7FFF& _
     )
 
-    m_formatInfoMaskArray = ArrayUtil.LongArray(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
+    m_maskValues = LongArray(0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
 End Sub
 
 Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
                  ByVal maskPattern As Long, _
                  ByRef moduleMatrix() As Variant)
     Dim formatInfoValue As Long
-    formatInfoValue = GetFormatInfoValue(ecLevel, maskPattern)
+    formatInfoValue = GetValue(ecLevel, maskPattern)
 
     Dim temp As Long
     Dim v    As Long
@@ -42,7 +42,7 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
 
     Dim i1 As Long
     For i1 = 0 To 7
-        temp = IIf((formatInfoValue And (2 ^ i1)) > 0, 1, 0) Xor m_formatInfoMaskArray(i1)
+        temp = IIf((formatInfoValue And (2 ^ i1)) > 0, 1, 0) Xor m_maskValues(i1)
         v = IIf(temp > 0, VAL, -VAL)
         moduleMatrix(r1)(8) = v
         moduleMatrix(8)(c1) = v
@@ -63,7 +63,7 @@ Public Sub Place(ByVal ecLevel As ErrorCorrectionLevel, _
 
     Dim i2 As Long
     For i2 = 8 To 14
-        temp = IIf((formatInfoValue And (2 ^ i2)) > 0, 1, 0) Xor m_formatInfoMaskArray(i2)
+        temp = IIf((formatInfoValue And (2 ^ i2)) > 0, 1, 0) Xor m_maskValues(i2)
         v = IIf(temp > 0, VAL, -VAL)
         moduleMatrix(r2)(8) = v
         moduleMatrix(8)(c2) = v
@@ -97,8 +97,8 @@ Public Sub PlaceTempBlank(ByRef moduleMatrix() As Variant)
     moduleMatrix(UBound(moduleMatrix) - 7)(8) = -VAL
 End Sub
 
-Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
-                                    ByVal maskPattern As Long) As Long
+Private Function GetValue(ByVal ecLevel As ErrorCorrectionLevel, _
+                          ByVal maskPattern As Long) As Long
     Dim indicator As Long
 
     Select Case ecLevel
@@ -114,5 +114,5 @@ Private Function GetFormatInfoValue(ByVal ecLevel As ErrorCorrectionLevel, _
             Call Err.Raise(5)
     End Select
 
-    GetFormatInfoValue = m_formatInfoValues((indicator * 2 ^ 3) Or maskPattern)
+    GetValue = m_values((indicator * 2 ^ 3) Or maskPattern)
 End Function

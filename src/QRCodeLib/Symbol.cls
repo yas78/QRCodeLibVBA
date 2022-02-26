@@ -67,7 +67,7 @@ Friend Property Get CurrentEncodingMode() As EncodingMode
 End Property
 
 Friend Function TryAppend(ByVal c As String) As Boolean
-    Dim bitLength  As Long
+    Dim bitLength As Long
     bitLength = m_currEncoder.GetCodewordBitLength(c)
 
     Do While (m_dataBitCapacity < m_dataBitCounter + bitLength)
@@ -238,7 +238,7 @@ Private Function BuildErrorCorrectionBlock(ByRef dataBlock() As Variant) As Vari
         ret(idx) = eccDataTmp
     Next
 
-    Dim gp() As Variant
+    Dim gp() As Long
     gp = GeneratorPolynomials.Item(numECCodewords)
 
     Dim eccIdx As Long

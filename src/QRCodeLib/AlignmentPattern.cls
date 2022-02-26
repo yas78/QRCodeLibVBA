@@ -11,66 +11,66 @@ Option Explicit
 
 Private Const VAL As Long = Values.ALIGNMENT_PTN
 
-Private m_centerPosArrays(40) As Variant
+Private m_items(40) As Variant
 
 Private Sub Class_Initialize()
-    m_centerPosArrays(2) = Array(6, 18)
-    m_centerPosArrays(3) = Array(6, 22)
-    m_centerPosArrays(4) = Array(6, 26)
-    m_centerPosArrays(5) = Array(6, 30)
-    m_centerPosArrays(6) = Array(6, 34)
-    m_centerPosArrays(7) = Array(6, 22, 38)
-    m_centerPosArrays(8) = Array(6, 24, 42)
-    m_centerPosArrays(9) = Array(6, 26, 46)
-    m_centerPosArrays(10) = Array(6, 28, 50)
-    m_centerPosArrays(11) = Array(6, 30, 54)
-    m_centerPosArrays(12) = Array(6, 32, 58)
-    m_centerPosArrays(13) = Array(6, 34, 62)
-    m_centerPosArrays(14) = Array(6, 26, 46, 66)
-    m_centerPosArrays(15) = Array(6, 26, 48, 70)
-    m_centerPosArrays(16) = Array(6, 26, 50, 74)
-    m_centerPosArrays(17) = Array(6, 30, 54, 78)
-    m_centerPosArrays(18) = Array(6, 30, 56, 82)
-    m_centerPosArrays(19) = Array(6, 30, 58, 86)
-    m_centerPosArrays(20) = Array(6, 34, 62, 90)
-    m_centerPosArrays(21) = Array(6, 28, 50, 72, 94)
-    m_centerPosArrays(22) = Array(6, 26, 50, 74, 98)
-    m_centerPosArrays(23) = Array(6, 30, 54, 78, 102)
-    m_centerPosArrays(24) = Array(6, 28, 54, 80, 106)
-    m_centerPosArrays(25) = Array(6, 32, 58, 84, 110)
-    m_centerPosArrays(26) = Array(6, 30, 58, 86, 114)
-    m_centerPosArrays(27) = Array(6, 34, 62, 90, 118)
-    m_centerPosArrays(28) = Array(6, 26, 50, 74, 98, 122)
-    m_centerPosArrays(29) = Array(6, 30, 54, 78, 102, 126)
-    m_centerPosArrays(30) = Array(6, 26, 52, 78, 104, 130)
-    m_centerPosArrays(31) = Array(6, 30, 56, 82, 108, 134)
-    m_centerPosArrays(32) = Array(6, 34, 60, 86, 112, 138)
-    m_centerPosArrays(33) = Array(6, 30, 58, 86, 114, 142)
-    m_centerPosArrays(34) = Array(6, 34, 62, 90, 118, 146)
-    m_centerPosArrays(35) = Array(6, 30, 54, 78, 102, 126, 150)
-    m_centerPosArrays(36) = Array(6, 24, 50, 76, 102, 128, 154)
-    m_centerPosArrays(37) = Array(6, 28, 54, 80, 106, 132, 158)
-    m_centerPosArrays(38) = Array(6, 32, 58, 84, 110, 136, 162)
-    m_centerPosArrays(39) = Array(6, 26, 54, 82, 110, 138, 166)
-    m_centerPosArrays(40) = Array(6, 30, 58, 86, 114, 142, 170)
+    m_items(2) = LongArray(6, 18)
+    m_items(3) = LongArray(6, 22)
+    m_items(4) = LongArray(6, 26)
+    m_items(5) = LongArray(6, 30)
+    m_items(6) = LongArray(6, 34)
+    m_items(7) = LongArray(6, 22, 38)
+    m_items(8) = LongArray(6, 24, 42)
+    m_items(9) = LongArray(6, 26, 46)
+    m_items(10) = LongArray(6, 28, 50)
+    m_items(11) = LongArray(6, 30, 54)
+    m_items(12) = LongArray(6, 32, 58)
+    m_items(13) = LongArray(6, 34, 62)
+    m_items(14) = LongArray(6, 26, 46, 66)
+    m_items(15) = LongArray(6, 26, 48, 70)
+    m_items(16) = LongArray(6, 26, 50, 74)
+    m_items(17) = LongArray(6, 30, 54, 78)
+    m_items(18) = LongArray(6, 30, 56, 82)
+    m_items(19) = LongArray(6, 30, 58, 86)
+    m_items(20) = LongArray(6, 34, 62, 90)
+    m_items(21) = LongArray(6, 28, 50, 72, 94)
+    m_items(22) = LongArray(6, 26, 50, 74, 98)
+    m_items(23) = LongArray(6, 30, 54, 78, 102)
+    m_items(24) = LongArray(6, 28, 54, 80, 106)
+    m_items(25) = LongArray(6, 32, 58, 84, 110)
+    m_items(26) = LongArray(6, 30, 58, 86, 114)
+    m_items(27) = LongArray(6, 34, 62, 90, 118)
+    m_items(28) = LongArray(6, 26, 50, 74, 98, 122)
+    m_items(29) = LongArray(6, 30, 54, 78, 102, 126)
+    m_items(30) = LongArray(6, 26, 52, 78, 104, 130)
+    m_items(31) = LongArray(6, 30, 56, 82, 108, 134)
+    m_items(32) = LongArray(6, 34, 60, 86, 112, 138)
+    m_items(33) = LongArray(6, 30, 58, 86, 114, 142)
+    m_items(34) = LongArray(6, 34, 62, 90, 118, 146)
+    m_items(35) = LongArray(6, 30, 54, 78, 102, 126, 150)
+    m_items(36) = LongArray(6, 24, 50, 76, 102, 128, 154)
+    m_items(37) = LongArray(6, 28, 54, 80, 106, 132, 158)
+    m_items(38) = LongArray(6, 32, 58, 84, 110, 136, 162)
+    m_items(39) = LongArray(6, 26, 54, 82, 110, 138, 166)
+    m_items(40) = LongArray(6, 30, 58, 86, 114, 142, 170)
 End Sub
 
 Public Sub Place(ByVal ver As Long, ByRef moduleMatrix() As Variant)
-    Dim centerArray As Variant
-    centerArray = m_centerPosArrays(ver)
+    Dim centers() As Long
+    centers = m_items(ver)
 
     Dim maxIndex As Long
-    maxIndex = UBound(centerArray)
+    maxIndex = UBound(centers)
 
     Dim i As Long
     Dim j As Long
     Dim r As Long
     Dim c As Long
     For i = 0 To maxIndex
-        r = centerArray(i)
+        r = centers(i)
 
         For j = 0 To maxIndex
-            c = centerArray(j)
+            c = centers(j)
 
             If i = 0 And j = 0 Or _
                i = 0 And j = maxIndex Or _
