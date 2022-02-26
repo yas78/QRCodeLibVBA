@@ -120,7 +120,7 @@ On Error GoTo Catch
     For idx = 0 To sbls.Count - 1
         Set sbl = sbls(idx)
         Set img = AddImageControl(idx)
-        img.Picture = sbl.GetPicture(sz, foreRGB, backRGB)
+        img.Picture = sbl.GetPicture(2, foreRGB, backRGB)
     Next
 
     fraQRCodeImage.ScrollHeight = _
