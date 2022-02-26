@@ -91,9 +91,6 @@ Private Sub Update_fraQRCodeImage()
     Dim ecLevel As ErrorCorrectionLevel
     ecLevel = cmbErrorCorrectionLevel.Value
 
-    Dim sz As Long
-    sz = CLng(txtModuleSize.Text)
-
     Dim foreRGB As String
     foreRGB = "#" & txtForeColor.Text
 
