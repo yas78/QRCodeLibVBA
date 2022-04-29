@@ -56,10 +56,10 @@ Private Enum PolygonFillMode
 End Enum
 
 Private Type RECT
-  Left   As Long
-  Top    As Long
-  Right  As Long
-  Bottom As Long
+    Left   As Long
+    Top    As Long
+    Right  As Long
+    Bottom As Long
 End Type
 
 Private Type POINTAPI
