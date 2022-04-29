@@ -177,24 +177,27 @@ End Sub
 Private Function SelectInitialMode( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
+    Dim c As String
+    c = Mid$(s, startIndex, 1)
+
     If Not (m_encKanji Is Nothing) Then
-        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+        If m_encKanji.InSubset(c) Then
             SelectInitialMode = EncodingMode.KANJI
             Exit Function
         End If
     End If
 
-    If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If m_encByte.InExclusiveSubset(c) Then
         SelectInitialMode = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
 
-    If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If m_encAlpha.InExclusiveSubset(c) Then
         SelectInitialMode = SelectModeWhenInitialDataAlphaNumeric(s, startIndex)
         Exit Function
     End If
 
-    If m_encNum.InSubset(Mid$(s, startIndex, 1)) Then
+    If m_encNum.InSubset(c) Then
         SelectInitialMode = SelectModeWhenInitialDataNumeric(s, startIndex)
         Exit Function
     End If
@@ -305,19 +308,22 @@ End Function
 Private Function SelectModeWhileInNumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
+    Dim c As String
+    c = Mid$(s, startIndex, 1)
+
     If Not (m_encKanji Is Nothing) Then
-        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+        If m_encKanji.InSubset(c) Then
             SelectModeWhileInNumeric = EncodingMode.KANJI
             Exit Function
         End If
     End If
 
-    If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If m_encByte.InExclusiveSubset(c) Then
         SelectModeWhileInNumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
 
-    If m_encAlpha.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If m_encAlpha.InExclusiveSubset(c) Then
         SelectModeWhileInNumeric = EncodingMode.ALPHA_NUMERIC
         Exit Function
     End If
@@ -328,14 +334,17 @@ End Function
 Private Function SelectModeWhileInAlphanumeric( _
     ByRef s As String, ByVal startIndex As Long) As EncodingMode
 
+    Dim c As String
+    c = Mid$(s, startIndex, 1)
+
     If Not (m_encKanji Is Nothing) Then
-        If m_encKanji.InSubset(Mid$(s, startIndex, 1)) Then
+        If m_encKanji.InSubset(c) Then
             SelectModeWhileInAlphanumeric = EncodingMode.KANJI
             Exit Function
         End If
     End If
 
-    If m_encByte.InExclusiveSubset(Mid$(s, startIndex, 1)) Then
+    If m_encByte.InExclusiveSubset(c) Then
         SelectModeWhileInAlphanumeric = EncodingMode.EIGHT_BIT_BYTE
         Exit Function
     End If
@@ -357,13 +366,16 @@ Private Function ShouldChangeAlphanumericToNumeric( _
     Dim cnt As Long
     cnt = 0
 
+    Dim c As String
     Dim i As Long
     For i = startIndex To Len(s)
-        If Not m_encAlpha.InSubset(Mid$(s, i, 1)) Then
+        c = Mid$(s, i, 1)
+
+        If Not m_encAlpha.InSubset(c) Then
             Exit For
         End If
 
-        If m_encNum.InSubset(Mid$(s, i, 1)) Then
+        If m_encNum.InSubset(c) Then
             cnt = cnt + 1
         Else
             ret = True
@@ -419,15 +431,18 @@ Private Function ShouldChangeByteToNumeric( _
     Dim cnt As Long
     cnt = 0
 
+    Dim c As String
     Dim i As Long
     For i = startIndex To Len(s)
-        If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
+        c = Mid$(s, i, 1)
+
+        If Not m_encByte.InSubset(c) Then
             Exit For
         End If
 
-        If m_encNum.InSubset(Mid$(s, i, 1)) Then
+        If m_encNum.InSubset(c) Then
             cnt = cnt + 1
-        ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
+        ElseIf m_encByte.InExclusiveSubset(c) Then
             ret = True
             Exit For
         Else
@@ -460,15 +475,18 @@ Private Function ShouldChangeByteToAlphanumeric( _
     Dim cnt As Long
     cnt = 0
 
+    Dim c As String
     Dim i As Long
     For i = startIndex To Len(s)
-        If Not m_encByte.InSubset(Mid$(s, i, 1)) Then
+        c = Mid$(s, i, 1)
+
+        If Not m_encByte.InSubset(c) Then
             Exit For
         End If
 
-        If m_encAlpha.InExclusiveSubset(Mid$(s, i, 1)) Then
+        If m_encAlpha.InExclusiveSubset(c) Then
             cnt = cnt + 1
-        ElseIf m_encByte.InExclusiveSubset(Mid$(s, i, 1)) Then
+        ElseIf m_encByte.InExclusiveSubset(c) Then
             ret = True
             Exit For
         Else
