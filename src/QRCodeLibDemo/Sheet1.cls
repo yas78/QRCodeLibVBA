@@ -10,7 +10,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Const ADDR_DATA As String = "I4"
-Const MODULE_SIZE As Long = 12
+Const MODULE_SIZE As Long = 2
 
 Private Sub btnForm_Click()
     Dim frm As Form1
