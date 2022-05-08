@@ -29,6 +29,16 @@ Public Sub Add(ByVal arg As Variant)
     End If
 End Sub
 
+Public Function Item(ByVal Index As Long) As Variant
+Attribute Item.VB_UserMemId = 0
+' Default Member [Attribute Item.VB_UserMemId = 0]
+    If (VarType(m_buf(Index)) And VbVarType.vbObject) = VbVarType.vbObject Then
+        Set Item = m_buf(Index)
+    Else
+        Item = m_buf(Index)
+    End If
+End Function
+
 Public Function Items() As Variant()
     Items = m_buf
 End Function
