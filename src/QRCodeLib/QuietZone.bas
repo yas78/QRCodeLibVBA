@@ -12,7 +12,6 @@ Public Property Get Width() As Long
     End If
     Width = m_width
 End Property
-
 Public Property Let Width(ByVal Value As Long)
     m_width = Value
 End Property

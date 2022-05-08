@@ -64,7 +64,7 @@ End Function
 
 Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) As Long
     Dim penaltyScore As Long
-    Dim temp    As Boolean
+    Dim temp As Boolean
 
     Dim r As Long
     Dim c As Long
