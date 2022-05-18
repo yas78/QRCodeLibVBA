@@ -46,24 +46,24 @@ End Function
 Public Function GetBytes() As Byte()
     Dim buf As New Collection
     Dim i As Long
-    Dim temp() As Byte
+    Dim bytes() As Byte
 
-    temp = BitConverter.GetBytes(CInt(m_entries.Count))
-    For i = 0 To UBound(temp)
-        Call buf.Add(temp(i))
+    bytes = BitConverter.GetBytes(CInt(m_entries.Count))
+    For i = 0 To UBound(bytes)
+        Call buf.Add(bytes(i))
     Next
 
     Dim e As IFDEntry
     For Each e In m_entries
-        temp = e.GetBytes()
-        For i = 0 To UBound(temp)
-            Call buf.Add(temp(i))
+        bytes = e.GetBytes()
+        For i = 0 To UBound(bytes)
+            Call buf.Add(bytes(i))
         Next
     Next
 
-    temp = BitConverter.GetBytes(m_nextIFDOffset)
-    For i = 0 To UBound(temp)
-        Call buf.Add(temp(i))
+    bytes = BitConverter.GetBytes(m_nextIFDOffset)
+    For i = 0 To UBound(bytes)
+        Call buf.Add(bytes(i))
     Next
 
     Dim ret() As Byte

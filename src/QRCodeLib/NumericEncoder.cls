@@ -52,11 +52,15 @@ Private Sub IQRCodeEncoder_Append(ByVal c As String)
 End Sub
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
+    Dim ret As Long
+
     If m_charCounter Mod 3 = 0 Then
-        IQRCodeEncoder_GetCodewordBitLength = 4
+        ret = 4
     Else
-        IQRCodeEncoder_GetCodewordBitLength = 3
+        ret = 3
     End If
+
+    IQRCodeEncoder_GetCodewordBitLength = ret
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
@@ -67,14 +71,18 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
         Call bs.Append(m_data(i), 10)
     Next
 
+    Dim sz As Long
+
     Select Case m_charCounter Mod 3
         Case 1
-            Call bs.Append(m_data(UBound(m_data)), 4)
+            sz = 4
         Case 2
-            Call bs.Append(m_data(UBound(m_data)), 7)
+            sz = 7
         Case Else
-            Call bs.Append(m_data(UBound(m_data)), 10)
+            sz = 10
     End Select
+
+    Call bs.Append(m_data(UBound(m_data)), sz)
 
     IQRCodeEncoder_GetBytes = bs.GetBytes()
 End Function

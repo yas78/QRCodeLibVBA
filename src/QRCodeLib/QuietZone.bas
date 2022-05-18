@@ -2,7 +2,7 @@ Attribute VB_Name = "QuietZone"
 Option Private Module
 Option Explicit
 
-Public Const MIN_WIDTH As Long = 4
+Private Const MIN_WIDTH As Long = 4
 
 Private m_width As Long
 

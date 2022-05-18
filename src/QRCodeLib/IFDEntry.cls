@@ -63,27 +63,19 @@ End Function
 
 Public Function GetBytes() As Byte()
     Dim ret(11) As Byte
-    Dim temp() As Byte
 
-    temp = BitConverter.GetBytes(m_tagID)
-    ret(0) = temp(0)
-    ret(1) = temp(1)
+    Dim bytes() As Byte
+    Dim idx As Long
+    idx = 0
 
-    temp = BitConverter.GetBytes(m_fieldType)
-    ret(2) = temp(0)
-    ret(3) = temp(1)
-
-    temp = BitConverter.GetBytes(m_count)
-    ret(4) = temp(0)
-    ret(5) = temp(1)
-    ret(6) = temp(2)
-    ret(7) = temp(3)
-
-    temp = BitConverter.GetBytes(m_value)
-    ret(8) = temp(0)
-    ret(9) = temp(1)
-    ret(10) = temp(2)
-    ret(11) = temp(3)
+    bytes = BitConverter.GetBytes(m_tagID)
+    idx = ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+    bytes = BitConverter.GetBytes(m_fieldType)
+    idx = ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+    bytes = BitConverter.GetBytes(m_count)
+    idx = ArrayUtil.CopyAll(ret, idx, bytes)
+    bytes = BitConverter.GetBytes(m_value)
+    idx = ArrayUtil.CopyAll(ret, idx, bytes)
 
     GetBytes = ret
 End Function

@@ -47,22 +47,27 @@ Public Function GetDIB(ByRef bitmapData() As Byte, _
     Dim bih As BitmapInfoHeader
     Dim palette() As RgbQuad
 
+    Dim bytes() As Byte
+
     If Not monochrome Then
         biBitCount = 24
         bfOffBits = BF_SIZE + BI_SIZE
     Else
         ReDim palette(1)
+
+        bytes = BitConverter.GetBytes(foreColorRgb)
         With palette(0)
-            .rgbBlue = CByte((foreColorRgb And &HFF0000) \ 2 ^ 16)
-            .rgbGreen = CByte((foreColorRgb And &HFF00&) \ 2 ^ 8)
-            .rgbRed = CByte(foreColorRgb And &HFF&)
+            .rgbBlue = bytes(2)
+            .rgbGreen = bytes(1)
+            .rgbRed = bytes(0)
             .rgbReserved = 0
         End With
 
+        bytes = BitConverter.GetBytes(backColorRgb)
         With palette(1)
-            .rgbBlue = CByte((backColorRgb And &HFF0000) \ 2 ^ 16)
-            .rgbGreen = CByte((backColorRgb And &HFF00&) \ 2 ^ 8)
-            .rgbRed = CByte(backColorRgb And &HFF&)
+            .rgbBlue = bytes(2)
+            .rgbGreen = bytes(1)
+            .rgbRed = bytes(0)
             .rgbReserved = 0
         End With
 
@@ -95,62 +100,45 @@ Public Function GetDIB(ByRef bitmapData() As Byte, _
     Dim ret() As Byte
     ReDim ret(bfOffBits + UBound(bitmapData))
 
-    Dim bytes() As Byte
     Dim idx As Long
     idx = 0
 
     With bfh
         bytes = BitConverter.GetBytes(.bfType)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.bfSize)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.bfReserved1)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.bfReserved2)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.bfOffBits)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
     End With
 
     With bih
         bytes = BitConverter.GetBytes(.biSize)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biWidth)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biHeight)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biPlanes)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biBitCount)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biCompression)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biSizeImage)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biXPelsPerMeter)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biYPelsPerMeter)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biClrUsed)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
         bytes = BitConverter.GetBytes(.biClrImportant)
-        Call ArrayUtil.Copy(ret, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(ret, idx, bytes)
     End With
 
     Dim i As Long
@@ -165,7 +153,7 @@ Public Function GetDIB(ByRef bitmapData() As Byte, _
         Next
     End If
 
-    Call ArrayUtil.Copy(ret, idx, bitmapData, 0, UBound(bitmapData) + 1)
+    Call ArrayUtil.CopyAll(ret, idx, bitmapData)
 
     GetDIB = ret
 End Function

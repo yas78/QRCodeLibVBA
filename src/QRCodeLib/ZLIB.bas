@@ -47,10 +47,9 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
     buffer(idx) = flg
     idx = idx + 1
 
-    Call ArrayUtil.Copy(buffer, idx, compressedData, 0, sz)
-    idx = idx + sz
+    idx = ArrayUtil.CopyAll(buffer, idx, compressedData)
 
     Dim bytes() As Byte
     bytes = BitConverter.GetBytes(adler, True)
-    Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+    Call ArrayUtil.CopyAll(buffer, idx, bytes)
 End Sub

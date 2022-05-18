@@ -138,12 +138,12 @@ Private Sub MakeGlobalColorTable(ByRef palette() As Long, ByVal bpp As Long, ByR
     Dim idx As Long
     idx = 0
 
+    Dim bytes() As Byte
+
     Dim v As Variant
     For Each v In palette
-        gcTable(idx + 0) = CByte(v And &HFF&)
-        gcTable(idx + 1) = CByte((v And &HFF00&) \ 2 ^ 8)
-        gcTable(idx + 2) = CByte((v And &HFF0000) \ 2 ^ 16)
-        idx = idx + 3
+        bytes = BitConverter.GetBytes(v)
+        idx = ArrayUtil.Copy(gcTable, idx, bytes, 0, 3)
     Next
 End Sub
 
@@ -386,71 +386,61 @@ Private Sub ToBytes( _
     idx = 0
 
     With hdr
-        Call ArrayUtil.Copy(buffer, idx, .ExtensionIntroducer, 0, 3)
-        idx = idx + 3
-        Call ArrayUtil.Copy(buffer, idx, .Version, 0, 3)
-        idx = idx + 3
+        idx = ArrayUtil.CopyAll(buffer, idx, .ExtensionIntroducer)
+        idx = ArrayUtil.CopyAll(buffer, idx, .Version)
     End With
 
     Dim bytes() As Byte
 
     With lsDesc
         bytes = BitConverter.GetBytes(.LogicalScreenWidth)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.LogicalScreenHeight)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
-        buffer(idx) = .PackedFields
-        idx = idx + 1
-        buffer(idx) = .BackgroundColorIndex
-        idx = idx + 1
-        buffer(idx) = .PixelAspectRatio
-        idx = idx + 1
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        bytes = BitConverter.GetBytes(.PackedFields)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        bytes = BitConverter.GetBytes(.BackgroundColorIndex)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        bytes = BitConverter.GetBytes(.PixelAspectRatio)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
     End With
 
-    Call ArrayUtil.Copy(buffer, idx, gcTable, 0, gcTableSize)
-    idx = idx + gcTableSize
+    idx = ArrayUtil.CopyAll(buffer, idx, gcTable)
 
     If (gcExt.PackedFields And 1) > 0 Then
         With gcExt
-            buffer(idx) = .ExtensionIntroducer
-            idx = idx + 1
-            buffer(idx) = .GraphicControlLabel
-            idx = idx + 1
-            buffer(idx) = .BlockSize
-            idx = idx + 1
-            buffer(idx) = .PackedFields
-            idx = idx + 1
+            bytes = BitConverter.GetBytes(.ExtensionIntroducer)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            bytes = BitConverter.GetBytes(.GraphicControlLabel)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            bytes = BitConverter.GetBytes(.BlockSize)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            bytes = BitConverter.GetBytes(.PackedFields)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
             bytes = BitConverter.GetBytes(.DelayTime)
-            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-            idx = idx + 2
-            buffer(idx) = .TransparentColorIndex
-            idx = idx + 1
-            buffer(idx) = .BlockTerminator
-            idx = idx + 1
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            bytes = BitConverter.GetBytes(.TransparentColorIndex)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            bytes = BitConverter.GetBytes(.BlockTerminator)
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         End With
     End If
 
     With imgDesc
-        buffer(idx) = .ImageSeparator
-        idx = idx + 1
+        bytes = BitConverter.GetBytes(.ImageSeparator)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.ImageLeftPosition)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.ImageTopPosition)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.ImageWidth)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.ImageHeight)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
-        idx = idx + 2
-        buffer(idx) = .PackedFields
-        idx = idx + 1
-        buffer(idx) = .LZWMinimumCodeSize
-        idx = idx + 1
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        bytes = BitConverter.GetBytes(.PackedFields)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        bytes = BitConverter.GetBytes(.LZWMinimumCodeSize)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
     End With
 
     For i = 0 To UBound(imgBlocks)
@@ -459,8 +449,7 @@ Private Sub ToBytes( _
             idx = idx + 1
 
             If .Size > 0 Then
-                Call ArrayUtil.Copy(buffer, idx, .BlockData, 0, UBound(.BlockData) + 1)
-                idx = idx + UBound(.BlockData) + 1
+                idx = ArrayUtil.CopyAll(buffer, idx, .BlockData)
             End If
         End With
     Next

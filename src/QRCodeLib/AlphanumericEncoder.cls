@@ -62,11 +62,15 @@ Private Sub IQRCodeEncoder_Append(ByVal c As String)
 End Sub
 
 Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
+    Dim ret As Long
+
     If m_charCounter Mod 2 = 0 Then
-        IQRCodeEncoder_GetCodewordBitLength = 6
+        ret = 6
     Else
-        IQRCodeEncoder_GetCodewordBitLength = 5
+        ret = 5
     End If
+
+    IQRCodeEncoder_GetCodewordBitLength = 6
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
@@ -92,38 +96,41 @@ Private Function IQRCodeEncoder_GetBytes() As Byte()
 End Function
 
 Private Function ConvertCharCode(ByVal c As String) As Long
+    Dim ret As Long
+
     Dim code As Long
     code = Asc(c)
 
     Select Case code
         ' (Space)
         Case 32
-            ConvertCharCode = 36
+            ret = 36
         ' $ %
         Case 36, 37
-            ConvertCharCode = code + 1
+            ret = code + 1
         ' * +
         Case 42, 43
-            ConvertCharCode = code - 3
+            ret = code - 3
         ' - .
         Case 45, 46
-            ConvertCharCode = code - 4
+            ret = code - 4
         ' /
         Case 47
-            ConvertCharCode = 43
+            ret = 43
         ' 0 - 9
         Case 48 To 57
-            ConvertCharCode = code - 48
+            ret = code - 48
         ' :
         Case 58
-            ConvertCharCode = 44
+            ret = 44
         ' A - Z
         Case 65 To 90
-            ConvertCharCode = code - 55
-
+            ret = code - 55
         Case Else
-            ConvertCharCode = -1
+            ret = -1
     End Select
+
+    ConvertCharCode = ret
 End Function
 
 Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean

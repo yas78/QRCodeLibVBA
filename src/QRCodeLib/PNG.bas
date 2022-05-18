@@ -112,15 +112,18 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
     Dim bytes() As Byte
     Dim crc As Long
 
+    Dim idx As Long
+    idx = 0
+
     With ihdr
         .pLength = 13
         .pType = STR_IHDR
 
         ReDim .pData(.pLength - 1)
         bytes = BitConverter.GetBytes(pictWidth, True)
-        Call ArrayUtil.Copy(.pData, 0, bytes, 0, 4)
+        idx = ArrayUtil.CopyAll(.pData, idx, bytes)
         bytes = BitConverter.GetBytes(pictHeight, True)
-        Call ArrayUtil.Copy(.pData, 4, bytes, 0, 4)
+        idx = ArrayUtil.CopyAll(.pData, idx, bytes)
 
         .pData(8) = bitDepth
         .pData(9) = tColor
@@ -142,16 +145,16 @@ Private Sub MakeIPLT(ByRef iplt As PngChunk, ParamArray rgbArray() As Variant)
     Dim v   As Variant
     Dim crc As Long
 
+    Dim bytes() As Byte
+
     With iplt
         .pLength = (UBound(rgbArray) + 1) * 3
         .pType = STR_PLTE
 
         ReDim .pData(.pLength - 1)
         For Each v In rgbArray
-            .pData(idx + 0) = CByte(v And &HFF&)
-            .pData(idx + 1) = CByte((v And &HFF00&) \ 2 ^ 8)
-            .pData(idx + 2) = CByte((v And &HFF0000) \ 2 ^ 16)
-            idx = idx + 3
+            bytes = BitConverter.GetBytes(v)
+            idx = ArrayUtil.Copy(.pData, idx, bytes, 0, 3)
         Next
 
         crc = CRC32.Checksum(BitConverter.GetBytes(.pType, True))
@@ -213,63 +216,48 @@ Private Sub ToBytes(ByRef psgn As PngSignature, _
     Dim idx As Long
     idx = 0
 
-    Call ArrayUtil.Copy(buffer, idx, psgn.psData, 0, 8)
-    idx = idx + 8
+    idx = ArrayUtil.CopyAll(buffer, idx, psgn.psData)
 
     Dim bytes() As Byte
 
     With ihdr
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.pType, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
-        Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
-        idx = idx + .pLength
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        idx = ArrayUtil.CopyAll(buffer, idx, .pData)
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
     End With
 
     If iplt.pLength > 0 Then
         With iplt
             bytes = BitConverter.GetBytes(.pLength, True)
-            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-            idx = idx + 4
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
             bytes = BitConverter.GetBytes(.pType, True)
-            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-            idx = idx + 4
-            Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
-            idx = idx + .pLength
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+            idx = ArrayUtil.CopyAll(buffer, idx, .pData)
             bytes = BitConverter.GetBytes(.pCRC, True)
-            Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-            idx = idx + 4
+            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         End With
     End If
 
     With idat
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.pType, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
-        Call ArrayUtil.Copy(buffer, idx, .pData, 0, .pLength)
-        idx = idx + .pLength
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        idx = ArrayUtil.CopyAll(buffer, idx, .pData)
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
     End With
 
     With iend
         bytes = BitConverter.GetBytes(.pLength, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.pType, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
-        idx = idx + 4
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
         bytes = BitConverter.GetBytes(.pCRC, True)
-        Call ArrayUtil.Copy(buffer, idx, bytes, 0, 4)
+        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
     End With
 End Sub

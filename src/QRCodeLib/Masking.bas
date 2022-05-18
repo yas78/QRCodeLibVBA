@@ -47,7 +47,7 @@ Private Sub Mask(ByVal maskPattern As Long, ByRef moduleMatrix() As Variant)
         For c = 0 To UBound(moduleMatrix(r))
             If Math.Abs(moduleMatrix(r)(c)) = Values.WORD Then
                 If condition.Evaluate(r, c) Then
-                    moduleMatrix(r)(c) = moduleMatrix(r)(c) * -1
+                    moduleMatrix(r)(c) = -(moduleMatrix(r)(c))
                 End If
             End If
         Next

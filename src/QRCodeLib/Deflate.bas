@@ -37,7 +37,7 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
     Dim idx As Long
     idx = 0
 
-    Dim temp() As Byte
+    Dim bytes() As Byte
 
     Dim i As Long
     For i = 0 To quotient - 1
@@ -46,19 +46,14 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
         idx = idx + 1
 
         dLen = &HFFFF&
-        temp = BitConverter.GetBytes(dLen)
-        buffer(idx) = temp(0)
-        buffer(idx + 1) = temp(1)
-        idx = idx + 2
+        bytes = BitConverter.GetBytes(dLen)
+        idx = ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
 
         dNLen = dLen Xor &HFFFF&
-        temp = BitConverter.GetBytes(dNLen)
-        buffer(idx) = temp(0)
-        buffer(idx + 1) = temp(1)
-        idx = idx + 2
+        bytes = BitConverter.GetBytes(dNLen)
+        idx = ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
 
-        Call ArrayUtil.Copy(buffer, idx, data, &HFFFF& * i, &HFFFF&)
-        idx = idx + &HFFFF&
+        idx = ArrayUtil.Copy(buffer, idx, data, &HFFFF& * i, &HFFFF&)
     Next
 
     If remainder > 0 Then
@@ -67,18 +62,13 @@ Public Sub Compress(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef buf
         idx = idx + 1
 
         dLen = remainder
-        temp = BitConverter.GetBytes(dLen)
-        buffer(idx) = temp(0)
-        buffer(idx + 1) = temp(1)
-        idx = idx + 2
+        bytes = BitConverter.GetBytes(dLen)
+        idx = ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
 
         dNLen = dLen Xor &HFFFF&
-        temp = BitConverter.GetBytes(dNLen)
-        buffer(idx) = temp(0)
-        buffer(idx + 1) = temp(1)
-        idx = idx + 2
+        bytes = BitConverter.GetBytes(dNLen)
+        idx = ArrayUtil.Copy(buffer, idx, bytes, 0, 2)
 
-        Call ArrayUtil.Copy(buffer, idx, data, &HFFFF& * quotient, remainder)
-        idx = idx + remainder
+        idx = ArrayUtil.Copy(buffer, idx, data, &HFFFF& * quotient, remainder)
     End If
 End Sub

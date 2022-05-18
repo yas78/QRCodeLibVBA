@@ -5,7 +5,20 @@ Option Explicit
 Public Function GetSVG(ByRef pts() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
-                       ByVal foreRgb As String) As String
+                       ByVal foreColorRgb As Long) As String
+    Dim bytes() As Byte
+    bytes = BitConverter.GetBytes(foreColorRgb)
+
+    Dim r As String
+    Dim g As String
+    Dim b As String
+    r = Right$("0" & Hex$(bytes(0)), 2)
+    g = Right$("0" & Hex$(bytes(1)), 2)
+    b = Right$("0" & Hex$(bytes(2)), 2)
+
+    Dim foreRgb As String
+    foreRgb = "#" & r & g & b
+
     Dim buf As New List
 
     Dim indent As String

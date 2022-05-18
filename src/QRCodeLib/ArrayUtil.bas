@@ -2,9 +2,9 @@ Attribute VB_Name = "ArrayUtil"
 Option Private Module
 Option Explicit
 
-Public Sub Copy(ByRef dest() As Byte, ByVal destIdx As Long, _
-                ByRef src() As Byte, ByVal srcIdx As Long, _
-                ByVal sz As Long)
+Public Function Copy(ByRef dest() As Byte, ByVal destIdx As Long, _
+                     ByRef src() As Byte, ByVal srcIdx As Long, _
+                     ByVal sz As Long) As Long
     Dim idx As Long
     idx = destIdx
 
@@ -13,7 +13,20 @@ Public Sub Copy(ByRef dest() As Byte, ByVal destIdx As Long, _
         dest(idx) = src(srcIdx + i)
         idx = idx + 1
     Next
-End Sub
+
+    Copy = idx
+End Function
+
+Public Function CopyAll(ByRef dest() As Byte, ByVal destIdx As Long, _
+                        ByRef src() As Byte) As Long
+    Dim sz As Long
+    sz = UBound(src) + 1
+
+    Dim ret As Long
+    ret = Copy(dest, destIdx, src, 0, sz)
+
+    CopyAll = ret
+End Function
 
 Public Function Rotate90(ByRef array2D() As Variant) As Variant()
     Dim ret() As Variant
