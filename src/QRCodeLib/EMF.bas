@@ -78,16 +78,19 @@ Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
 
 #If VBA7 Then
-Public Function GetEMF(ByRef contours() As Variant, _
+Public Function GetEMF(ByRef data() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As LongPtr
 #Else
-Public Function GetEMF(ByRef contours() As Variant, _
+Public Function GetEMF(ByRef data() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As Long
 #End If
+    Dim paths() As Variant
+    paths = Figure.FindContours(data)
+
     Dim dimension As RECT
     dimension = GetDimension(pictWidth, pictHeight)
 
@@ -101,9 +104,9 @@ Public Function GetEMF(ByRef contours() As Variant, _
 
     Call BeginPath(hDC)
 
-    Dim pts As Variant
-    For Each pts In contours
-        Call AddPolygon(pts, hDC)
+    Dim coords As Variant
+    For Each coords In paths
+        Call AddPolygon(coords, hDC)
     Next
 
     Call EndPath(hDC)

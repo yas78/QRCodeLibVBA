@@ -449,7 +449,7 @@ Private Function GetModuleMatrix() As Variant()
 
     Call Masking.Apply(m_currVersion, m_parent.ErrorCorrectionLevel, moduleMatrix)
 
-    GetModuleMatrix = moduleMatrix
+    GetModuleMatrix = QuietZone.Place(moduleMatrix)
 End Function
 
 Private Sub PlaceSymbolChar(ByRef moduleMatrix() As Variant)
@@ -517,7 +517,7 @@ Private Function GetMonochromeBMP(ByVal moduleSize As Long, _
                                   ByVal foreColorRgb As Long, _
                                   ByVal backColorRgb As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim moduleCount As Long
     moduleCount = UBound(moduleMatrix) + 1
@@ -584,7 +584,7 @@ Private Function GetTrueColorBMP(ByVal moduleSize As Long, _
                                  ByVal foreColorRgb As Long, _
                                  ByVal backColorRgb As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -701,7 +701,7 @@ Private Function GetMonochromePNG(ByVal moduleSize As Long, _
                                   ByVal foreColorRgb As Long, _
                                   ByVal backColorRgb As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim moduleCount As Long
     moduleCount = UBound(moduleMatrix) + 1
@@ -766,7 +766,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
                                  ByVal backColorRgb As Long, _
                                  ByVal bkStyle As BackStyle) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -783,17 +783,20 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
     Dim offset As Long
     offset = 0
 
+    Dim sz As Long
+
     Dim foreRgb() As Byte
     foreRgb = BitConverter.GetBytes(foreColorRgb)
-    foreRgb(3) = &HFF
 
     Dim backRgb() As Byte
     backRgb = BitConverter.GetBytes(backColorRgb)
 
     If bkStyle = BackStyle.bkTransparent Then
+        foreRgb(3) = &HFF
         backRgb(3) = 0
+        sz = 4
     Else
-        backRgb(3) = &HFF
+        sz = 3
     End If
 
     Dim colorRgb()  As Byte
@@ -817,11 +820,7 @@ Private Function GetTrueColorPNG(ByVal moduleSize As Long, _
             colorRgb = IIf(Values.IsDark(v), foreRgb, backRgb)
 
             For i = 1 To moduleSize
-                If bkStyle = BackStyle.bkTransparent Then
-                    idx = ArrayUtil.Copy(bitmapRow, idx, colorRgb, 0, 4)
-                Else
-                    idx = ArrayUtil.Copy(bitmapRow, idx, colorRgb, 0, 3)
-                End If
+                idx = ArrayUtil.Copy(bitmapRow, idx, colorRgb, 0, sz)
             Next
         Next
 
@@ -876,7 +875,7 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -884,10 +883,37 @@ Public Function GetSVG(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim pictHeight As Long
     pictHeight = pictWidth
 
-    Dim pts() As Variant
-    pts = GetContourPoints(moduleMatrix, moduleSize)
+    Dim pixelData() As Variant
+    ReDim pixelData(pictHeight - 1)
 
-    GetSVG = SVG.GetSVG(pts, pictWidth, pictHeight, foreColorRgb)
+    Dim imgRow() As Long
+
+    Dim r As Long
+    Dim c As Long
+
+    Dim rowArray As Variant
+    Dim v As Variant
+    Dim clr As Long
+    Dim i As Long
+    For Each rowArray In moduleMatrix
+        ReDim imgRow(pictWidth - 1)
+        c = 0
+
+        For Each v In rowArray
+            clr = IIf(Values.IsDark(v), 1, 0)
+            For i = 1 To moduleSize
+                imgRow(c) = clr
+                c = c + 1
+            Next
+        Next
+
+        For i = 1 To moduleSize
+            pixelData(r) = imgRow
+            r = r + 1
+        Next
+    Next
+
+    GetSVG = SVG.GetSVG(pixelData, pictWidth, pictHeight, foreColorRgb)
 End Function
 
 #If VBA7 Then
@@ -906,7 +932,7 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     foreColorRgb = ColorCode.ToRGB(foreRgb)
 
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -914,16 +940,8 @@ Public Function GetEMF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     Dim pictHeight As Long
     pictHeight = pictWidth
 
-    Dim pts() As Variant
-    pts = GetContourPoints(moduleMatrix, moduleSize)
-
-    GetEMF = EMF.GetEMF(pts, pictWidth, pictHeight, foreColorRgb)
-End Function
-
-Private Function GetContourPoints(ByRef moduleMatrix() As Variant, _
-                                  ByVal moduleSize As Long) As Variant()
-    Dim img() As Variant
-    ReDim img((UBound(moduleMatrix) + 1) * moduleSize - 1)
+    Dim pixelData() As Variant
+    ReDim pixelData(pictHeight - 1)
 
     Dim imgRow() As Long
 
@@ -935,7 +953,7 @@ Private Function GetContourPoints(ByRef moduleMatrix() As Variant, _
     Dim clr As Long
     Dim i As Long
     For Each rowArray In moduleMatrix
-        ReDim imgRow((UBound(rowArray) + 1) * moduleSize - 1)
+        ReDim imgRow(pictWidth - 1)
         c = 0
 
         For Each v In rowArray
@@ -947,17 +965,17 @@ Private Function GetContourPoints(ByRef moduleMatrix() As Variant, _
         Next
 
         For i = 1 To moduleSize
-            img(r) = imgRow
+            pixelData(r) = imgRow
             r = r + 1
         Next
     Next
 
-    GetContourPoints = Figure.FindContours(img)
+    GetEMF = EMF.GetEMF(pixelData, pictWidth, pictHeight, foreColorRgb)
 End Function
 
 Private Function GetBilevelTIFF(ByVal moduleSize As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim moduleCount As Long
     moduleCount = UBound(moduleMatrix) + 1
@@ -1016,7 +1034,7 @@ Private Function GetPaletteColorTIFF(ByVal moduleSize As Long, _
                                      ByVal foreColorRgb As Long, _
                                      ByVal backColorRgb As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -1066,7 +1084,7 @@ Private Function GetFullColorTIFF(ByVal moduleSize As Long, _
                                   ByVal foreColorRgb As Long, _
                                   ByVal backColorRgb As Long) As Byte()
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim pictWidth As Long
     pictWidth = (UBound(moduleMatrix) + 1) * moduleSize
@@ -1161,7 +1179,7 @@ Public Function GetGIF(Optional ByVal moduleSize As Long = DEFAULT_MODULE_SIZE, 
     backColorRgb = ColorCode.ToRGB(backRgb)
 
     Dim moduleMatrix() As Variant
-    moduleMatrix = QuietZone.Place(GetModuleMatrix())
+    moduleMatrix = GetModuleMatrix()
 
     Dim moduleCount As Long
     moduleCount = UBound(moduleMatrix) + 1

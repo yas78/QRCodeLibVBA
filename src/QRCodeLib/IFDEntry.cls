@@ -69,7 +69,7 @@ Public Function GetBytes() As Byte()
     idx = 0
 
     bytes = BitConverter.GetBytes(m_tagID)
-    idx = ArrayUtil.Copy(ret, idx, bytes, 0, 2)
+    idx = ArrayUtil.CopyAll(ret, idx, bytes)
     bytes = BitConverter.GetBytes(m_fieldType)
     idx = ArrayUtil.Copy(ret, idx, bytes, 0, 2)
     bytes = BitConverter.GetBytes(m_count)
