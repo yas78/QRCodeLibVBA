@@ -13,7 +13,7 @@ Public Function CalcTotal(ByRef moduleMatrix() As Variant) As Long
     penaltyScore = CalcBlockOfModulesInSameColor(moduleMatrix)
     total = total + penaltyScore
 
-    penaltyScore = CalcModuleRatio(moduleMatrix)
+    penaltyScore = CalcModuleRatio(QuietZone.Place(moduleMatrix))
     total = total + penaltyScore
 
     penaltyScore = CalcProportionOfDarkModules(moduleMatrix)
@@ -84,14 +84,11 @@ Private Function CalcBlockOfModulesInSameColor(ByRef moduleMatrix() As Variant) 
 End Function
 
 Private Function CalcModuleRatio(ByRef moduleMatrix() As Variant) As Long
-    Dim moduleMatrixTemp() As Variant
-    moduleMatrixTemp = QuietZone.Place(moduleMatrix)
-
     Dim penaltyScore As Long
     penaltyScore = 0
 
-    penaltyScore = penaltyScore + CalcModuleRatioInRow(moduleMatrixTemp)
-    penaltyScore = penaltyScore + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrixTemp))
+    penaltyScore = penaltyScore + CalcModuleRatioInRow(moduleMatrix)
+    penaltyScore = penaltyScore + CalcModuleRatioInRow(ArrayUtil.Rotate90(moduleMatrix))
 
     CalcModuleRatio = penaltyScore
 End Function

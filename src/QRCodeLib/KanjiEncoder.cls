@@ -91,16 +91,16 @@ Private Function IQRCodeEncoder_InSubset(ByVal c As String) As Boolean
     Dim charBytes() As Byte
     charBytes = m_encoding.GetBytes(c)
 
-    If UBound(charBytes) <> 1 Then
+    If (UBound(charBytes) + 1) <> 2 Then
         IQRCodeEncoder_InSubset = False
         Exit Function
     End If
 
-    Dim code As Long
-    code = (CLng(charBytes(0)) * 2 ^ 8) Or CLng(charBytes(1))
-
     Dim lsb As Long
-    lsb = code And &HFF&
+    lsb = CLng(charBytes(1))
+
+    Dim code As Long
+    code = (CLng(charBytes(0)) * 2 ^ 8) Or lsb
 
     If &H8140& <= code And code <= &H9FFC& Or _
        &HE040& <= code And code <= &HEBBF& Then

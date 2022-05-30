@@ -70,7 +70,7 @@ Private Function IQRCodeEncoder_GetCodewordBitLength(ByVal c As String) As Long
         ret = 5
     End If
 
-    IQRCodeEncoder_GetCodewordBitLength = 6
+    IQRCodeEncoder_GetCodewordBitLength = ret
 End Function
 
 Private Function IQRCodeEncoder_GetBytes() As Byte()
