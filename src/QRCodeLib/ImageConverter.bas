@@ -65,7 +65,7 @@ Private Const PICTYPE_METAFILE      As Long = 2
 Private Const PICTYPE_ICON          As Long = 3
 Private Const PICTYPE_ENHMETAFILE   As Long = 4
 
-Public Function ConvertFromDIB(ByRef dibData() As Byte) As stdole.IPictureDisp
+Public Function ConvertFromDib(ByRef dibData() As Byte) As stdole.IPictureDisp
     Dim sz As Long
     sz = UBound(dibData) + 1
 
@@ -102,13 +102,13 @@ Public Function ConvertFromDIB(ByRef dibData() As Byte) As stdole.IPictureDisp
     Call OleLoadPicture(stm, sz, WIN32_FALSE, iid, ret)
     Call GlobalFree(hMem)
 
-    Set ConvertFromDIB = ret
+    Set ConvertFromDib = ret
 End Function
 
 #If VBA7 Then
-Public Function ConvertFromEMF(ByVal hEmf As LongPtr) As stdole.IPictureDisp
+Public Function ConvertFromEmf(ByVal hEmf As LongPtr) As stdole.IPictureDisp
 #Else
-Public Function ConvertFromEMF(ByVal hEmf As Long) As stdole.IPictureDisp
+Public Function ConvertFromEmf(ByVal hEmf As Long) As stdole.IPictureDisp
 #End If
     Dim lpPictDesc As PICTDESC
 
@@ -124,5 +124,5 @@ Public Function ConvertFromEMF(ByVal hEmf As Long) As stdole.IPictureDisp
     Dim ret As stdole.IPictureDisp
     Call OleCreatePictureIndirect(lpPictDesc, iid, False, ret)
 
-    Set ConvertFromEMF = ret
+    Set ConvertFromEmf = ret
 End Function

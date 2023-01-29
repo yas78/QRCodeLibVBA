@@ -44,40 +44,20 @@ Public Function GetEntries() As IFDEntry()
 End Function
 
 Public Function GetBytes() As Byte()
-    Dim buf As New Collection
+    Dim buf As New BinaryWriter
     Dim i As Long
     Dim bytes() As Byte
 
-    bytes = BitConverter.GetBytes(CInt(m_entries.Count))
-    For i = 0 To UBound(bytes)
-        Call buf.Add(bytes(i))
-    Next
+    Call buf.WriteAny(CInt(m_entries.Count))
 
     Dim e As IFDEntry
     For Each e In m_entries
-        bytes = e.GetBytes()
-        For i = 0 To UBound(bytes)
-            Call buf.Add(bytes(i))
-        Next
+        Call buf.WriteAny(e.GetBytes())
     Next
 
-    bytes = BitConverter.GetBytes(m_nextIFDOffset)
-    For i = 0 To UBound(bytes)
-        Call buf.Add(bytes(i))
-    Next
+    Call buf.WriteAny(m_nextIFDOffset)
 
-    Dim ret() As Byte
-    ReDim ret(buf.Count - 1)
-
-    Dim v As Variant
-    Dim idx As Long
-    idx = 0
-    For Each v In buf
-        ret(idx) = CByte(v)
-        idx = idx + 1
-    Next
-
-    GetBytes = ret
+    Call buf.Flush(GetBytes)
 End Function
 
 Public Function Add(ByVal tag As TagID, ByVal v As Long) As IFDEntry

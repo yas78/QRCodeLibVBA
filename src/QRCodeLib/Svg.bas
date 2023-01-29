@@ -1,8 +1,8 @@
-Attribute VB_Name = "SVG"
+Attribute VB_Name = "Svg"
 Option Private Module
 Option Explicit
 
-Public Function GetSVG(ByRef data() As Variant, _
+Public Function GetSvg(ByRef data() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As String
@@ -49,5 +49,5 @@ Public Function GetSVG(ByRef data() As Variant, _
           "  d=""" & pathData & """ />" & vbNewLine & _
           "</svg>"
 
-    GetSVG = ret
+    GetSvg = ret
 End Function

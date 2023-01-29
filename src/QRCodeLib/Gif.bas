@@ -1,4 +1,4 @@
-Attribute VB_Name = "GIF"
+Attribute VB_Name = "Gif"
 Option Private Module
 Option Explicit
 
@@ -46,7 +46,7 @@ Private m_clearCode As String
 Private m_endCode   As String
 Private m_bitsLen   As Long
 
-Public Function GetGIF(ByRef data() As Byte, _
+Public Function GetGif(ByRef data() As Byte, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByRef palette() As Long, _
@@ -88,10 +88,60 @@ Public Function GetGIF(ByRef data() As Byte, _
     Dim trailer As Byte
     trailer = &H3B
 
-    Dim ret() As Byte
-    Call ToBytes(hdr, lsDesc, gcTable, gcExt, imgDesc, imgBlocks, trailer, ret)
+    Dim bs As New ByteSequence
 
-    GetGIF = ret
+    With hdr
+        Call bs.Append(.ExtensionIntroducer)
+        Call bs.Append(.Version)
+    End With
+
+    Dim bytes() As Byte
+
+    With lsDesc
+        Call bs.Append(.LogicalScreenWidth)
+        Call bs.Append(.LogicalScreenHeight)
+        Call bs.Append(.PackedFields)
+        Call bs.Append(.BackgroundColorIndex)
+        Call bs.Append(.PixelAspectRatio)
+    End With
+
+    Call bs.Append(gcTable)
+
+    If (gcExt.PackedFields And 1) > 0 Then
+        With gcExt
+            Call bs.Append(.ExtensionIntroducer)
+            Call bs.Append(.GraphicControlLabel)
+            Call bs.Append(.BlockSize)
+            Call bs.Append(.PackedFields)
+            Call bs.Append(.DelayTime)
+            Call bs.Append(.TransparentColorIndex)
+            Call bs.Append(.BlockTerminator)
+        End With
+    End If
+
+    With imgDesc
+        Call bs.Append(.ImageSeparator)
+        Call bs.Append(.ImageLeftPosition)
+        Call bs.Append(.ImageTopPosition)
+        Call bs.Append(.ImageWidth)
+        Call bs.Append(.ImageHeight)
+        Call bs.Append(.PackedFields)
+        Call bs.Append(.LZWMinimumCodeSize)
+    End With
+
+    For i = 0 To UBound(imgBlocks)
+        With imgBlocks(i)
+            Call bs.Append(.Size)
+
+            If .Size > 0 Then
+                Call bs.Append(.BlockData)
+            End If
+        End With
+    Next
+
+    Call bs.Append(trailer)
+
+    GetGif = bs.Flush()
 End Function
 
 Private Sub MakeGifHeader(ByRef hdr As GifHeader)
@@ -334,125 +384,4 @@ Private Sub UpdateBitsLength(ByVal bpp As Long)
         Call m_buf.Add(Array(CLng(m_clearCode), 12))
         Call InitializeDictionary(bpp)
     End If
-End Sub
-
-Private Sub ToBytes( _
-    ByRef hdr As GifHeader, _
-    ByRef lsDesc As LogicalScreenDescriptor, _
-    ByRef gcTable() As Byte, _
-    ByRef gcExt As GraphicControlExtension, _
-    ByRef imgDesc As ImageDescriptor, _
-    ByRef imgBlocks() As ImageBlock, _
-    ByRef trailer As Byte, _
-    ByRef buffer() As Byte)
-
-    Dim hdrSize As Long
-    hdrSize = 6
-
-    Dim lsDescSize As Long
-    lsDescSize = 7
-
-    Dim gcTableSize As Long
-    gcTableSize = UBound(gcTable) + 1
-
-    Dim gcExtSize As Long
-    If (gcExt.PackedFields And 1) > 0 Then
-        gcExtSize = 8
-    Else
-        gcExtSize = 0
-    End If
-
-    Dim imgDescSize As Long
-    imgDescSize = 11
-
-    Dim imgBlocksSize As Long
-    Dim i As Long
-    For i = 0 To UBound(imgBlocks)
-        imgBlocksSize = imgBlocksSize + 1
-        If imgBlocks(i).Size > 0 Then
-            imgBlocksSize = imgBlocksSize + (UBound(imgBlocks(i).BlockData) + 1)
-        End If
-    Next
-
-    Dim trSize As Long
-    trSize = 1
-
-    Dim sz As Long
-    sz = hdrSize + lsDescSize + gcTableSize + gcExtSize + imgDescSize + imgBlocksSize + trSize
-
-    ReDim buffer(sz - 1)
-
-    Dim idx As Long
-    idx = 0
-
-    With hdr
-        idx = ArrayUtil.CopyAll(buffer, idx, .ExtensionIntroducer)
-        idx = ArrayUtil.CopyAll(buffer, idx, .Version)
-    End With
-
-    Dim bytes() As Byte
-
-    With lsDesc
-        bytes = BitConverter.GetBytes(.LogicalScreenWidth)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.LogicalScreenHeight)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.PackedFields)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.BackgroundColorIndex)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.PixelAspectRatio)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    End With
-
-    idx = ArrayUtil.CopyAll(buffer, idx, gcTable)
-
-    If (gcExt.PackedFields And 1) > 0 Then
-        With gcExt
-            bytes = BitConverter.GetBytes(.ExtensionIntroducer)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.GraphicControlLabel)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.BlockSize)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.PackedFields)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.DelayTime)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.TransparentColorIndex)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.BlockTerminator)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        End With
-    End If
-
-    With imgDesc
-        bytes = BitConverter.GetBytes(.ImageSeparator)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.ImageLeftPosition)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.ImageTopPosition)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.ImageWidth)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.ImageHeight)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.PackedFields)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.LZWMinimumCodeSize)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    End With
-
-    For i = 0 To UBound(imgBlocks)
-        With imgBlocks(i)
-            buffer(idx) = .Size
-            idx = idx + 1
-
-            If .Size > 0 Then
-                idx = ArrayUtil.CopyAll(buffer, idx, .BlockData)
-            End If
-        End With
-    Next
-
-    buffer(idx) = trailer
 End Sub

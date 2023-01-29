@@ -1,4 +1,4 @@
-Attribute VB_Name = "CRC32"
+Attribute VB_Name = "Crc32"
 Option Private Module
 Option Explicit
 

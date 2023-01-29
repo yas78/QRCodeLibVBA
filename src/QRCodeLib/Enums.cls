@@ -17,12 +17,12 @@ Public Enum ErrorCorrectionLevel
 End Enum
 
 Public Enum ImageFormat
-    fmtBMP = &H10
-    fmtPNG = &H20
-    fmtSVG = &H30
-    fmtEMF = &H40
-    fmtTIFF = &H50
-    fmtGIF = &H60
+    fmtBmp = &H10
+    fmtPng = &H20
+    fmtSvg = &H30
+    fmtEmf = &H40
+    fmtTiff = &H50
+    fmtGif = &H60
     fmtMonochrome = 0
     fmtTrueColor = 1
     fmtBilevel = 2

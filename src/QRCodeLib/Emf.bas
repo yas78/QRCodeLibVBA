@@ -1,4 +1,4 @@
-Attribute VB_Name = "EMF"
+Attribute VB_Name = "Emf"
 Option Private Module
 Option Explicit
 
@@ -78,12 +78,12 @@ Private Const HORZRES  As Long = 8
 Private Const VERTRES  As Long = 10
 
 #If VBA7 Then
-Public Function GetEMF(ByRef data() As Variant, _
+Public Function GetEmf(ByRef data() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As LongPtr
 #Else
-Public Function GetEMF(ByRef data() As Variant, _
+Public Function GetEmf(ByRef data() As Variant, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long) As Long
@@ -113,7 +113,7 @@ Public Function GetEMF(ByRef data() As Variant, _
 
     Call DrawAndFillPath(foreColorRgb, foreColorRgb, hDC)
 
-    GetEMF = CloseEnhMetaFile(hDC)
+    GetEmf = CloseEnhMetaFile(hDC)
 End Function
 
 Private Function GetPixelSize() As Size
