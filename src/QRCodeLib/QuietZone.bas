@@ -2,21 +2,9 @@ Attribute VB_Name = "QuietZone"
 Option Private Module
 Option Explicit
 
-Private Const MIN_WIDTH As Long = 4
+Public Function Place(ByRef moduleMatrix() As Variant, Optional ByVal Width As Long = 4) As Variant()
+    If Width < 0 Then Call Err.Raise(5)
 
-Private m_width As Long
-
-Public Property Get Width() As Long
-    If m_width = 0 Then
-        m_width = MIN_WIDTH
-    End If
-    Width = m_width
-End Property
-Public Property Let Width(ByVal Value As Long)
-    m_width = Value
-End Property
-
-Public Function Place(ByRef moduleMatrix() As Variant) As Variant()
     Dim sz As Long
     sz = UBound(moduleMatrix) + Width * 2
 

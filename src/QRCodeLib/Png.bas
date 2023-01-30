@@ -1,4 +1,4 @@
-Attribute VB_Name = "PNG"
+Attribute VB_Name = "Png"
 Option Private Module
 Option Explicit
 
@@ -10,7 +10,7 @@ Private Type PngChunk
     pLength As Long
     pType   As Long
     pData() As Byte
-    pCRC    As Long
+    pCrc    As Long
 End Type
 
 Public Enum PngColorType
@@ -38,7 +38,7 @@ Private Enum PngInterlaceMethod
     pAdam7 = 1
 End Enum
 
-Public Function GetPNG(ByRef data() As Byte, _
+Public Function GetPng(ByRef data() As Byte, _
                        ByVal pictWidth As Long, _
                        ByVal pictHeight As Long, _
                        ByVal foreColorRgb As Long, _
@@ -80,10 +80,40 @@ Public Function GetPNG(ByRef data() As Byte, _
     Dim iend As PngChunk
     Call MakeIEND(iend)
 
-    Dim ret() As Byte
-    Call ToBytes(psgn, ihdr, iplt, idat, iend, ret)
+    Dim bs As New ByteSequence
 
-    GetPNG = ret
+    Call bs.Append(psgn.psData)
+
+    With ihdr
+        Call bs.Append(.pLength, True)
+        Call bs.Append(.pType, True)
+        Call bs.Append(.pData)
+        Call bs.Append(.pCrc, True)
+    End With
+
+    If iplt.pLength > 0 Then
+        With iplt
+            Call bs.Append(.pLength, True)
+            Call bs.Append(.pType, True)
+            Call bs.Append(.pData)
+            Call bs.Append(.pCrc, True)
+        End With
+    End If
+
+    With idat
+        Call bs.Append(.pLength, True)
+        Call bs.Append(.pType, True)
+        Call bs.Append(.pData)
+        Call bs.Append(.pCrc, True)
+    End With
+
+    With iend
+        Call bs.Append(.pLength, True)
+        Call bs.Append(.pType, True)
+        Call bs.Append(.pCrc, True)
+    End With
+
+    GetPng = bs.Flush()
 End Function
 
 Private Sub MakePngSignature(ByRef psgn As PngSignature)
@@ -131,8 +161,8 @@ Private Sub MakeIHDR(ByVal pictWidth As Long, _
         .pData(11) = tFilter
         .pData(12) = interlace
 
-        crc = CRC32.Checksum(BitConverter.GetBytes(STR_IHDR, True))
-        .pCRC = CRC32.Update(crc, .pData)
+        crc = Crc32.Checksum(BitConverter.GetBytes(STR_IHDR, True))
+        .pCrc = Crc32.Update(crc, .pData)
     End With
 End Sub
 
@@ -157,8 +187,8 @@ Private Sub MakeIPLT(ByRef iplt As PngChunk, ParamArray rgbArray() As Variant)
             idx = ArrayUtil.Copy(.pData, idx, bytes, 0, 3)
         Next
 
-        crc = CRC32.Checksum(BitConverter.GetBytes(.pType, True))
-        .pCRC = CRC32.Update(crc, .pData)
+        crc = Crc32.Checksum(BitConverter.GetBytes(.pType, True))
+        .pCrc = Crc32.Update(crc, .pData)
     End With
 End Sub
 
@@ -168,11 +198,11 @@ Private Sub MakeIDAT(ByRef data() As Byte, ByVal btype As DeflateBType, ByRef id
     Dim crc As Long
 
     With idat
-        Call ZLIB.Compress(data, btype, .pData)
+        Call Zlib.Compress(data, btype, .pData)
         .pLength = UBound(.pData) + 1
         .pType = STR_IDAT
-        crc = CRC32.Checksum(BitConverter.GetBytes(STR_IDAT, True))
-        .pCRC = CRC32.Update(crc, .pData)
+        crc = Crc32.Checksum(BitConverter.GetBytes(STR_IDAT, True))
+        .pCrc = Crc32.Update(crc, .pData)
     End With
 End Sub
 
@@ -182,82 +212,6 @@ Private Sub MakeIEND(ByRef iend As PngChunk)
     With iend
         .pLength = 0
         .pType = STR_IEND
-        .pCRC = CRC32.Checksum(BitConverter.GetBytes(STR_IEND, True))
-    End With
-End Sub
-
-Private Sub ToBytes(ByRef psgn As PngSignature, _
-                    ByRef ihdr As PngChunk, _
-                    ByRef iplt As PngChunk, _
-                    ByRef idat As PngChunk, _
-                    ByRef iend As PngChunk, _
-                    ByRef buffer() As Byte)
-    Dim psgnSize As Long
-    psgnSize = 8
-
-    Dim ihdrSize As Long
-    ihdrSize = 12 + ihdr.pLength
-
-    Dim ipltSize As Long
-    If iplt.pLength > 0 Then
-        ipltSize = 12 + iplt.pLength
-    Else
-        ipltSize = 0
-    End If
-
-    Dim idatSize As Long
-    idatSize = 12 + idat.pLength
-
-    Dim iendSize As Long
-    iendSize = 12 + iend.pLength
-
-    ReDim buffer(psgnSize + ihdrSize + ipltSize + idatSize + iendSize - 1)
-
-    Dim idx As Long
-    idx = 0
-
-    idx = ArrayUtil.CopyAll(buffer, idx, psgn.psData)
-
-    Dim bytes() As Byte
-
-    With ihdr
-        bytes = BitConverter.GetBytes(.pLength, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.pType, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        idx = ArrayUtil.CopyAll(buffer, idx, .pData)
-        bytes = BitConverter.GetBytes(.pCRC, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    End With
-
-    If iplt.pLength > 0 Then
-        With iplt
-            bytes = BitConverter.GetBytes(.pLength, True)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            bytes = BitConverter.GetBytes(.pType, True)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-            idx = ArrayUtil.CopyAll(buffer, idx, .pData)
-            bytes = BitConverter.GetBytes(.pCRC, True)
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        End With
-    End If
-
-    With idat
-        bytes = BitConverter.GetBytes(.pLength, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.pType, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        idx = ArrayUtil.CopyAll(buffer, idx, .pData)
-        bytes = BitConverter.GetBytes(.pCRC, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    End With
-
-    With iend
-        bytes = BitConverter.GetBytes(.pLength, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.pType, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(.pCRC, True)
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
+        .pCrc = Crc32.Checksum(BitConverter.GetBytes(STR_IEND, True))
     End With
 End Sub

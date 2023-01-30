@@ -22,10 +22,10 @@ Option Explicit
 #End If
 
 Private Const DEFAULT_MODULE_SIZE As Long = 5
-Private Const IMAGE_WIDTH         As Long = 166
-Private Const IMAGE_HEIGHT        As Long = 166
-Private Const IMAGE_MARGIN        As Long = 2
-Private Const COL_COUNT           As Long = 3
+Private Const IMAGE_WIDTH  As Long = 166
+Private Const IMAGE_HEIGHT As Long = 166
+Private Const IMAGE_MARGIN As Long = 2
+Private Const COL_COUNT    As Long = 3
 
 #If VBA7 Then
     Private m_hwnd As LongPtr
@@ -211,17 +211,17 @@ Private Sub btnSave_Click()
 
     Select Case LCase$(ext)
         Case ".bmp"
-            fmt = fmtBMP
+            fmt = fmtBmp
         Case ".emf"
-            fmt = fmtEMF
+            fmt = fmtEmf
         Case ".gif"
-            fmt = fmtGIF
+            fmt = fmtGif
         Case ".png"
-            fmt = fmtPNG
+            fmt = fmtPng
         Case ".svg"
-            fmt = fmtSVG
+            fmt = fmtSvg
         Case ".tif", ".tiff"
-            fmt = fmtTIFF
+            fmt = fmtTiff
         Case Else
             Call Err.Raise(51)
     End Select

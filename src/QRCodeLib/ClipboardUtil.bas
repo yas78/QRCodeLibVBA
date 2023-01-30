@@ -29,7 +29,7 @@ Private Const GHND          As Long = GMEM_MOVEABLE Or GMEM_ZEROINIT
 Private Const CF_DIB         As Long = 8
 Private Const CF_ENHMETAFILE As Long = 14
 
-Public Sub SetDIB(ByRef dibData() As Byte)
+Public Sub SetDib(ByRef dibData() As Byte)
     Dim sz As Long
     sz = UBound(dibData) - 14 + 1
 
@@ -61,9 +61,9 @@ Public Sub SetDIB(ByRef dibData() As Byte)
 End Sub
 
 #If VBA7 Then
-Public Sub SetEMF(ByVal hEmf As LongPtr)
+Public Sub SetEmf(ByVal hEmf As LongPtr)
 #Else
-Public Sub SetEMF(ByVal hEmf As Long)
+Public Sub SetEmf(ByVal hEmf As Long)
 #End If
     Call OpenClipboard(0)
     Call EmptyClipboard

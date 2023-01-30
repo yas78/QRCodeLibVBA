@@ -1,4 +1,4 @@
-Attribute VB_Name = "TIFF"
+Attribute VB_Name = "Tiff"
 Option Private Module
 Option Explicit
 
@@ -67,7 +67,7 @@ Private m_yResolution As Rational
 Private m_bitsPerSample(2) As Integer
 Private m_palette As ColorPalette
 
-Public Function GetTIFF(ByRef data() As Byte, _
+Public Function GetTiff(ByRef data() As Byte, _
                         ByVal pictWidth As Long, _
                         ByVal pictHeight As Long, _
                         ByVal imageType As TiffImageType, _
@@ -138,10 +138,41 @@ Public Function GetTIFF(ByRef data() As Byte, _
 
     Call UpdateOffsets
 
-    Dim ret() As Byte
-    Call ToBytes(ret)
+    Dim bs As New ByteSequence
 
-    GetTIFF = ret
+    With m_ifh
+        Call bs.Append(.Data1)
+        Call bs.Append(.Data2)
+        Call bs.Append(.Data3)
+    End With
+
+    Call bs.Append(m_ifd.GetBytes())
+
+    If m_imageType = TiffImageType.FullColor Then
+        Call bs.Append(m_bitsPerSample)
+    End If
+
+    With m_xResolution
+        Call bs.Append(.Data1)
+        Call bs.Append(.Data2)
+    End With
+
+    With m_yResolution
+        Call bs.Append(.Data1)
+        Call bs.Append(.Data2)
+    End With
+
+    Dim i As Long
+
+    If m_imageType = TiffImageType.PaletteColor Then
+        Call bs.Append(m_palette.r)
+        Call bs.Append(m_palette.g)
+        Call bs.Append(m_palette.b)
+    End If
+
+    Call bs.Append(m_data)
+
+    GetTiff = bs.Flush()
 End Function
 
 Private Sub MakeColorPalette(ByVal colors As Variant)
@@ -203,82 +234,3 @@ Private Sub UpdateOffsets()
         End If
     Next
 End Sub
-
-Private Sub ToBytes(ByRef buffer() As Byte)
-    ReDim buffer(CalcSize() - 1)
-
-    Dim idx As Long
-    idx = 0
-
-    Dim bytes() As Byte
-
-    bytes = BitConverter.GetBytes(m_ifh.Data1)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    bytes = BitConverter.GetBytes(m_ifh.Data2)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    bytes = BitConverter.GetBytes(m_ifh.Data3)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-
-    bytes = m_ifd.GetBytes()
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-
-    If m_imageType = TiffImageType.FullColor Then
-        bytes = BitConverter.GetBytes(m_bitsPerSample(0))
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(m_bitsPerSample(1))
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        bytes = BitConverter.GetBytes(m_bitsPerSample(2))
-        idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    End If
-
-    bytes = BitConverter.GetBytes(m_xResolution.Data1)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    bytes = BitConverter.GetBytes(m_xResolution.Data2)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    bytes = BitConverter.GetBytes(m_yResolution.Data1)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-    bytes = BitConverter.GetBytes(m_yResolution.Data2)
-    idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-
-    Dim i As Long
-
-    If m_imageType = TiffImageType.PaletteColor Then
-        For i = 0 To UBound(m_palette.r)
-            bytes = BitConverter.GetBytes(m_palette.r(i))
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        Next
-
-        For i = 0 To UBound(m_palette.g)
-            bytes = BitConverter.GetBytes(m_palette.g(i))
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        Next
-
-        For i = 0 To UBound(m_palette.b)
-            bytes = BitConverter.GetBytes(m_palette.b(i))
-            idx = ArrayUtil.CopyAll(buffer, idx, bytes)
-        Next
-    End If
-
-    Call ArrayUtil.CopyAll(buffer, idx, m_data)
-End Sub
-
-Private Function CalcSize() As Long
-    Dim ret As Long
-    ret = LenB(m_ifh)
-    ret = ret + m_ifd.Length
-
-    If m_imageType = TiffImageType.FullColor Then
-        ret = ret + 2 * (UBound(m_bitsPerSample) + 1)
-    End If
-
-    ret = ret + LenB(m_xResolution)
-    ret = ret + LenB(m_yResolution)
-
-    If m_imageType = TiffImageType.PaletteColor Then
-        ret = ret + LenB(m_palette)
-    End If
-
-    ret = ret + (UBound(m_data) + 1)
-
-    CalcSize = ret
-End Function
