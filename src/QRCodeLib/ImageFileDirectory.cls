@@ -45,7 +45,7 @@ End Function
 
 Public Function GetBytes() As Byte()
     Dim bs As New ByteSequence
-    
+
     Dim i As Long
     Dim bytes() As Byte
 

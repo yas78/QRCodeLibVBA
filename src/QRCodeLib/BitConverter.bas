@@ -56,11 +56,11 @@ Public Function GetBytes(ByVal arg As Variant, Optional ByVal reverse As Boolean
                 temp = ret(1)
                 ret(1) = ret(6)
                 ret(6) = temp
-                
+
                 temp = ret(2)
                 ret(2) = ret(5)
                 ret(5) = temp
-                
+
                 temp = ret(3)
                 ret(3) = ret(4)
                 ret(4) = temp

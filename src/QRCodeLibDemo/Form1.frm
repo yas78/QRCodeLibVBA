@@ -2,7 +2,7 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form1 
    Caption         =   "QR Code"
    ClientHeight    =   9225.001
-   ClientLeft      =   45
+   ClientLeft      =   50
    ClientTop       =   390
    ClientWidth     =   10590
    OleObjectBlob   =   "Form1.frx":0000

@@ -12,7 +12,7 @@ Option Explicit
 #If VBA7 Then
     Private Declare PtrSafe Function GetSaveFileName Lib "comdlg32" Alias "GetSaveFileNameA" (ByRef pOpenfilename As OPENFILENAME) As Long
 #Else
-    Private Declare Function GetSaveFileName Lib "comdlg32" Alias "GetSaveFileNameA" (byRef pOpenfilename As OPENFILENAME) As Long
+    Private Declare Function GetSaveFileName Lib "comdlg32" Alias "GetSaveFileNameA" (ByRef pOpenfilename As OPENFILENAME) As Long
 #End If
 
 #If VBA7 Then

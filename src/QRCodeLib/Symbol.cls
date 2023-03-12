@@ -798,7 +798,7 @@ Private Function GetTrueColorPng(ByVal moduleSize As Long, _
     filterType = 0
 
     Dim bs As New ByteSequence
-    
+
     Dim r As Long
     Dim v As Variant
     Dim i As Long
